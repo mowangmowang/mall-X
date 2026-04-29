@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONUtil;
@@ -20,9 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * MinIO对象存储管理Controller
- * Created by macro on 2019/12/25.
- */
+ * MinIO对象存储管理Controller */
 @Controller
 @Api(tags = "MinioController")
 @Tag(name = "MinioController", description = "MinIO对象存储管理")

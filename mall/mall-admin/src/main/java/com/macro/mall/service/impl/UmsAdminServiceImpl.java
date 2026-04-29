@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
@@ -39,9 +39,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 后台用户管理Service实现类
- * Created by macro on 2018/4/26.
- */
+ * 后台用户管理Service实现类 */
 @Service
 public class UmsAdminServiceImpl implements UmsAdminService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UmsAdminServiceImpl.class);

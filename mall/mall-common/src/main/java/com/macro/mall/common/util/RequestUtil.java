@@ -1,13 +1,11 @@
-package com.macro.mall.common.util;
+﻿package com.macro.mall.common.util;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
- * 请求工具类
- * Created by macro on 2020/10/8.
- */
+ * 请求工具类 */
 public class RequestUtil {
 
     /**

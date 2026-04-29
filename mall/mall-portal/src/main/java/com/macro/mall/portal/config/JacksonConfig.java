@@ -1,4 +1,4 @@
-package com.macro.mall.portal.config;
+﻿package com.macro.mall.portal.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,9 +11,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 /**
  * Jackson相关配置
- * 配置json不返回null的字段
- * Created by macro on 2018/8/2.
- */
+ * 配置json不返回null的字段 */
 @Configuration
 public class JacksonConfig {
     @Bean

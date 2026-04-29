@@ -1,4 +1,4 @@
-package com.macro.mall;
+﻿package com.macro.mall;
 
 import org.mybatis.generator.api.MyBatisGenerator;
 import org.mybatis.generator.config.Configuration;
@@ -10,9 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * MBG代码生成工具
- * Created by macro on 2018/4/26.
- */
+ * MBG代码生成工具 */
 public class Generator {
     public static void main(String[] args) throws Exception {
         //MBG 执行过程中的警告信息

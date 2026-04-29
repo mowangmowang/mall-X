@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import com.macro.mall.mapper.CmsPrefrenceAreaMapper;
 import com.macro.mall.model.CmsPrefrenceArea;
@@ -10,9 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * 商品优选管理Service实现类
- * Created by macro on 2018/6/1.
- */
+ * 商品优选管理Service实现类 */
 @Service
 public class CmsPrefrenceAreaServiceImpl implements CmsPrefrenceAreaService {
     @Autowired

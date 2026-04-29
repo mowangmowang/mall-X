@@ -1,4 +1,4 @@
-package com.macro.mall.dto;
+﻿package com.macro.mall.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -8,9 +8,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
 /**
- * 用户注册参数
- * Created by macro on 2018/4/26.
- */
+ * 用户注册参数 */
 @Getter
 @Setter
 public class UmsAdminParam {

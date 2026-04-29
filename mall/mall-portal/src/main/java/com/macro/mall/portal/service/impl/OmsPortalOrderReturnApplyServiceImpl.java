@@ -1,4 +1,4 @@
-package com.macro.mall.portal.service.impl;
+﻿package com.macro.mall.portal.service.impl;
 
 import com.macro.mall.mapper.OmsOrderReturnApplyMapper;
 import com.macro.mall.model.OmsOrderReturnApply;
@@ -11,9 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 /**
- * 订单退货管理Service实现类
- * Created by macro on 2018/10/17.
- */
+ * 订单退货管理Service实现类 */
 @Service
 public class OmsPortalOrderReturnApplyServiceImpl implements OmsPortalOrderReturnApplyService {
     @Autowired

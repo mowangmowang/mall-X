@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import com.macro.mall.mapper.UmsMemberLevelMapper;
 import com.macro.mall.model.UmsMemberLevel;
@@ -10,9 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * 会员等级管理Service实现类
- * Created by macro on 2018/4/26.
- */
+ * 会员等级管理Service实现类 */
 @Service
 public class UmsMemberLevelServiceImpl implements UmsMemberLevelService{
     @Autowired

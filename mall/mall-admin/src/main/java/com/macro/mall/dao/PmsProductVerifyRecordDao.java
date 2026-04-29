@@ -1,4 +1,4 @@
-package com.macro.mall.dao;
+﻿package com.macro.mall.dao;
 
 import com.macro.mall.model.PmsProductVerifyRecord;
 import org.apache.ibatis.annotations.Param;
@@ -6,9 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * 商品审核日志管理自定义Dao
- * Created by macro on 2018/4/27.
- */
+ * 商品审核日志管理自定义Dao */
 public interface PmsProductVerifyRecordDao {
     /**
      * 批量创建

@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.common.api.CommonResult;
@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 后台用户角色管理Controller
- * Created by macro on 2018/9/30.
- */
+ * 后台用户角色管理Controller */
 @Controller
 @Api(tags = "UmsRoleController")
 @Tag(name = "UmsRoleController", description = "后台用户角色管理")

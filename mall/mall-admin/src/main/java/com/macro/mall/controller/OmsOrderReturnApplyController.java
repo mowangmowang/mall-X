@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.common.api.CommonResult;
@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 订单退货申请管理Controller
- * Created by macro on 2018/10/18.
- */
+ * 订单退货申请管理Controller */
 @Controller
 @Api(tags = "OmsOrderReturnApplyController")
 @Tag(name = "OmsOrderReturnApplyController", description = "订单退货申请管理")

@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.common.api.CommonResult;
@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 订单管理Controller
- * Created by macro on 2018/10/11.
- */
+ * 订单管理Controller */
 @Controller
 @Api(tags = "OmsOrderController")
 @Tag(name = "OmsOrderController", description = "订单管理")

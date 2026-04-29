@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
@@ -15,9 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 首页广告管理Service实现类
- * Created by macro on 2018/11/7.
- */
+ * 首页广告管理Service实现类 */
 @Service
 public class SmsHomeAdvertiseServiceImpl implements SmsHomeAdvertiseService {
     @Autowired

@@ -1,4 +1,4 @@
-package com.macro.mall.bo;
+﻿package com.macro.mall.bo;
 
 import com.macro.mall.model.UmsAdmin;
 import com.macro.mall.model.UmsResource;
@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * SpringSecurity需要的用户信息封装类
- * Created by macro on 2018/4/26.
- */
+ * SpringSecurity需要的用户信息封装类 */
 public class AdminUserDetails implements UserDetails {
     //后台用户
     private final UmsAdmin umsAdmin;

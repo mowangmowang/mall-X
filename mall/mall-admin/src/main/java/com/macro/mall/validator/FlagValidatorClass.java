@@ -1,4 +1,4 @@
-package com.macro.mall.validator;
+﻿package com.macro.mall.validator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -9,7 +9,7 @@ import javax.validation.ConstraintValidatorContext;
  * 
  * <p>通常用于验证状态字段（如启用/禁用、审核状态等）的合法性</p>
  * 
- * @author macro
+ * @author alize
  *
  * @see FlagValidator
  */

@@ -1,4 +1,4 @@
-package com.macro.mall.security.component;
+﻿package com.macro.mall.security.component;
 
 import cn.hutool.core.util.URLUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +12,7 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 
 /**
- * 动态权限数据源，用于获取动态权限规则
- * Created by macro on 2020/2/7.
- */
+ * 动态权限数据源，用于获取动态权限规则 */
 public class DynamicSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
     private static Map<String, ConfigAttribute> configAttributeMap = null;

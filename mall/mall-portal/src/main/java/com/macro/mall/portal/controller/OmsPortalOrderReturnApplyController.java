@@ -1,4 +1,4 @@
-package com.macro.mall.portal.controller;
+﻿package com.macro.mall.portal.controller;
 
 import com.macro.mall.common.api.CommonResult;
 import com.macro.mall.portal.domain.OmsOrderReturnApplyParam;
@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 退货申请管理Controller
- * Created by macro on 2018/10/17.
- */
+ * 退货申请管理Controller */
 @RestController
 @Api(tags = "OmsPortalOrderReturnApplyController")
 @Tag(name = "OmsPortalOrderReturnApplyController",description = "退货申请管理")

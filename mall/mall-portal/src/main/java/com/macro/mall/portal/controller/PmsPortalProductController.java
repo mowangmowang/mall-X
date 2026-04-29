@@ -1,4 +1,4 @@
-package com.macro.mall.portal.controller;
+﻿package com.macro.mall.portal.controller;
 
 import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.common.api.CommonResult;
@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 前台商品管理Controller
- * Created by macro on 2020/4/6.
- */
+ * 前台商品管理Controller */
 @RestController
 @Api(tags = "PmsPortalProductController")
 @Tag(name = "PmsPortalProductController", description = "前台商品管理")

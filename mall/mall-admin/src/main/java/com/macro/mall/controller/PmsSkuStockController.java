@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import com.macro.mall.common.api.CommonResult;
 import com.macro.mall.model.PmsSkuStock;
@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 商品SKU库存管理Controller
- * Created by macro on 2018/4/27.
- */
+ * 商品SKU库存管理Controller */
 @Controller
 @Api(tags = "PmsSkuStockController")
 @Tag(name = "PmsSkuStockController", description = "sku商品库存管理")

@@ -1,4 +1,4 @@
-package com.macro.mall.service;
+﻿package com.macro.mall.service;
 
 import com.macro.mall.dto.PmsProductParam;
 import com.macro.mall.dto.PmsProductQueryParam;
@@ -12,9 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * 商品管理Service
- * Created by macro on 2018/4/26.
- */
+ * 商品管理Service */
 public interface PmsProductService {
     /**
      * 创建商品

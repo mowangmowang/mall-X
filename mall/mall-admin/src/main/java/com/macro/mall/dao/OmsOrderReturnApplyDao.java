@@ -1,4 +1,4 @@
-package com.macro.mall.dao;
+﻿package com.macro.mall.dao;
 
 import com.macro.mall.dto.OmsOrderReturnApplyResult;
 import com.macro.mall.dto.OmsReturnApplyQueryParam;
@@ -8,9 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * 订单退货申请管理自定义Dao
- * Created by macro on 2018/10/18.
- */
+ * 订单退货申请管理自定义Dao */
 public interface OmsOrderReturnApplyDao {
     /**
      * 查询申请列表

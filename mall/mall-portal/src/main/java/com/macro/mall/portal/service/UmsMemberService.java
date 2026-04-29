@@ -1,13 +1,11 @@
-package com.macro.mall.portal.service;
+﻿package com.macro.mall.portal.service;
 
 import com.macro.mall.model.UmsMember;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 会员管理Service
- * Created by macro on 2018/8/3.
- */
+ * 会员管理Service */
 public interface UmsMemberService {
     /**
      * 根据用户名获取会员

@@ -1,4 +1,4 @@
-package com.macro.mall.dao;
+﻿package com.macro.mall.dao;
 
 import com.macro.mall.model.PmsProductAttributeValue;
 import org.apache.ibatis.annotations.Param;
@@ -6,9 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * 商品属性值管理自定义Dao
- * Created by macro on 2018/4/26.
- */
+ * 商品属性值管理自定义Dao */
 public interface PmsProductAttributeValueDao {
     /**
      * 批量创建

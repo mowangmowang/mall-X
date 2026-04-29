@@ -1,4 +1,4 @@
-package com.macro.mall.portal.dao;
+﻿package com.macro.mall.portal.dao;
 
 import com.macro.mall.model.CmsSubject;
 import com.macro.mall.model.PmsBrand;
@@ -9,9 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * 首页内容管理自定义Dao
- * Created by macro on 2019/1/28.
- */
+ * 首页内容管理自定义Dao */
 public interface HomeDao {
 
     /**

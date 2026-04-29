@@ -1,4 +1,4 @@
-package com.macro.mall.portal.service.impl;
+﻿package com.macro.mall.portal.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
@@ -27,9 +27,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * 前台订单管理Service
- * Created by macro on 2018/8/30.
- */
+ * 前台订单管理Service */
 @Slf4j
 @Service
 public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {

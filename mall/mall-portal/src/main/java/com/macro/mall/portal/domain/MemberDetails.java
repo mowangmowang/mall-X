@@ -1,4 +1,4 @@
-package com.macro.mall.portal.domain;
+﻿package com.macro.mall.portal.domain;
 
 import com.macro.mall.model.UmsMember;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,9 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * SpringSecurity需要的用户信息封装类
- * Created by macro on 2018/8/3.
- */
+ * SpringSecurity需要的用户信息封装类 */
 public class MemberDetails implements UserDetails {
     private final UmsMember umsMember;
 

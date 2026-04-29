@@ -1,4 +1,4 @@
-package com.macro.mall.portal.domain;
+﻿package com.macro.mall.portal.domain;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,9 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Date;
 
 /**
- * 会员商品浏览历史记录
- * Created by macro on 2018/8/3.
- */
+ * 会员商品浏览历史记录 */
 @Getter
 @Setter
 @Document

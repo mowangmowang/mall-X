@@ -1,4 +1,4 @@
-package com.macro.mall.portal.service.impl;
+﻿package com.macro.mall.portal.service.impl;
 
 import com.macro.mall.mapper.PmsProductMapper;
 import com.macro.mall.model.PmsProduct;
@@ -19,9 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 会员浏览记录管理Service实现类
- * Created by macro on 2018/8/3.
- */
+ * 会员浏览记录管理Service实现类 */
 @Service
 public class MemberReadHistoryServiceImpl implements MemberReadHistoryService {
 

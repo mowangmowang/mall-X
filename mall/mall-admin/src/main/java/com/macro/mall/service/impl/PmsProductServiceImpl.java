@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
@@ -27,9 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 商品管理Service实现类
- * Created by macro on 2018/4/26.
- */
+ * 商品管理Service实现类 */
 @Service
 public class PmsProductServiceImpl implements PmsProductService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PmsProductServiceImpl.class);

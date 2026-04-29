@@ -1,4 +1,4 @@
-package com.macro.mall.common.config;
+﻿package com.macro.mall.common.config;
 
 import com.macro.mall.common.domain.SwaggerProperties;
 import org.springframework.beans.BeansException;
@@ -23,9 +23,7 @@ import java.util.stream.Collectors;
 
 /**
  * Swagger基础配置类 (Swagger2的核心配置)
- * 这是一份提供给初学者的带有详细注释的Swagger2配置类，主要用于自动生成API文档。
- * Created by macro on 2020/7/16.
- */
+ * 这是一份提供给初学者的带有详细注释的Swagger2配置类，主要用于自动生成API文档。 */
 public abstract class BaseSwaggerConfig {
 
     /**

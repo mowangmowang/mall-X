@@ -1,4 +1,4 @@
-package com.macro.mall.portal.service.impl;
+﻿package com.macro.mall.portal.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.macro.mall.common.exception.Asserts;
@@ -33,9 +33,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * 会员管理Service实现类
- * Created by macro on 2018/8/3.
- */
+ * 会员管理Service实现类 */
 @Service
 public class UmsMemberServiceImpl implements UmsMemberService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UmsMemberServiceImpl.class);

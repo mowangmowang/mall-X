@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.common.api.CommonResult;
@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 退货原因管理Controller
- * Created by macro on 2018/10/17.
- */
+ * 退货原因管理Controller */
 @Controller
 @Api(tags = "OmsOrderReturnReasonController")
 @Tag(name = "OmsOrderReturnReasonController", description = "退货原因管理")

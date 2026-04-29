@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.common.api.CommonResult;
@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 限时购和商品关系管理Controller
- * Created by macro on 2018/11/16.
- */
+ * 限时购和商品关系管理Controller */
 @Controller
 @Api(tags = "SmsFlashPromotionProductRelationController")
 @Tag(name = "SmsFlashPromotionProductRelationController", description = "限时购和商品关系管理")

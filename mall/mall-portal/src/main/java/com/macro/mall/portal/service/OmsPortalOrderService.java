@@ -1,4 +1,4 @@
-package com.macro.mall.portal.service;
+﻿package com.macro.mall.portal.service;
 
 import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.portal.domain.ConfirmOrderResult;
@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 前台订单管理Service
- * Created by macro on 2018/8/30.
- */
+ * 前台订单管理Service */
 public interface OmsPortalOrderService {
     /**
      * 根据用户购物车信息生成确认单信息

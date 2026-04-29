@@ -1,4 +1,4 @@
-package com.macro.mall.validator;
+﻿package com.macro.mall.validator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -11,7 +11,7 @@ import java.lang.annotation.*;
  * 通常用于状态码、类型标识等枚举型或有限集合值的校验。
  * </p>
  *
- * @author macro
+ * @author alize
  * @see FlagValidatorClass
  */
 @Documented

@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.common.api.CommonResult;
@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 优惠券管理Controller
- * Created by macro on 2018/8/28.
- */
+ * 优惠券管理Controller */
 @Controller
 @Api(tags = "SmsCouponController")
 @Tag(name = "SmsCouponController", description = "优惠券管理")

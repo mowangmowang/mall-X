@@ -1,4 +1,4 @@
-package com.macro.mall.service;
+﻿package com.macro.mall.service;
 
 import com.macro.mall.dto.PmsProductCategoryParam;
 import com.macro.mall.dto.PmsProductCategoryWithChildrenItem;
@@ -8,9 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * 商品分类管理Service
- * Created by macro on 2018/4/26.
- */
+ * 商品分类管理Service */
 public interface PmsProductCategoryService {
     /**
      * 创建商品分类

@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import com.macro.mall.common.service.RedisService;
@@ -18,9 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 后台用户缓存管理Service实现类
- * Created by macro on 2020/3/13.
- */
+ * 后台用户缓存管理Service实现类 */
 @Service
 public class UmsAdminCacheServiceImpl implements UmsAdminCacheService {
     @Autowired

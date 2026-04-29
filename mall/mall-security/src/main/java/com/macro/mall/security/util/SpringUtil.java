@@ -1,4 +1,4 @@
-package com.macro.mall.security.util;
+﻿package com.macro.mall.security.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * 通过实现 {@link ApplicationContextAware} 接口，在 Spring 容器启动时自动注入 {@link ApplicationContext}。
  * </p>
  *
- * @author macro
+ * @author alize
  */
 @Component
 public class SpringUtil implements ApplicationContextAware {

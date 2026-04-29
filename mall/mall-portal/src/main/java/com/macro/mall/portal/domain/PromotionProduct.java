@@ -1,4 +1,4 @@
-package com.macro.mall.portal.domain;
+﻿package com.macro.mall.portal.domain;
 
 import com.macro.mall.model.PmsProduct;
 import com.macro.mall.model.PmsProductFullReduction;
@@ -10,9 +10,7 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * 促销商品信息，包括sku、打折优惠、满减优惠
- * Created by macro on 2018/8/27.
- */
+ * 促销商品信息，包括sku、打折优惠、满减优惠 */
 @Getter
 @Setter
 public class PromotionProduct extends PmsProduct {

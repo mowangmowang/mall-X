@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
@@ -12,9 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * 首页新品推荐管理Service实现类
- * Created by macro on 2018/11/6.
- */
+ * 首页新品推荐管理Service实现类 */
 @Service
 public class SmsHomeNewProductServiceImpl implements SmsHomeNewProductService {
     @Autowired

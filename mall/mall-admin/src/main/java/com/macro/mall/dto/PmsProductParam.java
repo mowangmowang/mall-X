@@ -1,4 +1,4 @@
-package com.macro.mall.dto;
+﻿package com.macro.mall.dto;
 
 import com.macro.mall.model.*;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,9 +8,7 @@ import lombok.EqualsAndHashCode;
 import java.util.List;
 
 /**
- * 创建和修改商品的请求参数
- * Created by macro on 2018/4/26.
- */
+ * 创建和修改商品的请求参数 */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class PmsProductParam extends PmsProduct{

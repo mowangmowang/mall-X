@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.common.api.CommonResult;
@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 首页专题推荐管理Controller
- * Created by macro on 2018/11/6.
- */
+ * 首页专题推荐管理Controller */
 @Controller
 @Api(tags = "SmsHomeRecommendSubjectController")
 @Tag(name = "SmsHomeRecommendSubjectController", description = "首页专题推荐管理")

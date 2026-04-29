@@ -1,4 +1,4 @@
-package com.macro.mall.portal.service.impl;
+﻿package com.macro.mall.portal.service.impl;
 
 import com.macro.mall.mapper.PmsBrandMapper;
 import com.macro.mall.model.PmsBrand;
@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 /**
- * 会员关注Service实现类
- * Created by macro on 2018/8/2.
- */
+ * 会员关注Service实现类 */
 @Service
 public class MemberAttentionServiceImpl implements MemberAttentionService {
     @Value("${mongo.insert.sqlEnable}")

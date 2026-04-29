@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import com.macro.mall.common.api.CommonResult;
 import com.macro.mall.model.OmsOrderSetting;
@@ -11,9 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 订单设置管理Controller
- * Created by macro on 2018/10/16.
- */
+ * 订单设置管理Controller */
 @Controller
 @Api(tags = "OmsOrderSettingController")
 @Tag(name = "OmsOrderSettingController", description = "订单设置管理")

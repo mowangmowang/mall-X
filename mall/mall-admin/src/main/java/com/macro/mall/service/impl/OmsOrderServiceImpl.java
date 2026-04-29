@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.macro.mall.dao.OmsOrderDao;
@@ -18,9 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 订单管理Service实现类
- * Created by macro on 2018/10/11.
- */
+ * 订单管理Service实现类 */
 @Service
 public class OmsOrderServiceImpl implements OmsOrderService {
     @Autowired

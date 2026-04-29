@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
@@ -17,9 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 后台角色管理Service实现类
- * Created by macro on 2018/9/30.
- */
+ * 后台角色管理Service实现类 */
 @Service
 public class UmsRoleServiceImpl implements UmsRoleService {
     @Autowired

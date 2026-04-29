@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.macro.mall.dao.PmsProductAttributeCategoryDao;
@@ -13,9 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * 商品属性分类管理Service实现类
- * Created by macro on 2018/4/26.
- */
+ * 商品属性分类管理Service实现类 */
 @Service
 public class PmsProductAttributeCategoryServiceImpl implements PmsProductAttributeCategoryService {
     @Autowired

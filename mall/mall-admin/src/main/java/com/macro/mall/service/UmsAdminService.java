@@ -1,4 +1,4 @@
-package com.macro.mall.service;
+﻿package com.macro.mall.service;
 
 import com.macro.mall.dto.UmsAdminParam;
 import com.macro.mall.dto.UpdateAdminPasswordParam;
@@ -11,9 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * 后台用户管理Service
- * Created by macro on 2018/4/26.
- */
+ * 后台用户管理Service */
 public interface UmsAdminService {
     /**
      * 根据用户名获取后台管理员

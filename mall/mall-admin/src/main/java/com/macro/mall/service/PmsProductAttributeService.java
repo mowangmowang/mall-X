@@ -1,4 +1,4 @@
-package com.macro.mall.service;
+﻿package com.macro.mall.service;
 
 import com.macro.mall.dto.PmsProductAttributeParam;
 import com.macro.mall.dto.ProductAttrInfo;
@@ -8,9 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * 商品属性管理Service
- * Created by macro on 2018/4/26.
- */
+ * 商品属性管理Service */
 public interface PmsProductAttributeService {
     /**
      * 根据分类ID和类型分页获取商品属性

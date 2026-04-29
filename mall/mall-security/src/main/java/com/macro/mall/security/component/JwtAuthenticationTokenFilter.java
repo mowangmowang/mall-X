@@ -1,4 +1,4 @@
-package com.macro.mall.security.component;
+﻿package com.macro.mall.security.component;
 
 import com.macro.mall.security.util.JwtTokenUtil;
 import org.slf4j.Logger;
@@ -24,9 +24,7 @@ import java.io.IOException;
  * 继承自 OncePerRequestFilter，确保每个请求只执行一次过滤逻辑。
  * 主要职责：从 HTTP 请求头中提取 JWT 令牌 (JWT Token)，验证用户身份，
  * 并将认证信息存入 Spring Security 上下文 (Security Context)。
- * </p>
- * Created by macro on 2018/4/26.
- */
+ * </p> */
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationTokenFilter.class);
     

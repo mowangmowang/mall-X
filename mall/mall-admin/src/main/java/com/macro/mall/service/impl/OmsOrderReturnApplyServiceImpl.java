@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.macro.mall.dao.OmsOrderReturnApplyDao;
@@ -16,9 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 订单退货管理Service实现类
- * Created by macro on 2018/10/18.
- */
+ * 订单退货管理Service实现类 */
 @Service
 public class OmsOrderReturnApplyServiceImpl implements OmsOrderReturnApplyService {
     @Autowired

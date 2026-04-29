@@ -1,4 +1,4 @@
-package com.macro.mall.portal.controller;
+﻿package com.macro.mall.portal.controller;
 
 import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.common.api.CommonResult;
@@ -17,9 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 订单管理Controller
- * Created by macro on 2018/8/30.
- */
+ * 订单管理Controller */
 @RestController
 @Api(tags = "OmsPortalOrderController")
 @Tag(name = "OmsPortalOrderController", description = "订单管理")

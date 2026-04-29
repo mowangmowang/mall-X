@@ -1,4 +1,4 @@
-package com.macro.mall.component;
+﻿package com.macro.mall.component;
 
 import com.macro.mall.common.domain.EsProductMessage;
 import org.slf4j.Logger;
@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * 商品同步消息发送器
- * Created by macro on 2026/4/27.
- */
+ * 商品同步消息发送器 */
 @Component
 public class EsProductSender {
     private static final Logger LOGGER = LoggerFactory.getLogger(EsProductSender.class);

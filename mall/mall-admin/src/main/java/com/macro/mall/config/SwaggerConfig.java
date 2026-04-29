@@ -1,4 +1,4 @@
-package com.macro.mall.config;
+﻿package com.macro.mall.config;
 
 import com.macro.mall.common.config.BaseSwaggerConfig;
 import com.macro.mall.common.domain.SwaggerProperties;
@@ -9,9 +9,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * Swagger相关配置 (基于Swagger2框架)
- * 这是一份带有详细注释的示例，帮助初学者理解如何在具体模块中启用和配置Swagger。
- * Created by macro on 2018/4/26.
- */
+ * 这是一份带有详细注释的示例，帮助初学者理解如何在具体模块中启用和配置Swagger。 */
 @Configuration // @Configuration 注解表示这是一个配置类，Spring会在启动时扫描它并加载Bean
 @EnableSwagger2 // @EnableSwagger2 注解表示开启Swagger2的API文档功能
 public class SwaggerConfig extends BaseSwaggerConfig {

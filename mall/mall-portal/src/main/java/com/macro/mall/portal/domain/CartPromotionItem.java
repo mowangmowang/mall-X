@@ -1,4 +1,4 @@
-package com.macro.mall.portal.domain;
+﻿package com.macro.mall.portal.domain;
 
 import com.macro.mall.model.OmsCartItem;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,9 +8,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 /**
- * 带促销信息的购物车商品封装
- * Created by macro on 2018/8/27.
- */
+ * 带促销信息的购物车商品封装 */
 @Getter
 @Setter
 public class CartPromotionItem extends OmsCartItem{

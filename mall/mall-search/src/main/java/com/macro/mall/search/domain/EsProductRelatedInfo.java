@@ -1,4 +1,4 @@
-package com.macro.mall.search.domain;
+﻿package com.macro.mall.search.domain;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -6,9 +6,7 @@ import lombok.EqualsAndHashCode;
 import java.util.List;
 
 /**
- * 搜索商品的关联信息，包括品牌名称，分类名称及属性
- * Created by macro on 2018/6/27.
- */
+ * 搜索商品的关联信息，包括品牌名称，分类名称及属性 */
 @Data
 @EqualsAndHashCode
 public class EsProductRelatedInfo {

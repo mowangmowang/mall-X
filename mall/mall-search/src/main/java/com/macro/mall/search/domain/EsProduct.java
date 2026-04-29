@@ -1,4 +1,4 @@
-package com.macro.mall.search.domain;
+﻿package com.macro.mall.search.domain;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,9 +13,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * 搜索商品的信息
- * Created by macro on 2018/6/19.
- */
+ * 搜索商品的信息 */
 @Data
 @EqualsAndHashCode
 @Document(indexName = "pms")

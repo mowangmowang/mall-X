@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import com.macro.mall.common.api.CommonResult;
 import com.macro.mall.dto.SmsFlashPromotionSessionDetail;
@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 限时购场次管理Controller
- * Created by macro on 2018/11/16.
- */
+ * 限时购场次管理Controller */
 @Controller
 @Api(tags = "SmsFlashPromotionSessionController")
 @Tag(name = "SmsFlashPromotionSessionController", description = "限时购场次管理")

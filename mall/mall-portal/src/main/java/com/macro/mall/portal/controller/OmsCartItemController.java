@@ -1,4 +1,4 @@
-package com.macro.mall.portal.controller;
+﻿package com.macro.mall.portal.controller;
 
 import com.macro.mall.common.api.CommonResult;
 import com.macro.mall.model.OmsCartItem;
@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 购物车管理Controller
- * Created by macro on 2018/8/2.
- */
+ * 购物车管理Controller */
 @RestController
 @Api(tags = "OmsCartItemController")
 @Tag(name = "OmsCartItemController", description = "购物车管理")

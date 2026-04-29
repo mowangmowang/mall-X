@@ -1,4 +1,4 @@
-package com.macro.mall.portal.domain;
+﻿package com.macro.mall.portal.domain;
 
 import com.macro.mall.model.PmsProductCategory;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,9 +8,7 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * 包含子分类的商品分类
- * Created by macro on 2020/4/6.
- */
+ * 包含子分类的商品分类 */
 @Getter
 @Setter
 public class PmsProductCategoryNode extends PmsProductCategory {

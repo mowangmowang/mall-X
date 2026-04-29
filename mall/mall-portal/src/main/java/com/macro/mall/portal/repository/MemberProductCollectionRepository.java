@@ -1,4 +1,4 @@
-package com.macro.mall.portal.repository;
+﻿package com.macro.mall.portal.repository;
 
 import com.macro.mall.portal.domain.MemberProductCollection;
 import org.springframework.data.domain.Page;
@@ -6,9 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**
- * 会员商品收藏Repository
- * Created by macro on 2018/8/2.
- */
+ * 会员商品收藏Repository */
 public interface MemberProductCollectionRepository extends MongoRepository<MemberProductCollection, String> {
     /**
      * 根据会员ID和商品ID查找记录

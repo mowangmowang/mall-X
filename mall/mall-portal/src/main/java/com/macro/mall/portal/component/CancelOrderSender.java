@@ -1,4 +1,4 @@
-package com.macro.mall.portal.component;
+﻿package com.macro.mall.portal.component;
 
 import com.macro.mall.portal.domain.QueueEnum;
 import org.slf4j.Logger;
@@ -11,9 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * 取消订单消息的发送者
- * Created by macro on 2018/9/14.
- */
+ * 取消订单消息的发送者 */
 @Component
 public class CancelOrderSender {
     private static final Logger LOGGER = LoggerFactory.getLogger(CancelOrderSender.class);

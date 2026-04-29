@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.macro.mall.dto.UmsMenuNode;
@@ -14,9 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 后台菜单管理Service实现类
- * Created by macro on 2020/2/2.
- */
+ * 后台菜单管理Service实现类 */
 @Service
 public class UmsMenuServiceImpl implements UmsMenuService {
     @Autowired

@@ -1,4 +1,4 @@
-package com.macro.mall.portal.controller;
+﻿package com.macro.mall.portal.controller;
 
 import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.common.api.CommonResult;
@@ -12,9 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 会员品牌关注管理Controller
- * Created by macro on 2018/8/2.
- */
+ * 会员品牌关注管理Controller */
 @RestController
 @Api(tags = "MemberAttentionController")
 @Tag(name = "MemberAttentionController",description = "会员关注品牌管理")

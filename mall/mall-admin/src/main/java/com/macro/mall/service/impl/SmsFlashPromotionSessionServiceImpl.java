@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import com.macro.mall.dto.SmsFlashPromotionSessionDetail;
 import com.macro.mall.mapper.SmsFlashPromotionSessionMapper;
@@ -15,9 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 限时购场次管理Service实现类
- * Created by macro on 2018/11/16.
- */
+ * 限时购场次管理Service实现类 */
 @Service
 public class SmsFlashPromotionSessionServiceImpl implements SmsFlashPromotionSessionService {
     @Autowired

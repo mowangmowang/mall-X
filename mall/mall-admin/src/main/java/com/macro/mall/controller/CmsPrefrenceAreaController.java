@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import com.macro.mall.common.api.CommonResult;
 import com.macro.mall.model.CmsPrefrenceArea;
@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 /**
- * 商品优选管理Controller
- * Created by macro on 2018/6/1.
- */
+ * 商品优选管理Controller */
 @Controller
 @Api(tags = "CmsPrefrenceAreaController")
 @Tag(name = "CmsPrefrenceAreaController", description = "商品优选管理")

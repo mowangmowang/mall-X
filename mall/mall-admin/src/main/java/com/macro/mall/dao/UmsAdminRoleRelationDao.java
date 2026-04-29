@@ -1,4 +1,4 @@
-package com.macro.mall.dao;
+﻿package com.macro.mall.dao;
 
 import com.macro.mall.model.UmsAdminRoleRelation;
 import com.macro.mall.model.UmsResource;
@@ -8,9 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * 后台用户与角色关系管理自定义Dao
- * Created by macro on 2018/10/8.
- */
+ * 后台用户与角色关系管理自定义Dao */
 public interface UmsAdminRoleRelationDao {
     /**
      * 批量插入用户角色关系

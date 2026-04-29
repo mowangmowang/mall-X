@@ -1,4 +1,4 @@
-package com.macro.mall.portal.domain;
+﻿package com.macro.mall.portal.domain;
 
 import com.macro.mall.model.SmsCoupon;
 import com.macro.mall.model.SmsCouponHistory;
@@ -11,9 +11,7 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * 优惠券领取历史详情（包括优惠券信息和关联关系）
- * Created by macro on 2018/8/29.
- */
+ * 优惠券领取历史详情（包括优惠券信息和关联关系） */
 @Getter
 @Setter
 public class SmsCouponHistoryDetail extends SmsCouponHistory {

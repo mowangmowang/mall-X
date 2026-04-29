@@ -1,4 +1,4 @@
-package com.macro.mall.portal.service;
+﻿package com.macro.mall.portal.service;
 
 import com.macro.mall.model.OmsCartItem;
 import com.macro.mall.portal.domain.CartProduct;
@@ -8,9 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * 购物车管理Service
- * Created by macro on 2018/8/2.
- */
+ * 购物车管理Service */
 public interface OmsCartItemService {
     /**
      * 查询购物车中是否包含该商品，有增加数量，无添加到购物车

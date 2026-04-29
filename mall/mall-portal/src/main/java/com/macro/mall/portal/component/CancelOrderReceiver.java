@@ -1,4 +1,4 @@
-package com.macro.mall.portal.component;
+﻿package com.macro.mall.portal.component;
 
 import com.macro.mall.portal.service.OmsPortalOrderService;
 import org.slf4j.Logger;
@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * 取消订单消息的接收者
- * Created by macro on 2018/9/14.
- */
+ * 取消订单消息的接收者 */
 @Component
 @RabbitListener(queues = "mall.order.cancel")
 public class CancelOrderReceiver {

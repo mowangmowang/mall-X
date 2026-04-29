@@ -1,4 +1,4 @@
-package com.macro.mall.portal.controller;
+﻿package com.macro.mall.portal.controller;
 
 import com.macro.mall.common.api.CommonResult;
 import com.macro.mall.model.UmsMember;
@@ -19,9 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 会员管理Controller
- * Created by macro on 2018/8/3.
- */
+ * 会员管理Controller */
 @RestController
 @Api(tags = "UmsMemberController")
 @Tag(name = "UmsMemberController", description = "会员登录注册管理")

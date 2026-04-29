@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.macro.mall.dao.PmsSkuStockDao;
@@ -13,9 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 商品SKU库存管理Service实现类
- * Created by macro on 2018/4/27.
- */
+ * 商品SKU库存管理Service实现类 */
 @Service
 public class PmsSkuStockServiceImpl implements PmsSkuStockService {
     @Autowired

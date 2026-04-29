@@ -1,4 +1,4 @@
-package com.macro.mall.portal.service.impl;
+﻿package com.macro.mall.portal.service.impl;
 
 import com.macro.mall.mapper.UmsMemberReceiveAddressMapper;
 import com.macro.mall.model.UmsMember;
@@ -13,9 +13,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 
 /**
- * 用户地址管理Service实现类
- * Created by macro on 2018/8/28.
- */
+ * 用户地址管理Service实现类 */
 @Service
 public class UmsMemberReceiveAddressServiceImpl implements UmsMemberReceiveAddressService {
     @Autowired

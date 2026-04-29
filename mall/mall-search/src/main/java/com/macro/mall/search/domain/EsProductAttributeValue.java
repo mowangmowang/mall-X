@@ -1,4 +1,4 @@
-package com.macro.mall.search.domain;
+﻿package com.macro.mall.search.domain;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,9 +8,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 
 /**
- * 搜索商品的属性信息
- * Created by macro on 2018/6/27.
- */
+ * 搜索商品的属性信息 */
 @Data
 @EqualsAndHashCode
 public class EsProductAttributeValue implements Serializable {

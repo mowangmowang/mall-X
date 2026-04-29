@@ -1,4 +1,4 @@
-package com.macro.mall.dto;
+﻿package com.macro.mall.dto;
 
 import com.macro.mall.validator.FlagValidator;
 import io.swagger.annotations.ApiModelProperty;
@@ -10,9 +10,7 @@ import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
- * 添加更新商品分类的参数
- * Created by macro on 2018/4/26.
- */
+ * 添加更新商品分类的参数 */
 @Data
 @EqualsAndHashCode
 public class PmsProductCategoryParam {

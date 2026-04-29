@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * 商品品牌管理Service实现类
- * Created by macro on 2018/4/26.
- */
+ * 商品品牌管理Service实现类 */
 @Service
 public class PmsBrandServiceImpl implements PmsBrandService {
     @Autowired

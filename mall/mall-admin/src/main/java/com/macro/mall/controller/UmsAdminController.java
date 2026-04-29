@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import cn.hutool.core.collection.CollUtil;
 import com.macro.mall.common.api.CommonPage;
@@ -27,9 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 后台用户管理Controller
- * Created by macro on 2018/4/26.
- */
+ * 后台用户管理Controller */
 @Controller
 @Api(tags = "UmsAdminController")
 @Tag(name = "UmsAdminController", description = "后台用户管理")

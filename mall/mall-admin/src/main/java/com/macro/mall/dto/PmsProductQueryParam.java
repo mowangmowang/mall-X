@@ -1,13 +1,11 @@
-package com.macro.mall.dto;
+﻿package com.macro.mall.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 商品查询参数
- * Created by macro on 2018/4/27.
- */
+ * 商品查询参数 */
 @Data
 @EqualsAndHashCode
 public class PmsProductQueryParam {

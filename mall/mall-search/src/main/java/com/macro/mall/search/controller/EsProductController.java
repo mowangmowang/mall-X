@@ -1,4 +1,4 @@
-package com.macro.mall.search.controller;
+﻿package com.macro.mall.search.controller;
 
 import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.common.api.CommonResult;
@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 搜索商品管理Controller
- * Created by macro on 2018/6/19.
- */
+ * 搜索商品管理Controller */
 @Controller
 @Api(tags = "EsProductController")
 @Tag(name = "EsProductController",description = "搜索商品管理")

@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import com.macro.mall.mapper.OmsCompanyAddressMapper;
 import com.macro.mall.model.OmsCompanyAddress;
@@ -10,9 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * 收货地址管理Service实现类
- * Created by macro on 2018/10/18.
- */
+ * 收货地址管理Service实现类 */
 @Service
 public class OmsCompanyAddressServiceImpl implements OmsCompanyAddressService {
     @Autowired

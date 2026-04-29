@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.common.api.CommonResult;
@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 商品属性管理Controller
- * Created by macro on 2018/4/26.
- */
+ * 商品属性管理Controller */
 @Controller
 @Api(tags = "PmsProductAttributeController")
 @Tag(name = "PmsProductAttributeController", description = "商品属性管理")

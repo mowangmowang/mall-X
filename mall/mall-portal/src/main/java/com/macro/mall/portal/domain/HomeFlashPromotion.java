@@ -1,4 +1,4 @@
-package com.macro.mall.portal.domain;
+﻿package com.macro.mall.portal.domain;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -8,9 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 首页秒杀场次信息封装
- * Created by macro on 2019/1/28.
- */
+ * 首页秒杀场次信息封装 */
 @Getter
 @Setter
 public class HomeFlashPromotion {

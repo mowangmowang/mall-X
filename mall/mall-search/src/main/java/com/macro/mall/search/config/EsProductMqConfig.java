@@ -1,4 +1,4 @@
-package com.macro.mall.search.config;
+﻿package com.macro.mall.search.config;
 
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -7,9 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 商品同步消息队列配置
- * Created by macro on 2026/4/27.
- */
+ * 商品同步消息队列配置 */
 @Configuration
 public class EsProductMqConfig {
 

@@ -1,13 +1,11 @@
-package com.macro.mall.dto;
+﻿package com.macro.mall.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * OSS上传成功后的回调参数
- * Created by macro on 2018/5/17.
- */
+ * OSS上传成功后的回调参数 */
 @Data
 @EqualsAndHashCode
 public class OssCallbackParam {

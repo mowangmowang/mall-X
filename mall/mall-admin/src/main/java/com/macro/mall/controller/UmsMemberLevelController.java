@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import com.macro.mall.common.api.CommonResult;
 import com.macro.mall.model.UmsMemberLevel;
@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 /**
- * 会员等级管理Controller
- * Created by macro on 2018/4/26.
- */
+ * 会员等级管理Controller */
 @Controller
 @Api(tags = "UmsMemberLevelController")
 @Tag(name = "UmsMemberLevelController", description = "会员等级管理")

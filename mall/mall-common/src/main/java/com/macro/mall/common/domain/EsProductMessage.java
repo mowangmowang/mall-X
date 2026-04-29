@@ -1,4 +1,4 @@
-package com.macro.mall.common.domain;
+﻿package com.macro.mall.common.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * 商品同步消息
- * Created by macro on 2026/4/27.
- */
+ * 商品同步消息 */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

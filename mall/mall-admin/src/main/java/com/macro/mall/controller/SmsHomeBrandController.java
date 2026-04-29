@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.common.api.CommonResult;
@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 首页品牌管理Controller
- * Created by macro on 2018/11/6.
- */
+ * 首页品牌管理Controller */
 @Controller
 @Api(tags = "SmsHomeBrandController")
 @Tag(name = "SmsHomeBrandController", description = "首页品牌管理")

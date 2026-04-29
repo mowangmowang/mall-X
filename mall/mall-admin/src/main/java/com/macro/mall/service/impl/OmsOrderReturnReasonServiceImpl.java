@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.macro.mall.mapper.OmsOrderReturnReasonMapper;
@@ -12,9 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 订单原因管理Service实现类
- * Created by macro on 2018/10/17.
- */
+ * 订单原因管理Service实现类 */
 @Service
 public class OmsOrderReturnReasonServiceImpl implements OmsOrderReturnReasonService {
     @Autowired

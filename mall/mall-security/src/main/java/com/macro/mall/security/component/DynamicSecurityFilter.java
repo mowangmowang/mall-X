@@ -1,4 +1,4 @@
-package com.macro.mall.security.component;
+﻿package com.macro.mall.security.component;
 
 import com.macro.mall.security.config.IgnoreUrlsConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +18,7 @@ import java.io.IOException;
  * 动态权限过滤器，用于实现基于路径的动态权限过滤
  * <p>
  * 该过滤器继承自 AbstractSecurityInterceptor 并实现了 Filter 接口。
- * 它的主要作用是在请求到达目标资源之前，根据配置动态地判断当前用户是否有权限访问该资源。
- * Created by macro on 2020/2/7.
- */
+ * 它的主要作用是在请求到达目标资源之前，根据配置动态地判断当前用户是否有权限访问该资源。 */
 public class DynamicSecurityFilter extends AbstractSecurityInterceptor implements Filter {
 
     /**

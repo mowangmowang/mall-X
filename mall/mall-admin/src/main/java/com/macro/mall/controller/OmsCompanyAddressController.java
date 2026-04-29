@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import com.macro.mall.common.api.CommonResult;
 import com.macro.mall.model.OmsCompanyAddress;
@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 /**
- * 收货地址管理Controller
- * Created by macro on 2018/10/18.
- */
+ * 收货地址管理Controller */
 @Controller
 @Api(tags = "OmsCompanyAddressController")
 @Tag(name = "OmsCompanyAddressController", description = "收货地址管理")

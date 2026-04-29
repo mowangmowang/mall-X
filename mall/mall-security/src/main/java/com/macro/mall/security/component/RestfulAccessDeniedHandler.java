@@ -1,4 +1,4 @@
-package com.macro.mall.security.component;
+﻿package com.macro.mall.security.component;
 
 import cn.hutool.json.JSONUtil;
 import com.macro.mall.common.api.CommonResult;
@@ -23,9 +23,7 @@ import java.io.IOException;
  * 1. 普通用户尝试访问管理员接口
  * 2. 用户角色权限不足（如只有读取权限却尝试删除数据）
  * 3. 访问未分配给当前角色的受保护资源
- * </p>
- * Created by macro on 2018/4/26.
- */
+ * </p> */
 public class RestfulAccessDeniedHandler implements AccessDeniedHandler{
     
     /**

@@ -1,4 +1,4 @@
-package com.macro.mall.dto;
+﻿package com.macro.mall.dto;
 
 import com.macro.mall.model.OmsOrder;
 import com.macro.mall.model.OmsOrderItem;
@@ -10,9 +10,7 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * 订单详情信息
- * Created by macro on 2018/10/11.
- */
+ * 订单详情信息 */
 public class OmsOrderDetail extends OmsOrder {
     @Getter
     @Setter

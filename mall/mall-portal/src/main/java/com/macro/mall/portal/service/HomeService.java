@@ -1,4 +1,4 @@
-package com.macro.mall.portal.service;
+﻿package com.macro.mall.portal.service;
 
 import com.macro.mall.model.CmsSubject;
 import com.macro.mall.model.PmsProduct;
@@ -10,9 +10,7 @@ import com.macro.mall.portal.domain.SubjectDetail;
 import java.util.List;
 
 /**
- * 首页内容管理Service
- * Created by macro on 2019/1/28.
- */
+ * 首页内容管理Service */
 public interface HomeService {
 
     /**

@@ -1,4 +1,4 @@
-package com.macro.mall.portal.service.impl;
+﻿package com.macro.mall.portal.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import com.macro.mall.common.exception.Asserts;
@@ -20,9 +20,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
- * 会员优惠券管理Service实现类
- * Created by macro on 2018/8/29.
- */
+ * 会员优惠券管理Service实现类 */
 @Service
 public class UmsMemberCouponServiceImpl implements UmsMemberCouponService {
     @Autowired

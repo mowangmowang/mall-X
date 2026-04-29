@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import com.macro.mall.common.api.CommonResult;
 import com.macro.mall.model.UmsResourceCategory;
@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 后台资源分类管理Controller
- * Created by macro on 2020/2/5.
- */
+ * 后台资源分类管理Controller */
 @Controller
 @Api(tags = "UmsResourceCategoryController")
 @Tag(name = "UmsResourceCategoryController", description = "后台资源分类管理")

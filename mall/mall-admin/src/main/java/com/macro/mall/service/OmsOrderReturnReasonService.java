@@ -1,13 +1,11 @@
-package com.macro.mall.service;
+﻿package com.macro.mall.service;
 
 import com.macro.mall.model.OmsOrderReturnReason;
 
 import java.util.List;
 
 /**
- * 退货原因管理Service
- * Created by macro on 2018/10/17.
- */
+ * 退货原因管理Service */
 public interface OmsOrderReturnReasonService {
     /**
      * 添加退货原因

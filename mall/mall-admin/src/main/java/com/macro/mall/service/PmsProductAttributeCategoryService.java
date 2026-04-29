@@ -1,4 +1,4 @@
-package com.macro.mall.service;
+﻿package com.macro.mall.service;
 
 import com.macro.mall.dto.PmsProductAttributeCategoryItem;
 import com.macro.mall.model.PmsProductAttributeCategory;
@@ -6,9 +6,7 @@ import com.macro.mall.model.PmsProductAttributeCategory;
 import java.util.List;
 
 /**
- * 商品属性分类管理Service
- * Created by macro on 2018/4/26.
- */
+ * 商品属性分类管理Service */
 public interface PmsProductAttributeCategoryService {
     /**
      * 创建属性分类

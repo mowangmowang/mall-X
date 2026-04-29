@@ -1,4 +1,4 @@
-package com.macro.mall.portal.domain;
+﻿package com.macro.mall.portal.domain;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -7,9 +7,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 /**
- * 退货申请请求参数
- * Created by macro on 2018/10/17.
- */
+ * 退货申请请求参数 */
 @Getter
 @Setter
 public class OmsOrderReturnApplyParam {

@@ -1,4 +1,4 @@
-package com.macro.mall.portal.service.impl;
+﻿package com.macro.mall.portal.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import com.macro.mall.mapper.OmsCartItemMapper;
@@ -21,9 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 购物车管理Service实现类
- * Created by macro on 2018/8/2.
- */
+ * 购物车管理Service实现类 */
 @Service
 public class OmsCartItemServiceImpl implements OmsCartItemService {
     @Autowired

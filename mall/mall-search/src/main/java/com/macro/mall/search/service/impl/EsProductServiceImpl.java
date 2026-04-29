@@ -1,4 +1,4 @@
-package com.macro.mall.search.service.impl;
+﻿package com.macro.mall.search.service.impl;
 
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.StrUtil;
@@ -46,9 +46,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * 搜索商品管理Service实现类
- * Created by macro on 2018/6/19.
- */
+ * 搜索商品管理Service实现类 */
 @Service
 public class EsProductServiceImpl implements EsProductService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EsProductServiceImpl.class);

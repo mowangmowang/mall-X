@@ -1,4 +1,4 @@
-package com.macro.mall.portal.controller;
+﻿package com.macro.mall.portal.controller;
 
 import com.macro.mall.common.api.CommonResult;
 import com.macro.mall.model.UmsMemberReceiveAddress;
@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 会员收货地址管理Controller
- * Created by macro on 2018/8/28.
- */
+ * 会员收货地址管理Controller */
 @RestController
 @Api(tags = "UmsMemberReceiveAddressController")
 @Tag(name = "UmsMemberReceiveAddressController", description = "会员收货地址管理")

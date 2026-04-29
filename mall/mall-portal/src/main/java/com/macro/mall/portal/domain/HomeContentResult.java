@@ -1,4 +1,4 @@
-package com.macro.mall.portal.domain;
+﻿package com.macro.mall.portal.domain;
 
 import com.macro.mall.model.CmsSubject;
 import com.macro.mall.model.PmsBrand;
@@ -11,9 +11,7 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * 首页内容返回信息封装
- * Created by macro on 2019/1/28.
- */
+ * 首页内容返回信息封装 */
 @Getter
 @Setter
 public class HomeContentResult {

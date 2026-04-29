@@ -1,4 +1,4 @@
-package com.macro.mall.portal.controller;
+﻿package com.macro.mall.portal.controller;
 
 import com.macro.mall.common.api.CommonResult;
 import com.macro.mall.model.CmsSubject;
@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 首页内容管理Controller
- * Created by macro on 2019/1/28.
- */
+ * 首页内容管理Controller */
 @RestController
 @Api(tags = "HomeController")
 @Tag(name = "HomeController", description = "首页内容管理")

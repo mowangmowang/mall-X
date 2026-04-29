@@ -1,4 +1,4 @@
-package com.macro.mall.search.service;
+﻿package com.macro.mall.search.service;
 
 import com.macro.mall.search.domain.EsProduct;
 import com.macro.mall.search.domain.EsProductRelatedInfo;
@@ -7,9 +7,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 /**
- * 搜索商品管理Service
- * Created by macro on 2018/6/19.
- */
+ * 搜索商品管理Service */
 public interface EsProductService {
     /**
      * 从数据库中导入所有商品到ES

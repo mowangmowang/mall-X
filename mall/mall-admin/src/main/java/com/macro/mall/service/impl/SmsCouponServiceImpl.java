@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * 优惠券管理Service实现类
- * Created by macro on 2018/8/28.
- */
+ * 优惠券管理Service实现类 */
 @Service
 public class SmsCouponServiceImpl implements SmsCouponService {
     @Autowired
