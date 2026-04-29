@@ -1,4 +1,4 @@
-package com.macro.mall.portal.service.impl;
+﻿package com.macro.mall.portal.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.macro.mall.mapper.*;
@@ -20,9 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 首页内容管理Service实现类
- * Created by macro on 2019/1/28.
- */
+ * 首页内容管理Service实现类 */
 @Service
 public class HomeServiceImpl implements HomeService {
     @Autowired

@@ -1,10 +1,10 @@
-package com.macro.mall.service;
+﻿package com.macro.mall.service;
 
 import com.macro.mall.dto.PmsProductParam;
 import com.macro.mall.dto.PmsProductQueryParam;
 import com.macro.mall.dto.PmsProductResult;
 import com.macro.mall.model.PmsProduct;
-import com.macro.mall.model.PmsProductVertifyRecord;
+import com.macro.mall.model.PmsProductVerifyRecord;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,9 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * 商品管理Service
- * Created by macro on 2018/4/26.
- */
+ * 商品管理Service */
 public interface PmsProductService {
     /**
      * 创建商品
@@ -75,5 +73,5 @@ public interface PmsProductService {
     /**
      * 根据商品ID查询审核记录
      */
-    List<PmsProductVertifyRecord> getVertifyRecordList(Long productId);
+    List<PmsProductVerifyRecord> getVerifyRecordList(Long productId);
 }

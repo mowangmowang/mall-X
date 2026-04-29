@@ -486,7 +486,11 @@ CREATE TABLE `oms_order`  (
   `receive_time` datetime NULL DEFAULT NULL COMMENT '确认收货时间',
   `comment_time` datetime NULL DEFAULT NULL COMMENT '评价时间',
   `modify_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
-  PRIMARY KEY (`id`) USING BTREE
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_member_id` (`member_id`),
+  KEY `idx_order_sn` (`order_sn`),
+  KEY `idx_status` (`status`),
+  KEY `idx_create_time` (`create_time`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 77 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '订单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
