@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: mall-search
+  profiles:
+    active: dev #默认为开发环境
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  rabbitmq:
+    host: localhost
+    port: 5672
+    virtual-host: /mall
+    username: mall
+    password: mall
+    listener:
+      simple:
+        retry:
+          enabled: true        # 开启消费者重试机制
+          initial-interval: 1000ms  # 初始重试间隔 1秒
+          max-attempts: 3       # 最大重试次数
+          multiplier: 2         # 间隔倍数（1s -> 2s -> 4s）
+          max-interval: 10000ms # 最大重试间隔 10秒
+        default-requeue-rejected: false  # 重试失败后不重新入队，进入死信队列
+
+server:
+  port: 8081
+
+mybatis:
+  mapper-locations:
+    - classpath:dao/*.xml
+    - classpath*:com/**/mapper/*.xml
+
+
+
