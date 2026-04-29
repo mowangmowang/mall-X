@@ -19,3 +19,19 @@ target/
 # Local Config
 local.properties
 .DS_Store
+
+# Legado de filter-branch
+mall/
+mall学习教程/
+
+# Archivos personales (tesis, etc.)
+.claude/
+.gemini/
+nginx-1.24.0/
+output/
+skills/
+question/
+Origin/
+*.docx
+*.pdf
+~$*
