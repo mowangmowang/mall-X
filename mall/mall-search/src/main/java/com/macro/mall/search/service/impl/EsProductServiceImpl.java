@@ -145,7 +145,7 @@ public class EsProductServiceImpl implements EsProductService {
             filterFunctionBuilders.toArray(builders);
             FunctionScoreQueryBuilder functionScoreQueryBuilder = QueryBuilders.functionScoreQuery(builders)
                     .scoreMode(FunctionScoreQuery.ScoreMode.SUM)
-                    .setMinScore(0);  // 降低min_score阈值，避免过滤掉相关商品
+                    .setMinScore(0.5f);  // 设置较低的相关度阈值，过滤完全不相关商品但保留边缘相关
             nativeSearchQueryBuilder.withQuery(functionScoreQueryBuilder);
         }
         //排序
@@ -165,7 +165,6 @@ public class EsProductServiceImpl implements EsProductService {
             //按相关度
             nativeSearchQueryBuilder.withSorts(SortBuilders.scoreSort().order(SortOrder.DESC));
         }
-        nativeSearchQueryBuilder.withSorts(SortBuilders.scoreSort().order(SortOrder.DESC));
         NativeSearchQuery searchQuery = nativeSearchQueryBuilder.build();
         LOGGER.info("DSL:{}", searchQuery.getQuery().toString());
         SearchHits<EsProduct> searchHits = elasticsearchRestTemplate.search(searchQuery, EsProduct.class);
