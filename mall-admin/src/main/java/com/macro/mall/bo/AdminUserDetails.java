@@ -1,4 +1,4 @@
-﻿package com.macro.mall.bo;
+package com.macro.mall.bo;
 
 import com.macro.mall.model.UmsAdmin;
 import com.macro.mall.model.UmsResource;

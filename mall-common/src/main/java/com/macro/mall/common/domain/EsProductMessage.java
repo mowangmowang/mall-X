@@ -1,4 +1,4 @@
-﻿package com.macro.mall.common.domain;
+package com.macro.mall.common.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

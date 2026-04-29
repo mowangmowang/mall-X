@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal.config;
+package com.macro.mall.portal.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

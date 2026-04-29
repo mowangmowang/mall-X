@@ -1,4 +1,4 @@
-﻿package com.macro.mall.controller;
+package com.macro.mall.controller;
 
 import cn.hutool.core.collection.CollUtil;
 import com.macro.mall.common.api.CommonPage;

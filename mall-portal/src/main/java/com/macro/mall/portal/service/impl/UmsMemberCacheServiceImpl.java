@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal.service.impl;
+package com.macro.mall.portal.service.impl;
 
 import com.macro.mall.common.service.RedisService;
 import com.macro.mall.mapper.UmsMemberMapper;

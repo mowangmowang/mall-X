@@ -1,4 +1,4 @@
-﻿package com.macro.mall.search.dao;
+package com.macro.mall.search.dao;
 
 import com.macro.mall.search.domain.EsProduct;
 import org.apache.ibatis.annotations.Param;

@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal.component;
+package com.macro.mall.portal.component;
 
 import com.macro.mall.portal.domain.QueueEnum;
 import org.slf4j.Logger;

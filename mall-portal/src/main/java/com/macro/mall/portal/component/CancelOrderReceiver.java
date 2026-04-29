@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal.component;
+package com.macro.mall.portal.component;
 
 import com.macro.mall.portal.service.OmsPortalOrderService;
 import org.slf4j.Logger;

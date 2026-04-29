@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal.util;
+package com.macro.mall.portal.util;
 
 import java.util.Calendar;
 import java.util.Date;

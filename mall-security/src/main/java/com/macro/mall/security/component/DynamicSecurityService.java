@@ -1,4 +1,4 @@
-﻿package com.macro.mall.security.component;
+package com.macro.mall.security.component;
 
 import org.springframework.security.access.ConfigAttribute;
 

@@ -1,4 +1,4 @@
-﻿package com.macro.mall.service.impl;
+package com.macro.mall.service.impl;
 
 import com.macro.mall.dto.SmsFlashPromotionSessionDetail;
 import com.macro.mall.mapper.SmsFlashPromotionSessionMapper;

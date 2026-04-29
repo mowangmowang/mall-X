@@ -1,4 +1,4 @@
-﻿package com.macro.mall.search.domain;
+package com.macro.mall.search.domain;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

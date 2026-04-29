@@ -1,4 +1,4 @@
-﻿package com.macro.mall.security.component;
+package com.macro.mall.security.component;
 
 import com.macro.mall.security.util.JwtTokenUtil;
 import org.slf4j.Logger;

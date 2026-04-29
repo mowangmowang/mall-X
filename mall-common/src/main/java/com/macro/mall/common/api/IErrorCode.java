@@ -1,4 +1,4 @@
-﻿package com.macro.mall.common.api;
+package com.macro.mall.common.api;
 
 /**
  * API返回码接口 */

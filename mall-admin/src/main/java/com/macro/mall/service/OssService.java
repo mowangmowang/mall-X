@@ -1,4 +1,4 @@
-﻿package com.macro.mall.service;
+package com.macro.mall.service;
 
 import com.macro.mall.dto.OssCallbackResult;
 import com.macro.mall.dto.OssPolicyResult;

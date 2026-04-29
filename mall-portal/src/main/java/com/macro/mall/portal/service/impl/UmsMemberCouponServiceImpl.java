@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal.service.impl;
+package com.macro.mall.portal.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import com.macro.mall.common.exception.Asserts;

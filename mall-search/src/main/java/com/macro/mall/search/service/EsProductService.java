@@ -1,4 +1,4 @@
-﻿package com.macro.mall.search.service;
+package com.macro.mall.search.service;
 
 import com.macro.mall.search.domain.EsProduct;
 import com.macro.mall.search.domain.EsProductRelatedInfo;

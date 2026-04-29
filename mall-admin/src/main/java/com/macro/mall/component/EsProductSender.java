@@ -1,4 +1,4 @@
-﻿package com.macro.mall.component;
+package com.macro.mall.component;
 
 import com.macro.mall.common.domain.EsProductMessage;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-﻿package com.macro.mall.security.component;
+package com.macro.mall.security.component;
 
 import cn.hutool.json.JSONUtil;
 import com.macro.mall.common.api.CommonResult;

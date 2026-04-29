@@ -1,4 +1,4 @@
-﻿package com.macro.mall.dto;
+package com.macro.mall.dto;
 
 import com.macro.mall.model.SmsFlashPromotionSession;
 import io.swagger.annotations.ApiModelProperty;

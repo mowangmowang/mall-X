@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal.config;
+package com.macro.mall.portal.config;
 
 import com.macro.mall.common.config.BaseSwaggerConfig;
 import com.macro.mall.common.domain.SwaggerProperties;

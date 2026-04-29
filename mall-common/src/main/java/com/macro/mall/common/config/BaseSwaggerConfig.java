@@ -1,4 +1,4 @@
-﻿package com.macro.mall.common.config;
+package com.macro.mall.common.config;
 
 import com.macro.mall.common.domain.SwaggerProperties;
 import org.springframework.beans.BeansException;

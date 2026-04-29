@@ -1,4 +1,4 @@
-﻿package com.macro.mall.security.config;
+package com.macro.mall.security.config;
 
 import com.macro.mall.common.config.BaseRedisConfig;
 import org.springframework.cache.annotation.EnableCaching;

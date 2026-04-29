@@ -1,4 +1,4 @@
-﻿package com.macro.mall;
+package com.macro.mall;
 
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;

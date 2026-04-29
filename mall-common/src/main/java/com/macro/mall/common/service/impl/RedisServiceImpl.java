@@ -1,4 +1,4 @@
-﻿package com.macro.mall.common.service.impl;
+package com.macro.mall.common.service.impl;
 
 import com.macro.mall.common.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;

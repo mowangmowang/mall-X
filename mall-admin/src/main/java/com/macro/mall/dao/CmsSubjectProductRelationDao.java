@@ -1,4 +1,4 @@
-﻿package com.macro.mall.dao;
+package com.macro.mall.dao;
 
 import com.macro.mall.model.CmsSubjectProductRelation;
 import org.apache.ibatis.annotations.Param;

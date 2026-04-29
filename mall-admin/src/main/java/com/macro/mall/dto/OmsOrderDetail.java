@@ -1,4 +1,4 @@
-﻿package com.macro.mall.dto;
+package com.macro.mall.dto;
 
 import com.macro.mall.model.OmsOrder;
 import com.macro.mall.model.OmsOrderItem;

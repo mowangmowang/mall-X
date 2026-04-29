@@ -1,4 +1,4 @@
-﻿package com.macro.mall.security.component;
+package com.macro.mall.security.component;
 
 import cn.hutool.core.util.URLUtil;
 import org.springframework.beans.factory.annotation.Autowired;

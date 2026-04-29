@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal.controller;
+package com.macro.mall.portal.controller;
 
 import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.common.api.CommonResult;

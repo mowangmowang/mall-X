@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal.config;
+package com.macro.mall.portal.config;
 
 import com.macro.mall.portal.domain.QueueEnum;
 import org.springframework.amqp.core.*;

@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal.dao;
+package com.macro.mall.portal.dao;
 
 import com.macro.mall.model.SmsCoupon;
 import com.macro.mall.portal.domain.SmsCouponHistoryDetail;

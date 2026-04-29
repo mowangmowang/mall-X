@@ -1,4 +1,4 @@
-﻿package com.macro.mall.validator;
+package com.macro.mall.validator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

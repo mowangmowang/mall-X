@@ -1,4 +1,4 @@
-﻿package com.macro.mall.dao;
+package com.macro.mall.dao;
 
 import com.macro.mall.dto.ProductAttrInfo;
 import org.apache.ibatis.annotations.Param;

@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal.service.impl;
+package com.macro.mall.portal.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.macro.mall.common.api.CommonPage;

@@ -1,4 +1,4 @@
-﻿package com.macro.mall.service;
+package com.macro.mall.service;
 
 import com.macro.mall.dto.PmsProductParam;
 import com.macro.mall.dto.PmsProductQueryParam;

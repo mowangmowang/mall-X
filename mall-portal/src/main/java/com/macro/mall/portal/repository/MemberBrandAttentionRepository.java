@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal.repository;
+package com.macro.mall.portal.repository;
 
 import com.macro.mall.portal.domain.MemberBrandAttention;
 import org.springframework.data.domain.Page;

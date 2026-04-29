@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal.service;
+package com.macro.mall.portal.service;
 
 import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.portal.domain.ConfirmOrderResult;

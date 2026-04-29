@@ -1,4 +1,4 @@
-﻿package com.macro.mall;
+package com.macro.mall;
 
 import org.mybatis.generator.api.MyBatisGenerator;
 import org.mybatis.generator.config.Configuration;

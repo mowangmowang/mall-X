@@ -1,4 +1,4 @@
-﻿package com.macro.mall.service.impl;
+package com.macro.mall.service.impl;
 
 import com.macro.mall.mapper.UmsResourceCategoryMapper;
 import com.macro.mall.model.UmsResourceCategory;

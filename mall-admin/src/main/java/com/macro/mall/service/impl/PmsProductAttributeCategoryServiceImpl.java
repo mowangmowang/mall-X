@@ -1,4 +1,4 @@
-﻿package com.macro.mall.service.impl;
+package com.macro.mall.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.macro.mall.dao.PmsProductAttributeCategoryDao;

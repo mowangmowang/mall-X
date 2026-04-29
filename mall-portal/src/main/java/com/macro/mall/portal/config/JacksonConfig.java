@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal.config;
+package com.macro.mall.portal.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,4 +1,4 @@
-﻿package com.macro.mall.service.impl;
+package com.macro.mall.service.impl;
 
 import com.macro.mall.mapper.CmsPrefrenceAreaMapper;
 import com.macro.mall.model.CmsPrefrenceArea;

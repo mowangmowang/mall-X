@@ -1,4 +1,4 @@
-﻿package com.macro.mall.dto;
+package com.macro.mall.dto;
 
 import com.macro.mall.model.PmsProduct;
 import com.macro.mall.model.SmsFlashPromotionProductRelation;

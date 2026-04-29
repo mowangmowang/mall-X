@@ -1,4 +1,4 @@
-﻿package com.macro.mall.common.exception;
+package com.macro.mall.common.exception;
 
 import com.macro.mall.common.api.IErrorCode;
 

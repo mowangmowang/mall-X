@@ -1,4 +1,4 @@
-﻿package com.macro.mall.search.config;
+package com.macro.mall.search.config;
 
 import com.macro.mall.common.config.BaseSwaggerConfig;
 import com.macro.mall.common.domain.SwaggerProperties;

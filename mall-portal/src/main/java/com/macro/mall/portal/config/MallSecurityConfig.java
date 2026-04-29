@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal.config;
+package com.macro.mall.portal.config;
 
 import com.macro.mall.portal.service.UmsMemberService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal.service.impl;
+package com.macro.mall.portal.service.impl;
 
 import com.macro.mall.mapper.PmsProductMapper;
 import com.macro.mall.model.PmsProduct;

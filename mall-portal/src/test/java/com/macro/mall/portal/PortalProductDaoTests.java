@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal;
+package com.macro.mall.portal;
 
 import com.macro.mall.portal.dao.PortalProductDao;
 import com.macro.mall.portal.domain.PromotionProduct;

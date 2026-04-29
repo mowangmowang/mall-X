@@ -1,4 +1,4 @@
-﻿package com.macro.mall.search.service.impl;
+package com.macro.mall.search.service.impl;
 
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.StrUtil;

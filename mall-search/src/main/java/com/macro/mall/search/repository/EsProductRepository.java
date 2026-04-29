@@ -1,4 +1,4 @@
-﻿package com.macro.mall.search.repository;
+package com.macro.mall.search.repository;
 
 import com.macro.mall.search.domain.EsProduct;
 import org.springframework.data.domain.Page;

@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal.domain;
+package com.macro.mall.portal.domain;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

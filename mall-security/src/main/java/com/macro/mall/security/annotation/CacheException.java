@@ -1,4 +1,4 @@
-﻿package com.macro.mall.security.annotation;
+package com.macro.mall.security.annotation;
 
 import java.lang.annotation.*;
 

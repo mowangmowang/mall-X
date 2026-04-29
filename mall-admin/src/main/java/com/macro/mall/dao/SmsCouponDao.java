@@ -1,4 +1,4 @@
-﻿package com.macro.mall.dao;
+package com.macro.mall.dao;
 
 import com.macro.mall.dto.SmsCouponParam;
 import org.apache.ibatis.annotations.Param;

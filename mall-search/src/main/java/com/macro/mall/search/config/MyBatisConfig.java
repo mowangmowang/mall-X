@@ -1,4 +1,4 @@
-﻿package com.macro.mall.search.config;
+package com.macro.mall.search.config;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Configuration;

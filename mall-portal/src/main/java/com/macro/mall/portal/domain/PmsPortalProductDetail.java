@@ -1,4 +1,4 @@
-﻿package com.macro.mall.portal.domain;
+package com.macro.mall.portal.domain;
 
 import com.macro.mall.model.*;
 import io.swagger.annotations.ApiModelProperty;
