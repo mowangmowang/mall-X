@@ -1,0 +1,21 @@
+# Maven
+target/
+*.class
+*.log
+*.jar
+*.war
+*.zip
+
+# IDE
+.idea/
+*.iml
+*.iws
+.vscode/
+
+# Frontend
+# mall-web-app/  (disabled - included in graduation project)
+# mall-web/
+
+# Local Config
+local.properties
+.DS_Store

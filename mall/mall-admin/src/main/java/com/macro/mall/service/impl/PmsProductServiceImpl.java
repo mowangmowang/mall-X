@@ -1,4 +1,4 @@
-package com.macro.mall.service.impl;
+﻿package com.macro.mall.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
@@ -27,9 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 商品管理Service实现类
- * Created by macro on 2018/4/26.
- */
+ * 商品管理Service实现类 */
 @Service
 public class PmsProductServiceImpl implements PmsProductService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PmsProductServiceImpl.class);
@@ -66,7 +64,7 @@ public class PmsProductServiceImpl implements PmsProductService {
     @Autowired
     private PmsProductDao productDao;
     @Autowired
-    private PmsProductVertifyRecordDao productVertifyRecordDao;
+    private PmsProductVerifyRecordDao productVerifyRecordDao;
 
     @Override
     public Long create(PmsProductParam productParam) {
@@ -237,7 +235,7 @@ public class PmsProductServiceImpl implements PmsProductService {
         product.setVerifyStatus(verifyStatus);
         PmsProductExample example = new PmsProductExample();
         example.createCriteria().andIdIn(ids);
-        List<PmsProductVertifyRecord> list = new ArrayList<>();
+        List<PmsProductVerifyRecord> list = new ArrayList<>();
         int count = productMapper.updateByExampleSelective(product, example);
         
         // 获取当前登录用户
@@ -258,7 +256,7 @@ public class PmsProductServiceImpl implements PmsProductService {
         
         //修改完审核状态后插入审核记录
         for (Long id : ids) {
-            PmsProductVertifyRecord record = new PmsProductVertifyRecord();
+            PmsProductVerifyRecord record = new PmsProductVerifyRecord();
             record.setProductId(id);
             record.setCreateTime(new Date());
             record.setDetail(detail);
@@ -266,7 +264,7 @@ public class PmsProductServiceImpl implements PmsProductService {
             record.setVertifyMan(username);
             list.add(record);
         }
-        productVertifyRecordDao.insertList(list);
+        productVerifyRecordDao.insertList(list);
         return count;
     }
 
@@ -319,8 +317,8 @@ public class PmsProductServiceImpl implements PmsProductService {
     }
 
     @Override
-    public List<PmsProductVertifyRecord> getVertifyRecordList(Long productId) {
-        return productVertifyRecordDao.getListByProductId(productId);
+    public List<PmsProductVerifyRecord> getVerifyRecordList(Long productId) {
+        return productVerifyRecordDao.getListByProductId(productId);
     }
 
     /**

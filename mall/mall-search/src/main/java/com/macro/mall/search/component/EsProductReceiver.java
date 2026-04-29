@@ -1,4 +1,4 @@
-package com.macro.mall.search.component;
+﻿package com.macro.mall.search.component;
 
 import com.macro.mall.common.domain.EsProductMessage;
 import com.macro.mall.search.service.EsProductService;
@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * 商品同步消息接收器
- * Created by macro on 2026/4/27.
- */
+ * 商品同步消息接收器 */
 @Component
 @RabbitListener(queues = "mall.product.update")
 public class EsProductReceiver {

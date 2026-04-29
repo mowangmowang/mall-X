@@ -1,4 +1,4 @@
-package com.macro.mall.controller;
+﻿package com.macro.mall.controller;
 
 import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.common.api.CommonResult;
@@ -7,7 +7,7 @@ import com.macro.mall.dto.PmsProductParam;
 import com.macro.mall.dto.PmsProductQueryParam;
 import com.macro.mall.dto.PmsProductResult;
 import com.macro.mall.model.PmsProduct;
-import com.macro.mall.model.PmsProductVertifyRecord;
+import com.macro.mall.model.PmsProductVerifyRecord;
 import com.macro.mall.service.PmsProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,9 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 商品管理Controller
- * Created by macro on 2018/4/26.
- */
+ * 商品管理Controller */
 @Controller
 @Api(tags = "PmsProductController")
 @Tag(name = "PmsProductController", description = "商品管理")
@@ -161,8 +159,8 @@ public class PmsProductController {
     @ApiOperation("根据商品ID查询审核记录")
     @RequestMapping(value = "/vertifyRecord/{productId}", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<List<PmsProductVertifyRecord>> getVertifyRecord(@PathVariable Long productId) {
-        List<PmsProductVertifyRecord> list = productService.getVertifyRecordList(productId);
+    public CommonResult<List<PmsProductVerifyRecord>> getVerifyRecord(@PathVariable Long productId) {
+        List<PmsProductVerifyRecord> list = productService.getVerifyRecordList(productId);
         return CommonResult.success(list);
     }
 }
