@@ -66,7 +66,7 @@
 		</view>
 
 		<!-- 秒杀专区 -->
-		<view class="f-header m-t" v-if="homeFlashPromotion!==null">
+		<view class="f-header m-t" v-if="homeFlashPromotion">
 			<image src="/static/icon_flash_promotion.png"></image>
 			<view class="tit-box">
 				<text class="tit">秒杀专区</text>
@@ -188,7 +188,7 @@
 				goodsList: [],
 				advertiseList: [],
 				brandList: [],
-				homeFlashPromotion: [],
+				homeFlashPromotion: null,
 				newProductList: [],
 				hotProductList: [],
 				recommendProductList: [],
@@ -225,6 +225,7 @@
 		},
 		computed: {
 			cutDownTime() {
+					if (!this.homeFlashPromotion) return { endHour: "00", endMinute: "00", endSecond: "00" };
 				let endTime = new Date(this.homeFlashPromotion.endTime);
 				let endDateTime = new Date();
 				let startDateTime = new Date();
@@ -264,7 +265,7 @@
 					this.swiperLength = this.advertiseList.length;
 					this.titleNViewBackground = this.titleNViewBackgroundList[0];
 					this.brandList = response.data.brandList;
-					this.homeFlashPromotion = response.data.homeFlashPromotion;
+					this.homeFlashPromotion = response.data.homeFlashPromotion || null;
 					this.newProductList = response.data.newProductList;
 					this.hotProductList = response.data.hotProductList;
 					fetchRecommendProductList(this.recommendParams).then(response => {

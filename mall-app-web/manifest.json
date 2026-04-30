@@ -65,7 +65,7 @@
     "h5" : {
         "devServer" : {
             "https" : false,
-            "port" : 8060
+            "port" : 7898
         },
         "domain" : "localhost",
         "router" : {
