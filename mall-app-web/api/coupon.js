@@ -21,3 +21,10 @@ export function fetchMemberCouponList(useStatus) {
 		params:{useStatus:useStatus}
 	})
 }
+
+export function fetchAvailableCouponList() {
+	return request({
+		method: 'GET',
+		url: '/member/coupon/availableList'
+	})
+}

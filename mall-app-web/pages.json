@@ -53,9 +53,6 @@
 			"path": "pages/user/user",
 			"style": {
 				"navigationBarTitleText": "我的",
-				// #ifdef MP
-				"navigationStyle": "custom",
-				// #endif
 				"app-plus": {
 					"bounce": "none",
 					"titleNView": {
@@ -171,7 +168,7 @@
 					}
 				}
 			}
-		},{
+		}, {
 			"path": "pages/user/productCollection",
 			"style": {
 				"enablePullDownRefresh": true,
@@ -188,7 +185,7 @@
 					}
 				}
 			}
-		},{
+		}, {
 			"path": "pages/user/brandAttention",
 			"style": {
 				"enablePullDownRefresh": true,
@@ -204,6 +201,38 @@
 						}]
 					}
 				}
+			}
+		}, {
+			"path": "pages/subject/subject",
+			"style": {
+				"navigationBarTitleText": "专题详情"
+			}
+		}, {
+			"path": "pages/subject/list",
+			"style": {
+				"enablePullDownRefresh": true,
+				"navigationBarTitleText": "专题列表"
+			}
+		}, {
+			"path": "pages/topic/topic",
+			"style": {
+				"navigationBarTitleText": "话题详情"
+			}
+		}, {
+			"path": "pages/topic/list",
+			"style": {
+				"enablePullDownRefresh": true,
+				"navigationBarTitleText": "话题列表"
+			}
+		}, {
+			"path": "pages/prefrence/prefrence",
+			"style": {
+				"navigationBarTitleText": "优选特惠"
+			}
+		}, {
+			"path": "pages/coupon/center",
+			"style": {
+				"navigationBarTitleText": "领券中心"
 			}
 		}
 	],

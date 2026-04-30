@@ -1,50 +1,44 @@
 <template>
 	<view class="container">
-		
-		
 
 		<view class="mp-search-box" :style="searchBarStyle">
 			<text class="yticon icon-sousuo" :style="searchIconStyle"></text>
 			<input class="ser-input" type="text" v-model="keyword" placeholder="输入关键字搜索" @confirm="search($event.detail.value)" />
 		</view>
 
-		
-
 		<!-- 头部轮播 -->
 		<view class="carousel-section">
-			<!-- 标题栏和状态栏占位符 -->
 			<view class="titleNview-placing"></view>
-			<!-- 背景色区域 -->
 			<view class="titleNview-background" :style="{backgroundColor:titleNViewBackground}"></view>
 			<swiper class="carousel" circular @change="swiperChange">
 				<swiper-item v-for="(item, index) in advertiseList" :key="index" class="carousel-item" @click="navToAdvertisePage(item)">
 					<image :src="item.pic" />
 				</swiper-item>
 			</swiper>
-			<!-- 自定义swiper指示器 -->
 			<view class="swiper-dots">
 				<text class="num">{{swiperCurrent+1}}</text>
 				<text class="sign">/</text>
 				<text class="num">{{swiperLength}}</text>
 			</view>
 		</view>
-		<!-- 头部功能区 -->
+
+		<!-- 头部功能区：导航到独立页面 -->
 		<view class="cate-section">
-			<view class="cate-item">
+			<view class="cate-item" @click="navToSubjectList()">
 				<image src="/static/temp/c3.png"></image>
 				<text>专题</text>
 			</view>
-			<view class="cate-item">
+			<view class="cate-item" @click="navToTopicList()">
 				<image src="/static/temp/c5.png"></image>
 				<text>话题</text>
 			</view>
-			<view class="cate-item">
+			<view class="cate-item" @click="navToPrefrencePage()">
 				<image src="/static/temp/c6.png"></image>
 				<text>优选</text>
 			</view>
-			<view class="cate-item">
+			<view class="cate-item" @click="navToCouponCenter()">
 				<image src="/static/temp/c7.png"></image>
-				<text>特惠</text>
+				<text>领券</text>
 			</view>
 		</view>
 
@@ -113,6 +107,73 @@
 			</view>
 		</view>
 
+		<!-- 专题推荐 -->
+		<view class="f-header m-t" id="section-subject" @click="navToSubjectList()">
+			<image src="/static/icon_recommend_product.png"></image>
+			<view class="tit-box">
+				<text class="tit">专题推荐</text>
+				<text class="tit2">精彩专题，发现更多好物</text>
+			</view>
+			<text class="yticon icon-you"></text>
+		</view>
+		<view class="seckill-section" v-if="subjectList.length > 0">
+			<scroll-view class="floor-list" scroll-x>
+				<view class="scoll-wrapper">
+					<view v-for="(item, index) in subjectList" :key="index" class="floor-item" @click="navToSubjectDetailPage(item)">
+						<image :src="item.pic" mode="aspectFill"></image>
+						<text class="title clamp">{{item.title}}</text>
+						<text class="title2 clamp">{{item.description}}</text>
+						<text class="price" v-if="item.productCount > 0">{{item.productCount}}件商品</text>
+					</view>
+				</view>
+			</scroll-view>
+		</view>
+
+		<!-- 话题热榜 -->
+		<view class="f-header m-t" id="section-topic" @click="navToTopicList()">
+			<image src="/static/icon_hot_product.png"></image>
+			<view class="tit-box">
+				<text class="tit">话题热榜</text>
+				<text class="tit2">热门话题，一起来参与</text>
+			</view>
+			<text class="yticon icon-you"></text>
+		</view>
+		<view class="hot-section" v-if="topicList.length > 0">
+			<view v-for="(item, index) in topicList" :key="index" class="guess-item" @click="navToTopicDetailPage(item)">
+				<view class="txt" style="width:100%;padding-left:0;">
+					<text class="title clamp">{{item.name}}</text>
+					<text class="title2 clamp">{{item.content ? item.content.substring(0, 60) : ''}}</text>
+					<text class="price">{{item.attendCount || 0}}人参与</text>
+				</view>
+			</view>
+		</view>
+
+		<!-- 优选特惠 -->
+		<view class="f-header m-t" id="section-prefrence" @click="navToPrefrencePage()">
+			<image src="/static/icon_new_product.png"></image>
+			<view class="tit-box">
+				<text class="tit">优选特惠</text>
+				<text class="tit2">精选好货，超值优惠</text>
+			</view>
+			<text class="yticon icon-you"></text>
+		</view>
+		<view v-for="(area, idx) in prefrenceAreaList" :key="idx">
+			<view class="section-title">
+				<text>{{area.area.name}}</text>
+				<text class="section-subtitle">{{area.area.subTitle}}</text>
+			</view>
+			<view class="guess-section" v-if="area.productList.length > 0">
+				<view v-for="(item, index2) in area.productList.slice(0, 4)" :key="index2" class="guess-item" @click="navToDetailPage(item)">
+					<view class="image-wrapper">
+						<image :src="item.pic" mode="aspectFill"></image>
+					</view>
+					<text class="title clamp">{{item.name}}</text>
+					<text class="title2 clamp">{{item.subTitle}}</text>
+					<text class="price">￥{{item.price}}</text>
+				</view>
+			</view>
+		</view>
+
 		<!-- 猜你喜欢-->
 		<view class="f-header m-t">
 			<image src="/static/icon_recommend_product.png"></image>
@@ -140,7 +201,9 @@
 <script>
 	import {
 		fetchContent,
-		fetchRecommendProductList
+		fetchRecommendProductList,
+		fetchTopicList,
+		fetchPrefrenceAreaList
 	} from '@/api/home.js';
 	import {
 		formatDate
@@ -166,10 +229,13 @@
 				recommendParams: {
 					pageNum: 1,
 					pageSize: 4
-			},
+				},
 				loadingType:'more',
 				keyword: '',
-				searchBarOpacity: 0
+				searchBarOpacity: 0,
+				subjectList: [],
+				topicList: [],
+				prefrenceAreaList: []
 			};
 		},
 		computed: {
@@ -205,13 +271,12 @@
 			fetchRecommendProductList(this.recommendParams).then(response => {
 				let addProductList = response.data;
 				if(response.data.length===0){
-					//没有更多了
 					this.recommendParams.pageNum--;
 					this.loadingType = 'nomore';
-			}else{
+				}else{
 					this.recommendProductList = this.recommendProductList.concat(addProductList);
 					this.loadingType = 'more';
-			}
+				}
 			})
 		},
 		//App端搜索栏确认
@@ -219,9 +284,6 @@
 			this.search(e.keyword);
 		},
 		methods: {
-			/**
-			 * 加载数据
-			 */
 			async loadData() {
 				fetchContent().then(response => {
 					console.log("onLoad", response.data);
@@ -231,11 +293,34 @@
 					this.brandList = response.data.brandList;
 					this.newProductList = response.data.newProductList;
 					this.hotProductList = response.data.hotProductList;
+					this.subjectList = response.data.subjectList || [];
 					fetchRecommendProductList(this.recommendParams).then(response => {
 						this.recommendProductList = response.data;
 						uni.stopPullDownRefresh();
-			})
-			});
+					})
+				});
+				fetchTopicList({ pageNum: 1, pageSize: 4 }).then(response => {
+					this.topicList = response.data || [];
+				});
+				fetchPrefrenceAreaList().then(response => {
+					this.prefrenceAreaList = response.data || [];
+				});
+			},
+			//导航到专题列表
+			navToSubjectList() {
+				uni.navigateTo({ url: '/pages/subject/list' });
+			},
+			//导航到话题列表
+			navToTopicList() {
+				uni.navigateTo({ url: '/pages/topic/list' });
+			},
+			//导航到优选页面
+			navToPrefrencePage() {
+				uni.navigateTo({ url: '/pages/prefrence/prefrence' });
+			},
+			//导航到领券中心
+			navToCouponCenter() {
+				uni.navigateTo({ url: '/pages/coupon/center' });
 			},
 			//轮播图切换修改背景色
 			swiperChange(e) {
@@ -250,14 +335,27 @@
 				if (!kw || !kw.trim()) return;
 				uni.navigateTo({
 					url: `/pages/product/list?keyword=${encodeURIComponent(kw.trim())}`
-			})
+				})
+			},
+			//专题详情
+			navToSubjectDetailPage(item) {
+				let id = item.id;
+				uni.navigateTo({
+					url: `/pages/subject/subject?id=${id}`
+				})
+			},
+			//话题详情
+			navToTopicDetailPage(item) {
+				uni.navigateTo({
+					url: `/pages/topic/topic?id=${item.id}`
+				})
 			},
 			//商品详情页
 			navToDetailPage(item) {
 				let id = item.id;
 				uni.navigateTo({
 					url: `/pages/product/product?id=${id}`
-			})
+				})
 			},
 			//广告详情页
 			navToAdvertisePage(item) {
@@ -269,25 +367,25 @@
 				let id = item.id;
 				uni.navigateTo({
 					url: `/pages/brand/brandDetail?id=${id}`
-			})
+				})
 			},
 			//推荐品牌列表页
 			navToRecommendBrandPage() {
 				uni.navigateTo({
 					url: `/pages/brand/list`
-			})
+				})
 			},
 			//新鲜好物列表页
 			navToNewProudctListPage() {
 				uni.navigateTo({
 					url: `/pages/product/newProductList`
-			})
+				})
 			},
 			//人气推荐列表页
 			navToHotProudctListPage() {
 				uni.navigateTo({
 					url: `/pages/product/hotProductList`
-			})
+				})
 			},
 		},
 	}
@@ -295,7 +393,6 @@
 
 <style lang="scss">
 
-		
 		.mp-search-box {
 			position: fixed;
 			top: 0;
@@ -327,7 +424,7 @@
 				border: none;
 			}
 		}
-		
+
 
 
 		/* #ifdef MP */
@@ -568,6 +665,19 @@
 		}
 	}
 
+	/* 板块副标题 */
+	.section-title {
+		padding: 10upx $page-row-spacing 0;
+		font-size: $font-sm;
+		color: $font-color-light;
+
+		.section-subtitle {
+			margin-left: 12upx;
+			font-size: $font-sm - 2upx;
+			color: $color-secondary;
+		}
+	}
+
 	/* 猜你喜欢 & 品牌 */
 	.guess-section {
 		display: flex;
@@ -727,8 +837,3 @@
 		}
 	}
 </style>
-
-
-
-
-

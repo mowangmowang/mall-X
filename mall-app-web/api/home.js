@@ -37,3 +37,40 @@ export function fetchHotProductList(params) {
 		params:params
 	})
 }
+
+export function fetchTopicDetail(id) {
+	return request({
+		method: 'GET',
+		url: '/home/topic/' + id
+	})
+}
+
+export function fetchTopicList(params) {
+	return request({
+		method: 'GET',
+		url: '/home/topicList',
+		params: params
+	})
+}
+
+export function fetchPrefrenceAreaList() {
+	return request({
+		method: 'GET',
+		url: '/home/prefrenceAreaList'
+	})
+}
+
+export function fetchSubjectList(params) {
+	return request({
+		method: 'GET',
+		url: '/home/subjectList',
+		params: params
+	})
+}
+
+export function fetchSubjectDetail(id) {
+	return request({
+		method: 'GET',
+		url: '/home/subject/' + id
+	})
+}
