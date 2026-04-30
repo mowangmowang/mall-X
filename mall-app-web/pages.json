@@ -4,23 +4,9 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				// #ifdef MP
 				"navigationBarTitleText": "Mall商城",
-				//"navigationStyle": "custom",
-				// #endif
-				"enablePullDownRefresh": true,
-				"app-plus": {
-					"titleNView": {
-						"type": "transparent",
-						"searchInput": {
-							"backgroundColor": "rgba(231, 231, 231,.7)",
-							"borderRadius": "16px",
-							"placeholder": "请输入商品 如：手机",
-							"disabled": true,
-							"placeholderColor": "#606266"
-						}
-					}
-				}
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true
 			}
 		},
 		{
@@ -78,7 +64,7 @@
 							"fontSrc": "/static/yticon.ttf",
 							"text": "",
 							"fontSize": "24",
-							"color": "#303133",
+							"color": "#171717",
 							"width": "46px",
 							"background": "rgba(0,0,0,0)"
 						}]
@@ -178,7 +164,7 @@
 						"buttons": [{
 							"text": "清空",
 							"fontSize": "16",
-							"color": "#303133",
+							"color": "#171717",
 							"width": "46px",
 							"background": "rgba(0,0,0,0)"
 						}]
@@ -195,7 +181,7 @@
 						"buttons": [{
 							"text": "清空",
 							"fontSize": "16",
-							"color": "#303133",
+							"color": "#171717",
 							"width": "46px",
 							"background": "rgba(0,0,0,0)"
 						}]
@@ -212,7 +198,7 @@
 						"buttons": [{
 							"text": "清空",
 							"fontSize": "16",
-							"color": "#303133",
+							"color": "#171717",
 							"width": "46px",
 							"background": "rgba(0,0,0,0)"
 						}]
@@ -228,8 +214,8 @@
 		"backgroundColor": "#f8f8f8"
 	},
 	"tabBar": {
-		"color": "#C0C4CC",
-		"selectedColor": "#fa436a",
+		"color": "#9CA3AF",
+		"selectedColor": "#171717",
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [{

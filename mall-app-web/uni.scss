@@ -1,184 +1,111 @@
-
 /* 页面左右间距 */
 $page-row-spacing: 30upx;
-$page-color-base: #f8f8f8;
-$page-color-light: #f8f6fc;
-$base-color: #fa436a;
+
+/* ====== BLACK-WHITE DESIGN SYSTEM ====== */
+
+/* Color Palette — Minimal Monochrome */
+$color-primary: #171717;          /* Pure black for primary text & icons */
+$color-secondary: #404040;        /* Dark gray for secondary text */
+$color-disabled: #9CA3AF;        /* Muted gray for disabled states (4.5:1 contrast) */
+$color-border: #E5E7EB;          /* Light gray borders & dividers */
+$color-bg: #FFFFFF;              /* Page background */
+$color-bg-secondary: #F9FAFB;    /* Card/section background */
+$color-accent: #171717;          /* CTA buttons, emphasis (pure black) */
+$color-danger: #DC2626;          /* Delete/danger (only color accent) */
+
+/* Backward-compatible aliases */
+$base-color: $color-primary;
+$page-color-base: $color-bg-secondary;
+$page-color-light: $color-bg;
 
 /* 文字尺寸 */
-$font-sm: 24upx;
-$font-base: 28upx;
+$font-sm: 26upx;
+$font-base: 30upx;
 $font-lg: 32upx;
-/*文字颜色*/
-$font-color-dark: #303133;
-$font-color-base: #606266;
-$font-color-light: #909399;
-$font-color-disabled: #C0C4CC;
-$font-color-spec: #4399fc;
+$font-xl: 34upx;
+$font-2xl: 36upx;
+
+/* 文字颜色 */
+$font-color-dark: $color-primary;
+$font-color-base: $color-secondary;
+$font-color-light: $color-secondary;
+$font-color-disabled: $color-disabled;
+$font-color-spec: $color-primary;
+
 /* 边框颜色 */
 $border-color-dark: #DCDFE6;
 $border-color-base: #E4E7ED;
 $border-color-light: #EBEEF5;
+
 /* 图片加载中颜色 */
 $image-bg-color: #eee;
+
 /* 行为相关颜色 */
-$uni-color-primary:#fa436a;
-$uni-color-success: #4cd964;
-$uni-color-warning: #f0ad4e;
-$uni-color-error: #dd524d;
+$uni-color-primary: $color-primary;
+$uni-color-success: #10B981;
+$uni-color-warning: #F59E0B;
+$uni-color-error: $color-danger;
 
-/* ====== GLASSMORPHISM DESIGN SYSTEM ====== */
-
-/* Modernized Color Palette */
-$glass-primary: #EC4899;          /* Modern pink */
-$glass-primary-light: #F472B6;    /* Light pink */
-$glass-primary-dark: #DB2777;     /* Dark pink */
-$glass-accent: #06B6D4;           /* Cyan accent */
-$glass-accent-light: #67E8F9;     /* Light cyan */
-$glass-success: #10B981;          /* Modern green */
-$glass-warning: #F59E0B;          /* Modern amber */
-$glass-error: #EF4444;            /* Modern red */
-
-/* Glassmorphism Backgrounds */
-$glass-bg-light: rgba(255, 255, 255, 0.7);
-$glass-bg-dark: rgba(255, 255, 255, 0.9);
-$glass-bg-blur: 20px;
-$glass-border-light: rgba(255, 255, 255, 0.3);
-$glass-border-dark: rgba(255, 255, 255, 0.1);
-
-/* Depth & Shadows */
-$glass-shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-$glass-shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-$glass-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-
-/* Typography Scale */
-$glass-font-xs: 20upx;
-$glass-font-sm: 24upx;
-$glass-font-base: 28upx;
-$glass-font-lg: 32upx;
-$glass-font-xl: 36upx;
-$glass-font-2xl: 40upx;
-$glass-font-3xl: 48upx;
+/* Typography */
+$font-heading: 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+$font-body: 'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
 /* Spacing System */
-$glass-spacing-xs: 8upx;
-$glass-spacing-sm: 16upx;
-$glass-spacing-base: 24upx;
-$glass-spacing-lg: 32upx;
-$glass-spacing-xl: 48upx;
-$glass-spacing-2xl: 64upx;
+$spacing-xs: 8upx;
+$spacing-sm: 16upx;
+$spacing-base: 24upx;
+$spacing-lg: 32upx;
+$spacing-xl: 48upx;
+$spacing-2xl: 64upx;
 
 /* Border Radius */
-$glass-radius-sm: 8upx;
-$glass-radius-base: 12upx;
-$glass-radius-lg: 16upx;
-$glass-radius-xl: 24upx;
-$glass-radius-full: 9999upx;
+$radius-sm: 8upx;
+$radius-base: 12upx;
+$radius-lg: 16upx;
+$radius-xl: 24upx;
+$radius-full: 9999upx;
 
-/* Font Families (to be imported in App.vue) */
-$glass-font-heading: 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-$glass-font-body: 'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+/* Shadows — single layer, subtle */
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.05);
+
+/* z-index scale */
+$z-dropdown: 100;
+$z-sticky: 200;
+$z-overlay: 800;
+$z-modal: 1000;
 
 /* Animation */
-$glass-transition-fast: 0.15s ease;
-$glass-transition-base: 0.3s ease;
-$glass-transition-slow: 0.5s ease;
-
-/* Glassmorphism Mixins */
-@mixin glass-effect($opacity: 0.7, $blur: 20px, $border: rgba(255, 255, 255, 0.3)) {
-  background: rgba(255, 255, 255, $opacity);
-  border: 1px solid $border;
-
-  /* Backdrop filter with vendor prefixes */
-  -webkit-backdrop-filter: blur($blur);
-  backdrop-filter: blur($blur);
-
-  /* Fallback for unsupported platforms */
-  @supports not (backdrop-filter: blur($blur)) {
-    background: rgba(255, 255, 255, $opacity + 0.1);
-    box-shadow: $glass-shadow-sm;
-  }
-}
-
-@mixin glass-card {
-  @include glass-effect(0.8, 15px);
-  border-radius: $glass-radius-lg;
-  padding: $glass-spacing-lg;
-  box-shadow: $glass-shadow-md;
-  transition: all $glass-transition-base;
-}
-
-@mixin glass-button {
-  @include glass-effect(0.9, 10px);
-  border-radius: $glass-radius-full;
-  padding: $glass-spacing-sm $glass-spacing-xl;
-  font-weight: 600;
-  transition: all $glass-transition-base;
-
-  &:active {
-    transform: translateY(2px);
-    box-shadow: $glass-shadow-sm;
-  }
-}
-
-/* Hover effects */
-@mixin hover-lift {
-  transition: transform $glass-transition-base, box-shadow $glass-transition-base;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: $glass-shadow-lg;
-  }
-}
-
-@mixin hover-glow {
-  transition: box-shadow $glass-transition-base;
-
-  &:hover {
-    box-shadow: 0 0 20px rgba($glass-primary, 0.3);
-  }
-}
-
-/* Update existing variables for backward compatibility */
-$base-color: $glass-primary !default;
-$uni-color-primary: $glass-primary !default;
-$uni-color-success: $glass-success !default;
-$uni-color-warning: $glass-warning !default;
-$uni-color-error: $glass-error !default;
+$transition-fast: 0.15s ease;
+$transition-base: 0.3s ease;
 
 /* Spacing utilities */
-.m-xs { margin: $glass-spacing-xs !important; }
-.m-sm { margin: $glass-spacing-sm !important; }
-.m-base { margin: $glass-spacing-base !important; }
-.m-lg { margin: $glass-spacing-lg !important; }
-.m-xl { margin: $glass-spacing-xl !important; }
+.m-xs { margin: $spacing-xs !important; }
+.m-sm { margin: $spacing-sm !important; }
+.m-base { margin: $spacing-base !important; }
+.m-lg { margin: $spacing-lg !important; }
+.m-xl { margin: $spacing-xl !important; }
 
-.p-xs { padding: $glass-spacing-xs !important; }
-.p-sm { padding: $glass-spacing-sm !important; }
-.p-base { padding: $glass-spacing-base !important; }
-.p-lg { padding: $glass-spacing-lg !important; }
-.p-xl { padding: $glass-spacing-xl !important; }
-
-/* Glass utility classes */
-.glass-card { @include glass-card; }
-.glass-panel { @include glass-effect(0.85, 25px); }
-.glass-button { @include glass-button; }
+.p-xs { padding: $spacing-xs !important; }
+.p-sm { padding: $spacing-sm !important; }
+.p-base { padding: $spacing-base !important; }
+.p-lg { padding: $spacing-lg !important; }
+.p-xl { padding: $spacing-xl !important; }
 
 /* Typography utilities */
-.font-heading { font-family: $glass-font-heading !important; }
-.font-body { font-family: $glass-font-body !important; }
+.font-heading { font-family: $font-heading !important; }
+.font-body { font-family: $font-body !important; }
 .font-light { font-weight: 300 !important; }
 .font-normal { font-weight: 400 !important; }
 .font-semibold { font-weight: 600 !important; }
 .font-bold { font-weight: 700 !important; }
 
-/* Animation utilities */
-.glass-pulse {
-  animation: glass-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+/* Card utility */
+.card {
+  background: $color-bg;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-sm;
 }
-
-@keyframes glass-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-

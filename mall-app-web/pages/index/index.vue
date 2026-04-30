@@ -1,11 +1,14 @@
 <template>
 	<view class="container">
-		<!-- 小程序头部兼容 -->
-		<!-- #ifdef MP -->
-		<view class="mp-search-box">
-			<input class="ser-input" type="text" value="输入关键字搜索" disabled />
+		
+		
+
+		<view class="mp-search-box" :style="searchBarStyle">
+			<text class="yticon icon-sousuo" :style="searchIconStyle"></text>
+			<input class="ser-input" type="text" v-model="keyword" placeholder="输入关键字搜索" @confirm="search($event.detail.value)" />
 		</view>
-		<!-- #endif -->
+
+		
 
 		<!-- 头部轮播 -->
 		<view class="carousel-section">
@@ -145,7 +148,7 @@
 	import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue';
 	export default {
 		components: {
-			uniLoadMore	
+			uniLoadMore
 		},
 		data() {
 			return {
@@ -163,9 +166,29 @@
 				recommendParams: {
 					pageNum: 1,
 					pageSize: 4
-				},
-				loadingType:'more'
+			},
+				loadingType:'more',
+				keyword: '',
+				searchBarOpacity: 0
 			};
+		},
+		computed: {
+			searchBarStyle() {
+				const o = this.searchBarOpacity;
+				return {
+					background: `rgba(255, 255, 255, ${o})`,
+					boxShadow: o > 0.5 ? '0 2upx 12upx rgba(0,0,0,0.06)' : 'none'
+				};
+			},
+			searchIconStyle() {
+				const o = this.searchBarOpacity;
+				const c = Math.round(255 - 191 * o);
+				return { color: `rgb(${c}, ${c}, ${c})` };
+			}
+		},
+		onPageScroll(e) {
+			const scrollY = e.scrollTop || 0;
+			this.searchBarOpacity = Math.min(1, Math.max(0, scrollY / 250));
 		},
 		onLoad() {
 			this.loadData();
@@ -185,11 +208,15 @@
 					//没有更多了
 					this.recommendParams.pageNum--;
 					this.loadingType = 'nomore';
-				}else{
+			}else{
 					this.recommendProductList = this.recommendProductList.concat(addProductList);
 					this.loadingType = 'more';
-				}
+			}
 			})
+		},
+		//App端搜索栏确认
+		onNavigationBarSearchInputConfirmed(e) {
+			this.search(e.keyword);
 		},
 		methods: {
 			/**
@@ -207,8 +234,8 @@
 					fetchRecommendProductList(this.recommendParams).then(response => {
 						this.recommendProductList = response.data;
 						uni.stopPullDownRefresh();
-					})
-				});
+			})
+			});
 			},
 			//轮播图切换修改背景色
 			swiperChange(e) {
@@ -217,12 +244,20 @@
 				let changeIndex = index % this.titleNViewBackgroundList.length;
 				this.titleNViewBackground = this.titleNViewBackgroundList[changeIndex];
 			},
+			//搜索
+			search(keyword) {
+				let kw = keyword || this.keyword;
+				if (!kw || !kw.trim()) return;
+				uni.navigateTo({
+					url: `/pages/product/list?keyword=${encodeURIComponent(kw.trim())}`
+			})
+			},
 			//商品详情页
 			navToDetailPage(item) {
 				let id = item.id;
 				uni.navigateTo({
 					url: `/pages/product/product?id=${id}`
-				})
+			})
 			},
 			//广告详情页
 			navToAdvertisePage(item) {
@@ -234,59 +269,73 @@
 				let id = item.id;
 				uni.navigateTo({
 					url: `/pages/brand/brandDetail?id=${id}`
-				})
+			})
 			},
 			//推荐品牌列表页
 			navToRecommendBrandPage() {
 				uni.navigateTo({
 					url: `/pages/brand/list`
-				})
+			})
 			},
 			//新鲜好物列表页
 			navToNewProudctListPage() {
 				uni.navigateTo({
 					url: `/pages/product/newProductList`
-				})
+			})
 			},
 			//人气推荐列表页
 			navToHotProudctListPage() {
 				uni.navigateTo({
 					url: `/pages/product/hotProductList`
-				})
+			})
 			},
 		},
 	}
 </script>
 
 <style lang="scss">
-	@import '../../uni.scss';
 
-	/* #ifdef MP */
-	.mp-search-box {
-		position: absolute;
-		left: 0;
-		top: 30upx;
-		z-index: 9999;
-		width: 100%;
-		padding: 0 80upx;
+		
+		.mp-search-box {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			z-index: $z-dropdown;
+			padding: calc(var(--status-bar-height) + 16upx) 80upx 16upx;
+			display: flex;
+			align-items: center;
+			cursor: pointer;
 
-		.ser-input {
-			flex: 1;
-			height: 56upx;
-			line-height: 56upx;
-			text-align: center;
-			font-size: 28upx;
-			color: $font-color-base;
-			border-radius: 20px;
-			background: rgba(255, 255, 255, .6);
+			.yticon {
+				font-size: 32upx;
+				color: $color-secondary;
+				margin-right: 12upx;
+				flex-shrink: 0;
+			}
+
+			.ser-input {
+				flex: 1;
+				height: 64upx;
+				line-height: 64upx;
+				padding: 0 24upx;
+				font-size: 28upx;
+				color: $font-color-base;
+				border-radius: 20px;
+				background: $color-bg-secondary;
+				outline: none;
+				border: none;
+			}
 		}
-	}
+		
 
-	page {
+
+		/* #ifdef MP */
+		page {
 		.cate-section {
 			position: relative;
 			z-index: 5;
-			border-radius: $glass-radius-xl $glass-radius-xl 0 0;
+			border-radius: $radius-xl $radius-xl 0 0;
 			margin-top: -20upx;
 		}
 
@@ -301,7 +350,7 @@
 			.carousel {
 				.carousel-item {
 					padding: 0;
-				}
+			}
 			}
 
 			.swiper-dots {
@@ -310,12 +359,10 @@
 			}
 		}
 	}
-
 	/* #endif */
 
-
 	page {
-		background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+		background: $color-bg;
 		min-height: 100vh;
 	}
 
@@ -329,8 +376,7 @@
 		padding-top: 10px;
 
 		.titleNview-placing {
-			height: var(--status-bar-height);
-			padding-top: 44px;
+			height: calc(var(--status-bar-height) + 110upx);
 			box-sizing: content-box;
 		}
 
@@ -369,16 +415,14 @@
 		bottom: 30upx;
 		width: 72upx;
 		height: 36upx;
-		@include glass-effect(0.8, 10px);
-		border-radius: $glass-radius-full;
-		border: 1px solid rgba(255, 255, 255, 0.5);
-		box-shadow: $glass-shadow-md;
+		background: rgba(0, 0, 0, 0.5);
+		border-radius: 18px;
 
 		.num {
 			width: 36upx;
 			height: 36upx;
 			border-radius: 50px;
-			font-size: $glass-font-sm;
+			font-size: 22upx;
 			color: #fff;
 			text-align: center;
 			line-height: 36upx;
@@ -390,10 +434,9 @@
 			top: 0;
 			left: 50%;
 			line-height: 36upx;
-			font-size: $glass-font-xs;
+			font-size: 20upx;
 			color: #fff;
 			transform: translateX(-50%);
-			font-weight: 400;
 		}
 	}
 
@@ -403,60 +446,40 @@
 		justify-content: space-around;
 		align-items: center;
 		flex-wrap: wrap;
-		padding: $glass-spacing-xl $glass-spacing-base;
-		@include glass-card;
-		margin: $glass-spacing-base $page-row-spacing;
-		border-radius: $glass-radius-xl;
-		font-family: $glass-font-body;
+		padding: $spacing-xl $spacing-base;
+		background: $color-bg;
+		border: 1px solid $color-border;
+		border-radius: $radius-xl;
+		margin: $spacing-base $page-row-spacing;
 
 		.cate-item {
 			display: flex;
 			flex-direction: column;
 			align-items: center;
-			font-size: $glass-font-sm;
+			font-size: $font-sm;
 			color: $font-color-dark;
 			font-weight: 600;
-			padding: $glass-spacing-sm;
-			transition: all $glass-transition-base;
+			padding: $spacing-sm;
 
 			&:active {
-				transform: scale(0.95);
+				opacity: 0.7;
 			}
 		}
 
-		/* 原图标颜色太深,不想改图了,所以加了透明度 */
 		image {
 			width: 100upx;
 			height: 100upx;
-			margin-bottom: $glass-spacing-sm;
+			margin-bottom: $spacing-sm;
 			border-radius: 50%;
 			opacity: .9;
-			box-shadow: 0 8upx 20upx rgba($glass-primary, 0.3);
-			transition: all $glass-transition-base;
 
 			&:active {
-				transform: scale(0.95);
-				box-shadow: 0 4upx 10upx rgba($glass-primary, 0.4);
+				opacity: 0.7;
 			}
 		}
 	}
 
-	.ad-1 {
-		width: 100%;
-		height: 210upx;
-		padding: $glass-spacing-base 0;
-		margin: $glass-spacing-base $page-row-spacing;
-		@include glass-card;
-		border-radius: $glass-radius-lg;
-		overflow: hidden;
-
-		image {
-			width: 100%;
-			height: 100%;
-			border-radius: $glass-radius-base;
-		}
-	}
-
+	.seckill-section {
 		.floor-list {
 			white-space: nowrap;
 		}
@@ -464,60 +487,52 @@
 		.scoll-wrapper {
 			display: flex;
 			align-items: flex-start;
-			padding: $glass-spacing-xs 0;
+			padding: $spacing-xs 0;
 		}
 
 		.floor-item {
 			width: 300upx;
-			margin-right: $glass-spacing-lg;
-			padding: $glass-spacing-base;
-			@include glass-effect(0.85, 10px);
-			border-radius: $glass-radius-lg;
-			font-size: $glass-font-sm;
+			margin-right: $spacing-lg;
+			padding: $spacing-base;
+			background: $color-bg;
+			border: 1px solid $color-border;
+			border-radius: $radius-lg;
+			font-size: $font-sm;
 			color: $font-color-dark;
 			line-height: 1.8;
-			transition: all $glass-transition-base;
-			font-family: $glass-font-body;
 
 			&:active {
-				transform: translateY(4px);
-				box-shadow: $glass-shadow-sm;
+				opacity: 0.8;
 			}
 
 			image {
 				width: 300upx;
 				height: 300upx;
-				border-radius: $glass-radius-base;
-				margin-bottom: $glass-spacing-base;
-				transition: transform $glass-transition-base;
-			}
-
-			&:active image {
-				transform: scale(1.05);
+				border-radius: $radius-base;
+				margin-bottom: $spacing-base;
 			}
 
 			.price {
-				color: $glass-primary;
+				color: $color-primary;
 				font-weight: 700;
-				font-size: $glass-font-lg;
-				margin-top: $glass-spacing-sm;
+				font-size: $font-lg;
+				margin-top: $spacing-sm;
 			}
 		}
+	}
 
 	.f-header {
 		display: flex;
 		align-items: center;
 		height: 140upx;
 		padding: 6upx 30upx 8upx;
-		@include glass-effect(0.85, 15px);
-		border-radius: $glass-radius-lg;
-		margin: $glass-spacing-base $page-row-spacing;
-		font-family: $glass-font-heading;
-		transition: all $glass-transition-base;
+		background: $color-bg;
+		border: 1px solid $color-border;
+		border-radius: $radius-lg;
+		margin: $spacing-base $page-row-spacing;
 
 		&:active {
-			transform: translateY(2px);
-			box-shadow: $glass-shadow-sm;
+			opacity: 0.7;
 		}
 
 		image {
@@ -525,8 +540,7 @@
 			width: 80upx;
 			height: 80upx;
 			margin-right: 20upx;
-			border-radius: $glass-radius-base;
-			box-shadow: $glass-shadow-sm;
+			border-radius: $radius-base;
 		}
 
 		.tit-box {
@@ -536,204 +550,83 @@
 		}
 
 		.tit {
-			font-size: $glass-font-lg;
+			font-size: $font-lg;
 			color: $font-color-dark;
 			line-height: 1.3;
 			font-weight: 600;
 		}
 
 		.tit2 {
-			font-size: $glass-font-sm;
+			font-size: $font-sm;
 			color: $font-color-light;
-			font-weight: 400;
 		}
 
 		.icon-you {
-			font-size: $glass-font-lg;
-			color: $glass-accent;
+			font-size: $font-lg;
+			color: $color-secondary;
 			font-weight: 600;
 		}
 	}
 
-	/* 分类推荐楼层 */
-	.hot-floor {
-		width: 100%;
-		overflow: hidden;
-		margin-bottom: $glass-spacing-lg;
-
-		.floor-img-box {
-			width: 100%;
-			height: 320upx;
-			position: relative;
-			border-radius: $glass-radius-lg;
-			overflow: hidden;
-			@include glass-effect(0.7, 5px);
-			margin: $glass-spacing-base $page-row-spacing;
-
-			&:after {
-				content: '';
-				position: absolute;
-				left: 0;
-				top: 0;
-				width: 100%;
-				height: 100%;
-				background: linear-gradient(rgba($glass-primary, 0.1) 30%, transparent);
-			}
-		}
-
-		.floor-img {
-			width: 100%;
-			height: 100%;
-		}
-
-		.floor-list {
-			white-space: nowrap;
-			padding: $glass-spacing-base;
-			padding-right: 50upx;
-			border-radius: $glass-radius-lg;
-			margin-top: -140upx;
-			margin-left: $page-row-spacing;
-			@include glass-card;
-			position: relative;
-			z-index: 1;
-		}
-
-		.scoll-wrapper {
-			display: flex;
-			align-items: flex-start;
-		}
-
-		.floor-item {
-			width: 180upx;
-			margin-right: $glass-spacing-lg;
-			padding: $glass-spacing-base;
-			@include glass-effect(0.85, 10px);
-			border-radius: $glass-radius-base;
-			font-size: $glass-font-sm;
-			color: $font-color-dark;
-			line-height: 1.8;
-			transition: all $glass-transition-base;
-			font-family: $glass-font-body;
-
-			&:active {
-				transform: translateY(4px);
-				box-shadow: $glass-shadow-sm;
-			}
-
-			image {
-				width: 180upx;
-				height: 180upx;
-				border-radius: $glass-radius-base;
-				margin-bottom: $glass-spacing-sm;
-				transition: transform $glass-transition-base;
-			}
-
-			&:active image {
-				transform: scale(1.05);
-			}
-
-			.price {
-				color: $glass-primary;
-				font-weight: 700;
-				font-size: $glass-font-base;
-				margin-top: $glass-spacing-xs;
-			}
-		}
-
-		.more {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			flex-direction: column;
-			flex-shrink: 0;
-			width: 180upx;
-			height: 180upx;
-			border-radius: $glass-radius-base;
-			@include glass-effect(0.9, 10px);
-			font-size: $glass-font-base;
-			color: $font-color-light;
-			transition: all $glass-transition-base;
-
-			&:active {
-				transform: scale(0.95);
-			}
-
-			text:first-child {
-				margin-bottom: $glass-spacing-xs;
-			}
-		}
-	}
-
-	/* 猜你喜欢 */
+	/* 猜你喜欢 & 品牌 */
 	.guess-section {
 		display: flex;
 		flex-wrap: wrap;
-		padding: $glass-spacing-base $page-row-spacing;
+		padding: $spacing-base $page-row-spacing;
 
 		.guess-item {
 			display: flex;
 			flex-direction: column;
 			width: 48%;
-			padding: $glass-spacing-lg;
-			margin-bottom: $glass-spacing-lg;
-			@include glass-card;
-			transition: all $glass-transition-base;
-			font-family: $glass-font-body;
+			padding: $spacing-lg;
+			margin-bottom: $spacing-lg;
+			background: $color-bg;
+			border: 1px solid $color-border;
+			border-radius: $radius-lg;
 
 			&:nth-child(2n+1) {
 				margin-right: 4%;
 			}
 
 			&:active {
-				transform: translateY(4px);
-				box-shadow: $glass-shadow-sm;
+				opacity: 0.8;
 			}
 		}
 
 		.image-wrapper {
 			width: 100%;
 			height: 330upx;
-			border-radius: $glass-radius-base;
+			border-radius: $radius-base;
 			overflow: hidden;
-			margin-bottom: $glass-spacing-base;
+			margin-bottom: $spacing-base;
 
 			image {
 				width: 100%;
 				height: 100%;
 				opacity: 1;
-				transition: transform $glass-transition-base;
-			}
-
-			&:active image {
-				transform: scale(1.05);
 			}
 		}
 
 		.image-wrapper-brand {
 			width: 100%;
 			height: 150upx;
-			border-radius: $glass-radius-base;
+			border-radius: $radius-base;
 			overflow: hidden;
-			margin-bottom: $glass-spacing-base;
+			margin-bottom: $spacing-base;
 
 			image {
 				width: 100%;
 				height: 100%;
 				opacity: 1;
-				transition: transform $glass-transition-base;
-			}
-
-			&:active image {
-				transform: scale(1.05);
 			}
 		}
 
 		.title {
-			font-size: $glass-font-base;
+			font-size: $font-base;
 			color: $font-color-dark;
 			line-height: 1.4;
 			font-weight: 600;
-			margin-bottom: $glass-spacing-xs;
+			margin-bottom: $spacing-xs;
 			display: -webkit-box;
 			-webkit-line-clamp: 2;
 			-webkit-box-orient: vertical;
@@ -741,10 +634,10 @@
 		}
 
 		.title2 {
-			font-size: $glass-font-sm;
+			font-size: $font-sm;
 			color: $font-color-light;
 			line-height: 1.4;
-			margin-bottom: $glass-spacing-base;
+			margin-bottom: $spacing-base;
 			display: -webkit-box;
 			-webkit-line-clamp: 2;
 			-webkit-box-orient: vertical;
@@ -752,9 +645,9 @@
 		}
 
 		.price {
-			font-size: $glass-font-lg;
-			color: $glass-primary;
-			line-height: 1;
+			font-size: $font-lg;
+			color: $color-primary;
+			line-height: 1.4;
 			font-weight: 700;
 			margin-top: auto;
 		}
@@ -763,29 +656,27 @@
 	.hot-section {
 		display: flex;
 		flex-wrap: wrap;
-		padding: $glass-spacing-base $page-row-spacing;
+		padding: $spacing-base $page-row-spacing;
 
 		.guess-item {
 			display: flex;
 			flex-direction: row;
 			width: 100%;
-			padding: $glass-spacing-lg;
-			margin-bottom: $glass-spacing-lg;
-			@include glass-card;
-			border-radius: $glass-radius-lg;
-			transition: all $glass-transition-base;
-			font-family: $glass-font-body;
+			padding: $spacing-lg;
+			margin-bottom: $spacing-lg;
+			background: $color-bg;
+			border: 1px solid $color-border;
+			border-radius: $radius-lg;
 
 			&:active {
-				transform: translateY(4px);
-				box-shadow: $glass-shadow-sm;
+				opacity: 0.8;
 			}
 		}
 
 		.image-wrapper {
 			width: 30%;
 			height: 250upx;
-			border-radius: $glass-radius-base;
+			border-radius: $radius-base;
 			overflow: hidden;
 			flex-shrink: 0;
 
@@ -793,20 +684,15 @@
 				width: 100%;
 				height: 100%;
 				opacity: 1;
-				transition: transform $glass-transition-base;
-			}
-
-			&:active image {
-				transform: scale(1.05);
 			}
 		}
 
 		.title {
-			font-size: $glass-font-base;
+			font-size: $font-base;
 			color: $font-color-dark;
 			line-height: 1.4;
 			font-weight: 600;
-			margin-bottom: $glass-spacing-xs;
+			margin-bottom: $spacing-xs;
 			display: -webkit-box;
 			-webkit-line-clamp: 2;
 			-webkit-box-orient: vertical;
@@ -814,10 +700,10 @@
 		}
 
 		.title2 {
-			font-size: $glass-font-sm;
+			font-size: $font-sm;
 			color: $font-color-light;
 			line-height: 1.4;
-			margin-bottom: $glass-spacing-base;
+			margin-bottom: $spacing-base;
 			display: -webkit-box;
 			-webkit-line-clamp: 3;
 			-webkit-box-orient: vertical;
@@ -825,9 +711,9 @@
 		}
 
 		.price {
-			font-size: $glass-font-lg;
-			color: $glass-primary;
-			line-height: 1;
+			font-size: $font-lg;
+			color: $color-primary;
+			line-height: 1.4;
 			font-weight: 700;
 			margin-top: auto;
 		}
@@ -836,8 +722,13 @@
 			width: 70%;
 			display: flex;
 			flex-direction: column;
-			padding-left: $glass-spacing-lg;
+			padding-left: $spacing-lg;
 			justify-content: space-between;
 		}
 	}
 </style>
+
+
+
+
+
