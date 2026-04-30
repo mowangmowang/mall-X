@@ -280,8 +280,12 @@
 </script>
 
 <style lang="scss">
-
-		.mp-search-box {
+	// 移除全局 focus-visible 黑框
+	:focus-visible {
+		outline: none !important;
+	}
+	
+	.mp-search-box {
 			position: fixed;
 			top: 0;
 			left: 0;
@@ -310,6 +314,14 @@
 				background: $color-bg-secondary;
 				outline: none;
 				border: none;
+			}
+			
+			.ser-input:focus,
+			.ser-input:focus-visible {
+				outline: none !important;
+				border: none !important;
+				-webkit-appearance: none;
+				box-shadow: none !important;
 			}
 		}
 

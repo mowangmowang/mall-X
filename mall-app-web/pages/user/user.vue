@@ -1,4 +1,4 @@
-﻿<template>
+<template>
     <view class="container">
 
 		<view class="user-section">
@@ -65,7 +65,7 @@
 					<text class="yticon icon-yishouhuo"></text>
 					<text>待收货</text>
 				</view>
-				<view class="order-item" hover-class="common-hover"  :hover-stay-time="50">
+				<view class="order-item" @click="navTo('/pages/order/order?state=5')" hover-class="common-hover"  :hover-stay-time="50">
 					<text class="yticon icon-shouhoutuikuan"></text>
 					<text>退款/售后</text>
 				</view>
@@ -249,14 +249,14 @@
 	.vip-card-box{
 		display:flex;
 		flex-direction: column;
-		color: $color-primary;
 		height: 240upx;
-		background: $color-bg;
-		border: 1px solid #333;
+		background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+		border: 1px solid #b8860b;
 		border-radius: 16upx 16upx 0 0;
 		overflow: hidden;
 		position: relative;
 		padding: 20upx 24upx;
+		box-shadow: 0 4upx 20upx rgba(184, 134, 11, 0.2);
 		.b-btn{
 			position: absolute;
 			right: 20upx;
@@ -266,23 +266,31 @@
 			text-align: center;
 			line-height: 40upx;
 			font-size: 22upx;
-			color: #fff;
+			color: #1a1a1a;
 			border-radius: 20px;
-			background: $color-primary;
+			background: linear-gradient(135deg, #b8860b 0%, #daa520 100%);
+			font-weight: 600;
 			z-index: 1;
+			box-shadow: 0 2upx 8upx rgba(184, 134, 11, 0.3);
 		}
 		.tit{
 			font-size: $font-base+2upx;
-			color: $color-primary;
+			color: #daa520;
 			margin-bottom: 28upx;
+			font-weight: 600;
 			.yticon{
-				color: $color-primary;
+				color: #daa520;
 				margin-right: 16upx;
 			}
 		}
+		.e-m{
+			font-size: $font-base;
+			color: #cd853f;
+			font-weight: 500;
+		}
 		.e-b{
 			font-size: $font-sm;
-			color: $color-secondary;
+			color: rgba(218, 165, 32, 0.75);
 			margin-top: 10upx;
 		}
 	}
