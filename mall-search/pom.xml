@@ -19,6 +19,11 @@
     </parent>
 
     <dependencies>
+        <!-- 引入 mall-common 模块（通用工具类和配置） -->
+        <dependency>
+            <groupId>com.macro.mall</groupId>
+            <artifactId>mall-common</artifactId>
+        </dependency>
         <!-- 引入 mall-mbg 模块（MyBatis Generator 生成的代码），排除 Redis 依赖避免冲突 -->
         <dependency>
             <groupId>com.macro.mall</groupId>

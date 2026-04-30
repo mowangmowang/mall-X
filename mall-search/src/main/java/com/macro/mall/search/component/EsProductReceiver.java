@@ -7,11 +7,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
  * 商品同步消息接收器 (Message Receiver)
  * 监听 RabbitMQ 队列，接收商品变更消息并同步到 Elasticsearch
+ * 同时提供定期全量校对任务，确保数据一致性
  */
 @Component
 @RabbitListener(queues = "mall.product.update")  // 监听商品更新队列
@@ -38,6 +40,21 @@ public class EsProductReceiver {
             // 删除：移除 ES 索引
             esProductService.delete(message.getProductId());
             LOGGER.info("商品索引删除成功：productId={}", message.getProductId());
+        }
+    }
+
+    /**
+     * 定期全量校对任务：每天凌晨 3:00 执行
+     * 从 MySQL 导入所有商品到 Elasticsearch，确保数据最终一致性
+     */
+    @Scheduled(cron = "0 0 3 * * ?")
+    public void syncAllProducts() {
+        LOGGER.info("开始执行 Elasticsearch 全量校对任务...");
+        try {
+            int count = esProductService.importAll();
+            LOGGER.info("Elasticsearch 全量校对任务完成，共同步 {} 个商品", count);
+        } catch (Exception e) {
+            LOGGER.error("Elasticsearch 全量校对任务执行失败: {}", e.getMessage(), e);
         }
     }
 }

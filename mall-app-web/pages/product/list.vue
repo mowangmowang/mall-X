@@ -24,6 +24,19 @@
 				<text class="price-btn" @click="onPriceRangeChange">确定</text>
 			</view>
 			<view class="goods-list">
+				<!-- 骨架屏 -->
+				<block v-if="isLoading && productList.length === 0">
+					<view v-for="index in 6" :key="index" class="goods-item skeleton-item">
+						<view class="image-wrapper skeleton-img"></view>
+						<view class="title skeleton-text"></view>
+						<view class="title2 skeleton-text short"></view>
+						<view class="price-box">
+							<view class="price skeleton-text price-skeleton"></view>
+							<view class="skeleton-text sale-skeleton"></view>
+						</view>
+					</view>
+				</block>
+				<!-- 商品列表 -->
 				<view v-for="(item, index) in productList" :key="index" class="goods-item" @click="navToDetailPage(item)">
 					<view class="image-wrapper">
 						<image :src="item.pic" mode="aspectFill"></image>
@@ -75,6 +88,7 @@
 					priceOrder: 0, //1 价格从低到高 2价格从高到低
 					cateList: [],
 					productList: [],
+					isLoading: false, // 是否正在加载数据
 					searchParam: {
 						productCategoryId: null,
 						keyword: null,
@@ -147,9 +161,11 @@
 				},
 				//加载商品 ，带下拉刷新和上滑加载
 				async loadData(type = 'add', loading) {
+					this.isLoading = true;
 					//没有更多直接返回
 					if (type === 'add') {
 						if (this.loadingType === 'nomore') {
+							this.isLoading = false;
 							return;
 						}
 						this.loadingType = 'loading';
@@ -189,12 +205,19 @@
 						}
 							this.productList = this.productList.concat(productList);
 						}
+						this.isLoading = false;
 						if (type === 'refresh') {
 							if (loading == 1) {
 								uni.hideLoading()
 						} else {
 								uni.stopPullDownRefresh();
 						}
+						}
+					}).catch(() => {
+						this.isLoading = false;
+						if (type === 'refresh') {
+							uni.stopPullDownRefresh();
+							uni.hideLoading();
 						}
 					});
 				},
@@ -387,6 +410,39 @@
 				background: $base-color;
 				border-radius: 6upx;
 				line-height: 1.5;
+			}
+		}
+		
+		/* 骨架屏样式 */
+		.skeleton-item {
+			.skeleton-img {
+				background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 37%, #f0f0f0 63%);
+				animation: skeleton-loading 1.4s ease infinite;
+			}
+			.skeleton-text {
+				background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 37%, #f0f0f0 63%);
+				animation: skeleton-loading 1.4s ease infinite;
+				border-radius: 4upx;
+			}
+			.short {
+				width: 60%;
+			}
+			.price-skeleton {
+				width: 30%;
+				height: 30upx;
+			}
+			.sale-skeleton {
+				width: 40%;
+				height: 24upx;
+			}
+		}
+		
+		@keyframes skeleton-loading {
+			0% {
+				background-position: -468px 0
+			}
+			100% {
+				background-position: 468px 0
 			}
 		}
 
