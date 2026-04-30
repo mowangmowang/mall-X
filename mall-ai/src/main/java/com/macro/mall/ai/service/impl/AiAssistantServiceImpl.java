@@ -5,6 +5,7 @@ import cn.hutool.json.JSONUtil;
 import com.macro.mall.ai.client.AiClient;
 import com.macro.mall.ai.domain.*;
 import com.macro.mall.ai.service.AiAssistantService;
+import com.macro.mall.ai.util.InputSanitizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +31,14 @@ public class AiAssistantServiceImpl implements AiAssistantService {
 
     @Override
     public AiResponse chatAboutProduct(ProductQaRequest request) {
+        // 对用户问题进行安全清理，防止 Prompt Injection 攻击
+        String sanitizedQuestion = InputSanitizer.sanitize(request.getQuestion());
+        
+        // 对商品信息进行基本清理
         String context = buildProductContext(request);
-        String content = context + "\n\n【顾客问题】" + request.getQuestion();
+        String content = context + "\n\n【顾客问题】" + sanitizedQuestion;
 
-        log.info("AI product Q&A - productId={}, question={}", request.getProductId(), request.getQuestion());
+        log.info("AI product Q&A - productId={}, question={}", request.getProductId(), sanitizedQuestion);
         String reply = aiClient.chat(QA_SYSTEM_PROMPT, content);
 
         return new AiResponse(reply);
@@ -41,27 +46,30 @@ public class AiAssistantServiceImpl implements AiAssistantService {
 
     @Override
     public ReturnSuggestionResult suggestReturn(ReturnSuggestionRequest request) {
+        // 对用户问题描述进行安全清理
+        String sanitizedIssue = InputSanitizer.sanitize(request.getIssue());
+        
         String content = String.format(
                 "用户描述的问题：%s\n商品名称：%s\n商品属性：%s\n订单编号：%s",
-                request.getIssue(),
-                nullToEmpty(request.getProductName()),
-                nullToEmpty(request.getProductAttr()),
+                sanitizedIssue,
+                InputSanitizer.sanitizeProductInfo(nullToEmpty(request.getProductName())),
+                InputSanitizer.sanitizeProductInfo(nullToEmpty(request.getProductAttr())),
                 nullToEmpty(request.getOrderSn())
         );
 
-        log.info("AI return suggest - issue={}", request.getIssue());
+        log.info("AI return suggest - issue={}", sanitizedIssue);
         String jsonResponse = aiClient.chat(RETURN_SYSTEM_PROMPT, content);
 
-        return parseReturnSuggestion(jsonResponse, request.getIssue());
+        return parseReturnSuggestion(jsonResponse, sanitizedIssue);
     }
 
     private String buildProductContext(ProductQaRequest request) {
         StringBuilder sb = new StringBuilder();
         sb.append("【商品信息】\n");
-        sb.append("名称：").append(nullToEmpty(request.getProductName())).append("\n");
-        sb.append("品牌：").append(nullToEmpty(request.getProductBrand())).append("\n");
-        sb.append("价格：").append(nullToEmpty(request.getProductPrice())).append("元\n");
-        sb.append("描述：").append(nullToEmpty(request.getProductSubTitle()));
+        sb.append("名称：").append(InputSanitizer.sanitizeProductInfo(nullToEmpty(request.getProductName()))).append("\n");
+        sb.append("品牌：").append(InputSanitizer.sanitizeProductInfo(nullToEmpty(request.getProductBrand()))).append("\n");
+        sb.append("价格：").append(InputSanitizer.sanitizeProductInfo(nullToEmpty(request.getProductPrice()))).append("元\n");
+        sb.append("描述：").append(InputSanitizer.sanitizeProductInfo(nullToEmpty(request.getProductSubTitle())));
         return sb.toString();
     }
 
