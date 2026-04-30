@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- MyBatis Mapper 映射文件：定义商品数据查询 SQL，用于导入 Elasticsearch -->
 <mapper namespace="com.macro.mall.search.dao.EsProductDao">
+    <!-- 结果集映射：将 MySQL 查询结果映射为 EsProduct 对象（包含嵌套属性列表） -->
     <resultMap id="esProductListMap" type="com.macro.mall.search.domain.EsProduct" autoMapping="true">
         <id column="id" jdbcType="BIGINT" property="id" />
+        <!-- 集合映射：一对多关系，一个商品对应多个属性值 -->
         <collection property="attrValueList" columnPrefix="attr_" ofType="com.macro.mall.search.domain.EsProductAttributeValue">
             <id column="id" property="id" jdbcType="BIGINT"/>
             <result column="product_attribute_id" property="productAttributeId" jdbcType="BIGINT"/>
@@ -11,6 +14,7 @@
             <result column="name" property="name"/>
         </collection>
     </resultMap>
+    <!-- 查询商品列表（用于导入 Elasticsearch） -->
     <select id="getAllEsProductList" resultMap="esProductListMap">
         select
             p.id id,
@@ -36,11 +40,11 @@
             pa.type attr_type,
             pa.name attr_name
         from pms_product p
-        left join pms_product_attribute_value pav on p.id = pav.product_id
-        left join pms_product_attribute pa on pav.product_attribute_id= pa.id
-        where delete_status = 0 and publish_status = 1
+        left join pms_product_attribute_value pav on p.id = pav.product_id  -- 关联属性值表
+        left join pms_product_attribute pa on pav.product_attribute_id= pa.id  -- 关联属性定义表
+        where delete_status = 0 and publish_status = 1  -- 仅查询未删除且已上架的商品
         <if test="id!=null">
-            and p.id=#{id}
+            and p.id=#{id}  -- 若指定 ID，则只查询单个商品
         </if>
     </select>
 </mapper>

@@ -33,7 +33,9 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * 会员管理Service实现类 */
+ * 会员管理 Service 实现类
+ * 实现会员注册、登录、认证、密码修改等核心业务逻辑
+ */
 @Service
 public class UmsMemberServiceImpl implements UmsMemberService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UmsMemberServiceImpl.class);
@@ -52,6 +54,10 @@ public class UmsMemberServiceImpl implements UmsMemberService {
     @Value("${redis.expire.authCode}")
     private Long AUTH_CODE_EXPIRE_SECONDS;
 
+    /**
+     * 根据用户名查询会员信息
+     * 优先从 Redis 缓存中获取，缓存未命中时查询数据库并写入缓存
+     */
     @Override
     public UmsMember getByUsername(String username) {
         UmsMember member = memberCacheService.getMember(username);
@@ -61,7 +67,7 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         List<UmsMember> memberList = memberMapper.selectByExample(example);
         if (!CollectionUtils.isEmpty(memberList)) {
             member = memberList.get(0);
-            memberCacheService.setMember(member);
+            memberCacheService.setMember(member); // 写入缓存
             return member;
         }
         return null;
@@ -72,6 +78,10 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         return memberMapper.selectByPrimaryKey(id);
     }
 
+    /**
+     * 会员注册
+     * 校验验证码、检查用户是否已存在，创建新会员并分配默认等级
+     */
     @Override
     public void register(String username, String password, String telephone, String authCode) {
         //验证验证码
@@ -90,9 +100,9 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         UmsMember umsMember = new UmsMember();
         umsMember.setUsername(username);
         umsMember.setPhone(telephone);
-        umsMember.setPassword(passwordEncoder.encode(password));
+        umsMember.setPassword(passwordEncoder.encode(password)); // 密码加密存储
         umsMember.setCreateTime(new Date());
-        umsMember.setStatus(1);
+        umsMember.setStatus(1); // 设置状态为启用
         //获取默认会员等级并设置
         UmsMemberLevelExample levelExample = new UmsMemberLevelExample();
         levelExample.createCriteria().andDefaultStatusEqualTo(1);
@@ -101,9 +111,13 @@ public class UmsMemberServiceImpl implements UmsMemberService {
             umsMember.setMemberLevelId(memberLevelList.get(0).getId());
         }
         memberMapper.insert(umsMember);
-        umsMember.setPassword(null);
+        umsMember.setPassword(null); // 返回时隐藏密码字段
     }
 
+    /**
+     * 生成6位数字验证码
+     * 将验证码存储到 Redis 中，设置过期时间用于后续校验
+     */
     @Override
     public String generateAuthCode(String telephone) {
         StringBuilder sb = new StringBuilder();
@@ -115,6 +129,10 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         return sb.toString();
     }
 
+    /**
+     * 修改会员密码
+     * 校验手机号和验证码，更新密码并清除缓存
+     */
     @Override
     public void updatePassword(String telephone, String password, String authCode) {
         UmsMemberExample example = new UmsMemberExample();
@@ -130,9 +148,13 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         UmsMember umsMember = memberList.get(0);
         umsMember.setPassword(passwordEncoder.encode(password));
         memberMapper.updateByPrimaryKeySelective(umsMember);
-        memberCacheService.delMember(umsMember.getId());
+        memberCacheService.delMember(umsMember.getId()); // 清除缓存，确保下次登录使用新密码
     }
 
+    /**
+     * 获取当前登录会员信息
+     * 从 Spring Security 上下文 (SecurityContext) 中提取认证信息
+     */
     @Override
     public UmsMember getCurrentMember() {
         SecurityContext ctx = SecurityContextHolder.getContext();
@@ -141,15 +163,23 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         return memberDetails.getUmsMember();
     }
 
+    /**
+     * 更新会员积分
+     * 用于订单完成后增加积分或退款时扣减积分
+     */
     @Override
     public void updateIntegration(Long id, Integer integration) {
         UmsMember record=new UmsMember();
         record.setId(id);
         record.setIntegration(integration);
         memberMapper.updateByPrimaryKeySelective(record);
-        memberCacheService.delMember(id);
+        memberCacheService.delMember(id); // 清除缓存，保证数据一致性
     }
 
+    /**
+     * Spring Security 用户加载方法
+     * 根据用户名加载用户详情，用于身份验证
+     */
     @Override
     public UserDetails loadUserByUsername(String username) {
         UmsMember member = getByUsername(username);
@@ -159,6 +189,10 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         throw new UsernameNotFoundException("用户名或密码错误");
     }
 
+    /**
+     * 会员登录
+     * 验证用户名和密码，生成 JWT Token 并设置到安全上下文
+     */
     @Override
     public String login(String username, String password) {
         String token = null;
@@ -170,19 +204,26 @@ public class UmsMemberServiceImpl implements UmsMemberService {
             }
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            token = jwtTokenUtil.generateToken(userDetails);
+            token = jwtTokenUtil.generateToken(userDetails); // 生成 JWT Token
         } catch (AuthenticationException e) {
             LOGGER.warn("登录异常:{}", e.getMessage());
         }
         return token;
     }
 
+    /**
+     * 刷新 Token
+     * 验证旧 Token 有效性，生成新的 Token 延长会话时间
+     */
     @Override
     public String refreshToken(String token) {
         return jwtTokenUtil.refreshHeadToken(token);
     }
 
-    //对输入的验证码进行校验
+    /**
+     * 校验验证码
+     * 从 Redis 中获取真实验证码并与输入比对
+     */
     private boolean verifyAuthCode(String authCode, String telephone){
         if(StrUtil.isEmpty(authCode)){
             return false;

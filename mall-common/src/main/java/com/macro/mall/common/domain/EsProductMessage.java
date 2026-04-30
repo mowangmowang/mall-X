@@ -7,14 +7,16 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * 商品同步消息 */
+ * 商品同步消息 (Elasticsearch Product Message)
+ * 用于在 RabbitMQ 中传递商品索引的增删改操作指令
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class EsProductMessage implements Serializable {
     private static final long serialVersionUID = 1L;
     /**
-     * 商品ID
+     * 商品 ID
      */
     private Long productId;
     
@@ -24,7 +26,7 @@ public class EsProductMessage implements Serializable {
     private String actionType;
     
     /**
-     * 时间戳
+     * 时间戳（用于消息顺序控制）
      */
     private Long timestamp;
 }

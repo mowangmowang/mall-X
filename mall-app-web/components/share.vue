@@ -2,11 +2,11 @@
 	<view v-if="show" class="mask" @click="toggleMask" @touchmove.stop.prevent="stopPrevent"
 		:style="{backgroundColor: backgroundColor}"
 	>
-		<view 
+		<view
 			class="mask-content"
 			@click.stop.prevent="stopPrevent"
 			:style="[{
-				height: config.height, 
+				height: config.height,
 				transform: transform
 			}]"
 		>
@@ -15,9 +15,9 @@
 					分享到
 				</view>
 				<view class="share-list">
-					<view 
+					<view
 						v-for="(item, index) in shareList" :key="index"
-						class="share-item" 
+						class="share-item"
 						@click="shareToFriend(item.text)"
 					>
 						<image :src="item.icon" mode=""></image>
@@ -77,7 +77,7 @@
 				setTimeout(()=>{
 					this.timer = 0;
 				}, 500)
-				
+
 				if(this.show){
 					this.transform = this.config.transform;
 					this.backgroundColor = 'rgba(0,0,0,0)';
@@ -87,7 +87,7 @@
 					}, 200)
 					return;
 				}
-				
+
 				this.show = true;
 				//等待mask重绘完成执行
 				if(this.hasTabbar){
@@ -127,7 +127,7 @@
 		display:flex;
 		justify-content: center;
 		align-items: flex-end;
-		z-index: 998;
+		z-index: $z-overlay;
 		transition: .3s;
 		.bottom{
 			position:absolute;
@@ -144,7 +144,7 @@
 			color: $font-color-dark;
 		}
 	}
-	
+
 	.mask-content{
 		width: 100%;
 		height: 580upx;
@@ -160,7 +160,7 @@
 	.share-header{
 		height: 110upx;
 		font-size: $font-base+2upx;
-		color: font-color-dark;
+		color: $font-color-dark;
 		display:flex;
 		align-items:center;
 		justify-content: center;
@@ -197,6 +197,13 @@
 		text{
 			font-size: $font-base;
 			color: $font-color-base;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.mask,
+		.mask-content {
+			transition: none;
 		}
 	}
 </style>

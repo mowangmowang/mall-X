@@ -219,7 +219,7 @@
 
 <style lang="scss">
 	page {
-		background: $page-color-base;
+		background: $color-bg-secondary;
 	}
 
 	.top-image {
@@ -382,7 +382,7 @@
 		.price {
 			font-size: $font-lg;
 			color: $uni-color-primary;
-			line-height: 1;
+			line-height: 1.4;
 	
 			&:before {
 				content: '￥';

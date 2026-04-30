@@ -54,7 +54,7 @@
 	}
 	.success-icon{
 		font-size: 160upx;
-		color: #fa436a;
+		color: $color-primary;
 		margin-top: 100upx;
 	}
 	.tit{

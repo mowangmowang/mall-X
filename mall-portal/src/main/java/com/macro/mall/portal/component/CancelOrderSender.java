@@ -11,13 +11,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * 取消订单消息的发送者 */
+ * 取消订单消息发送者
+ * 负责向 RabbitMQ 延迟队列发送订单取消消息，实现订单超时自动取消功能
+ */
 @Component
 public class CancelOrderSender {
     private static final Logger LOGGER = LoggerFactory.getLogger(CancelOrderSender.class);
     @Autowired
     private AmqpTemplate amqpTemplate;
 
+    /**
+     * 发送订单取消延迟消息
+     * @param orderId 订单ID
+     * @param delayTimes 延迟时间（毫秒），超过此时间后消息将被转发到实际消费队列
+     */
     public void sendMessage(Long orderId,final long delayTimes){
         //给延迟队列发送消息
         amqpTemplate.convertAndSend(QueueEnum.QUEUE_TTL_ORDER_CANCEL.getExchange(), QueueEnum.QUEUE_TTL_ORDER_CANCEL.getRouteKey(), orderId, new MessagePostProcessor() {

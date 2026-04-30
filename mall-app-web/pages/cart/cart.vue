@@ -146,34 +146,49 @@
 			},
 			//数量
 			numberChange(data) {
+				uni.showLoading({ title: '更新中...', mask: true });
 				let cartItem = this.cartList[data.index];
 				updateQuantity({id:cartItem.id,quantity:data.number}).then(response=>{
 					cartItem.quantity = data.number;
 					this.calcTotal();
+					uni.hideLoading();
+				}).catch(() => {
+					uni.hideLoading();
+					uni.showToast({ title: '更新失败', icon: 'none' });
 				});
 			},
 			//删除
 			handleDeleteCartItem(index) {
+				uni.showLoading({ title: '删除中...', mask: true });
 				let list = this.cartList;
 				let row = list[index];
 				let id = row.id;
+				let that = this;
 				deletCartItem({ids:id}).then(response=>{
-					this.cartList.splice(index, 1);
-					this.calcTotal();
+					that.cartList.splice(index, 1);
+					that.calcTotal();
 					uni.hideLoading();
+				}).catch(() => {
+					uni.hideLoading();
+					uni.showToast({ title: '删除失败', icon: 'none' });
 				});
 			},
 			//清空
 			clearCart() {
-				clearCartList().then(response=>{
-					uni.showModal({
-						content: '清空购物车？',
-						success: (e) => {
-							if (e.confirm) {
+				uni.showModal({
+					content: '清空购物车？',
+					success: (e) => {
+						if (e.confirm) {
+							uni.showLoading({ title: '清空中...', mask: true });
+							clearCartList().then(response=>{
 								this.cartList = [];
-							}
+								uni.hideLoading();
+							}).catch(() => {
+								uni.hideLoading();
+								uni.showToast({ title: '清空失败', icon: 'none' });
+							});
 						}
-					})
+					}
 				});
 			},
 			//计算总价
@@ -220,8 +235,6 @@
 </script>
 
 <style lang='scss'>
-	@import '../../uni.scss';
-
 	.container {
 		padding-bottom: 134upx;
 
@@ -237,33 +250,30 @@
 			justify-content: center;
 			flex-direction: column;
 			align-items: center;
-			background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+			background: $color-bg;
 
 			image {
 				width: 240upx;
 				height: 160upx;
-				margin-bottom: $glass-spacing-lg;
-				border-radius: $glass-radius-base;
-				box-shadow: $glass-shadow-md;
+				margin-bottom: $spacing-lg;
 			}
 
 			.empty-tips {
 				display: flex;
-				font-size: $glass-font-base;
+				font-size: $font-base;
 				color: $font-color-light;
-				font-family: $glass-font-body;
-				padding: $glass-spacing-base;
-				@include glass-effect(0.85, 15px);
-				border-radius: $glass-radius-lg;
+				padding: $spacing-base;
+				background: $color-bg;
+				border: 1px solid $color-border;
+				border-radius: $radius-lg;
 
 				.navigator {
-					color: $glass-primary;
-					margin-left: $glass-spacing-base;
+					color: $color-primary;
+					margin-left: $spacing-base;
 					font-weight: 600;
-					transition: color $glass-transition-base;
 
 					&:active {
-						color: $glass-primary-dark;
+						opacity: 0.7;
 					}
 				}
 			}
@@ -274,16 +284,14 @@
 	.cart-item {
 		display: flex;
 		position: relative;
-		padding: $glass-spacing-lg $page-row-spacing;
-		margin: $glass-spacing-base $page-row-spacing;
-		@include glass-card;
-		border-radius: $glass-radius-lg;
-		transition: all $glass-transition-base;
-		font-family: $glass-font-body;
+		padding: $spacing-lg $page-row-spacing;
+		margin: $spacing-base $page-row-spacing;
+		background: $color-bg;
+		border: 1px solid $color-border;
+		border-radius: $radius-lg;
 
 		&:active {
-			transform: translateY(4px);
-			box-shadow: $glass-shadow-sm;
+			opacity: 0.9;
 		}
 
 		.image-wrapper {
@@ -293,13 +301,7 @@
 			position: relative;
 
 			image {
-				border-radius: $glass-radius-base;
-				box-shadow: $glass-shadow-sm;
-				transition: transform $glass-transition-base;
-			}
-
-			&:active image {
-				transform: scale(1.05);
+				border-radius: $radius-base;
 			}
 		}
 
@@ -309,17 +311,14 @@
 			top: -16upx;
 			z-index: 8;
 			font-size: 44upx;
-			line-height: 1;
+			line-height: 1.4;
 			padding: 4upx;
 			color: $font-color-light;
-			background: rgba(255, 255, 255, 0.9);
-			border-radius: $glass-radius-full;
-			box-shadow: $glass-shadow-sm;
-			transition: all $glass-transition-base;
+			background: $color-bg;
+			border-radius: $radius-full;
 
 			&.checked {
-				color: $glass-primary;
-				box-shadow: 0 0 15upx rgba($glass-primary, 0.5);
+				color: $color-primary;
 			}
 		}
 
@@ -329,11 +328,11 @@
 			flex: 1;
 			overflow: hidden;
 			position: relative;
-			padding-left: $glass-spacing-lg;
+			padding-left: $spacing-lg;
 
 			.title,
 			.price {
-				font-size: $glass-font-base;
+				font-size: $font-base;
 				color: $font-color-dark;
 				height: 40upx;
 				line-height: 40upx;
@@ -341,11 +340,11 @@
 			}
 
 			.attr {
-				font-size: $glass-font-sm;
+				font-size: $font-sm;
 				color: $font-color-light;
 				height: 50upx;
 				line-height: 50upx;
-				margin: $glass-spacing-xs 0;
+				margin: $spacing-xs 0;
 				display: -webkit-box;
 				-webkit-line-clamp: 2;
 				-webkit-box-orient: vertical;
@@ -355,9 +354,9 @@
 			.price {
 				height: 50upx;
 				line-height: 50upx;
-				color: $glass-primary;
+				color: $color-primary;
 				font-weight: 700;
-				font-size: $glass-font-lg;
+				font-size: $font-lg;
 				margin-top: auto;
 			}
 		}
@@ -367,11 +366,9 @@
 			font-size: 34upx;
 			height: 50upx;
 			color: $font-color-light;
-			transition: all $glass-transition-base;
 
 			&:active {
-				color: $glass-error;
-				transform: scale(1.2);
+				color: $color-danger;
 			}
 		}
 	}
@@ -384,14 +381,15 @@
 		position: fixed;
 		left: 30upx;
 		bottom: 30upx;
-		z-index: 95;
+		z-index: $z-sticky;
 		display: flex;
 		align-items: center;
 		width: 690upx;
 		height: 100upx;
 		padding: 0 30upx;
-		@include glass-effect(0.9, 20px);
-		border-radius: $glass-radius-lg;
+		background: $color-bg;
+		border: 1px solid $color-border;
+		border-radius: $radius-lg;
 
 		.checkbox {
 			height: 52upx;
@@ -416,7 +414,7 @@
 			padding-left: 38upx;
 			font-size: $font-base;
 			color: #fff;
-			background: $font-color-disabled;
+			background: $color-disabled;
 			border-radius: 0 50px 50px 0;
 			opacity: 0;
 			transition: .2s;
@@ -455,16 +453,13 @@
 			border-radius: 100px;
 			height: 76upx;
 			line-height: 76upx;
-			font-size: $glass-font-base;
-			background: $glass-primary;
-			box-shadow: $glass-shadow-md;
-			transition: all $glass-transition-base;
+			font-size: $font-base;
+			background: $color-primary;
+			color: #fff;
 			font-weight: 600;
 
 			&:active {
-				background: $glass-primary-dark;
-				transform: translateY(2px);
-				box-shadow: $glass-shadow-sm;
+				opacity: 0.8;
 			}
 		}
 	}
@@ -472,6 +467,6 @@
 	/* 复选框选中状态 */
 	.action-section .checkbox.checked,
 	.cart-item .checkbox.checked {
-		color: $glass-primary;
+		color: $color-primary;
 	}
 </style>

@@ -1,17 +1,19 @@
+# Spring Boot 应用配置
 spring:
   application:
-    name: mall-search
+    name: mall-search  # 应用名称
   profiles:
-    active: dev #默认为开发环境
+    active: dev # 默认激活开发环境配置
   mvc:
     pathmatch:
-      matching-strategy: ant_path_matcher
+      matching-strategy: ant_path_matcher  # 使用 Ant 路径匹配策略（兼容 Swagger）
+  # RabbitMQ 消息队列配置
   rabbitmq:
-    host: localhost
-    port: 5672
-    virtual-host: /mall
-    username: mall
-    password: mall
+    host: localhost  # RabbitMQ 服务器地址
+    port: 5672  # AMQP 协议端口
+    virtual-host: /mall  # 虚拟主机
+    username: mall  # 用户名
+    password: mall  # 密码
     listener:
       simple:
         retry:
@@ -22,13 +24,15 @@ spring:
           max-interval: 10000ms # 最大重试间隔 10秒
         default-requeue-rejected: false  # 重试失败后不重新入队，进入死信队列
 
+# 服务器配置
 server:
-  port: 8081
+  port: 8081  # 搜索服务端口
 
+# MyBatis 配置
 mybatis:
   mapper-locations:
-    - classpath:dao/*.xml
-    - classpath*:com/**/mapper/*.xml
+    - classpath:dao/*.xml  # Mapper XML 文件路径
+    - classpath*:com/**/mapper/*.xml  # 通用 Mapper 路径
 
 
 

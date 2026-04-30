@@ -199,9 +199,9 @@ export default {
 		float:left;
 		width: 150upx;
 		height: 150upx;
-		z-index: 99;
+		z-index: $z-overlay;
 		border-radius:8upx;
-		background:#f9f9f9;
+		background: $color-bg-secondary;
 		&:before,
 		&:after {
 			content: " ";
@@ -212,14 +212,14 @@ export default {
 			transform: translate(-50%, -50%);
 			width: 4upx;
 			height: 60upx;
-			background-color: #d6d6d6;
+			background-color: $color-disabled;
 		}
 		&:after {
 			width: 60upx;
 			height: 4upx;
 		}
 		&:active {
-			background-color: #f7f7f7;
+			background-color: $color-bg-secondary;
 		}
 	}
 

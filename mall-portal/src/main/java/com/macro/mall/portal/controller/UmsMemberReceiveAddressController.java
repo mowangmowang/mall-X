@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 会员收货地址管理Controller */
+ * 会员收货地址管理控制器
+ * 提供收货地址的增删改查功能，用于订单确认时选择收货地址
+ */
 @RestController
 @Api(tags = "UmsMemberReceiveAddressController")
 @Tag(name = "UmsMemberReceiveAddressController", description = "会员收货地址管理")
@@ -24,6 +26,7 @@ public class UmsMemberReceiveAddressController {
     @ApiOperation("添加收货地址")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public CommonResult add(@RequestBody UmsMemberReceiveAddress address) {
+        // 新增收货地址，自动关联当前登录用户
         int count = memberReceiveAddressService.add(address);
         if (count > 0) {
             return CommonResult.success(count);
@@ -34,6 +37,7 @@ public class UmsMemberReceiveAddressController {
     @ApiOperation("删除收货地址")
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
     public CommonResult delete(@PathVariable Long id) {
+        // 根据ID删除收货地址
         int count = memberReceiveAddressService.delete(id);
         if (count > 0) {
             return CommonResult.success(count);
@@ -44,6 +48,7 @@ public class UmsMemberReceiveAddressController {
     @ApiOperation("修改收货地址")
     @RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
     public CommonResult update(@PathVariable Long id, @RequestBody UmsMemberReceiveAddress address) {
+        // 更新指定收货地址的信息
         int count = memberReceiveAddressService.update(id, address);
         if (count > 0) {
             return CommonResult.success(count);
@@ -54,6 +59,7 @@ public class UmsMemberReceiveAddressController {
     @ApiOperation("获取所有收货地址")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public CommonResult<List<UmsMemberReceiveAddress>> list() {
+        // 查询当前用户的所有收货地址列表
         List<UmsMemberReceiveAddress> addressList = memberReceiveAddressService.list();
         return CommonResult.success(addressList);
     }
@@ -61,6 +67,7 @@ public class UmsMemberReceiveAddressController {
     @ApiOperation("获取收货地址详情")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public CommonResult<UmsMemberReceiveAddress> getItem(@PathVariable Long id) {
+        // 查询指定ID的收货地址详细信息
         UmsMemberReceiveAddress address = memberReceiveAddressService.getItem(id);
         return CommonResult.success(address);
     }

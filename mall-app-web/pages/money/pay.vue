@@ -13,7 +13,7 @@
 					<text>推荐使用支付宝支付</text>
 				</view>
 				<label class="radio">
-					<radio value="" color="#fa436a" :checked='payType == 1' />
+					<radio value="" color="#171717" :checked='payType == 1' />
 					</radio>
 				</label>
 			</view>
@@ -23,7 +23,7 @@
 					<text class="tit">微信支付</text>
 				</view>
 				<label class="radio">
-					<radio value="" color="#fa436a" :checked='payType == 2' />
+					<radio value="" color="#171717" :checked='payType == 2' />
 					</radio>
 				</label>
 			</view>
@@ -91,18 +91,18 @@
 	}
 
 	.price-box {
-		background-color: #fff;
+		background-color: $color-bg;
 		height: 265upx;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 		font-size: 28upx;
-		color: #909399;
+		color: $font-color-light;
 
 		.price {
 			font-size: 50upx;
-			color: #303133;
+			color: $font-color-dark;
 			margin-top: 12upx;
 
 			&:before {
@@ -114,7 +114,7 @@
 
 	.pay-type-list {
 		margin-top: 20upx;
-		background-color: #fff;
+		background-color: $color-bg;
 		padding-left: 60upx;
 
 		.type-item {
@@ -134,15 +134,15 @@
 		}
 
 		.icon-erjiye-yucunkuan {
-			color: #fe8e2e;
+			color: $color-secondary;
 		}
 
 		.icon-weixinzhifu {
-			color: #36cb59;
+			color: $color-secondary;
 		}
 
 		.icon-alipay {
-			color: #01aaef;
+			color: $color-secondary;
 		}
 
 		.tit {
@@ -169,8 +169,7 @@
 		margin: 80upx auto 30upx;
 		font-size: $font-lg;
 		color: #fff;
-		background-color: $base-color;
+		background-color: $color-primary;
 		border-radius: 10upx;
-		box-shadow: 1px 2px 5px rgba(219, 63, 96, 0.4);
 	}
 </style>

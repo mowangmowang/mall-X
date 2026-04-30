@@ -71,7 +71,7 @@
 
 	.uni-load-more__text {
 		font-size: 28upx;
-		color: #999
+		color: $color-secondary
 	}
 
 	.uni-load-more__img {
@@ -89,7 +89,7 @@
 		height: 2px;
 		border-top-left-radius: 1px;
 		border-bottom-left-radius: 1px;
-		background: #999;
+		background: $color-secondary;
 		position: absolute;
 		opacity: .2;
 		transform-origin: 50%;

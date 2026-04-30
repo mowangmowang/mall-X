@@ -60,12 +60,10 @@
 </script>
 
 <style lang='scss'>
-	@import '../../uni.scss';
-
 	page,
 	.content {
 		height: 100%;
-		background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+		background: $color-bg;
 	}
 
 	.content {
@@ -76,10 +74,8 @@
 		flex-shrink: 0;
 		width: 200upx;
 		height: 100%;
-		@include glass-effect(0.85, 15px);
-		border-radius: 0 $glass-radius-lg $glass-radius-lg 0;
-		margin: $glass-spacing-base;
-		box-shadow: $glass-shadow-md;
+		background: $color-bg;
+		border-right: 1px solid $color-border;
 	}
 
 	.f-item {
@@ -88,25 +84,19 @@
 		justify-content: center;
 		width: 100%;
 		height: 100upx;
-		font-size: $glass-font-base;
-		font-family: $glass-font-body;
+		font-size: $font-base;
 		font-weight: 500;
 		color: $font-color-base;
 		position: relative;
-		transition: all $glass-transition-base;
 		cursor: pointer;
 
 		&:hover {
-			background: rgba($glass-primary, 0.08);
-		}
-
-		&:active {
-			transform: translateX(2px);
+			background: $color-bg-secondary;
 		}
 
 		&.active {
-			color: $glass-primary;
-			background: rgba($glass-primary, 0.12);
+			color: $color-primary;
+			background: $color-bg-secondary;
 			font-weight: 600;
 
 			&:before {
@@ -117,10 +107,8 @@
 				transform: translateY(-50%);
 				height: 48upx;
 				width: 6upx;
-				background-color: $glass-primary;
-				border-radius: 0 $glass-radius-sm $glass-radius-sm 0;
-				box-shadow: 0 0 10upx rgba($glass-primary, 0.5);
-				opacity: 1;
+				background-color: $color-primary;
+				border-radius: 0 $radius-sm $radius-sm 0;
 			}
 		}
 	}
@@ -128,8 +116,8 @@
 	.right-aside {
 		flex: 1;
 		overflow: hidden;
-		padding: $glass-spacing-base;
-		margin: $glass-spacing-base $glass-spacing-base $glass-spacing-base 0;
+		padding: $spacing-base;
+		margin: $spacing-base $spacing-base $spacing-base 0;
 	}
 
 	.s-list {
@@ -137,10 +125,10 @@
 		display: flex;
 		flex-wrap: wrap;
 		width: 100%;
-		@include glass-effect(0.8, 20px);
-		border-radius: $glass-radius-lg;
-		padding: $glass-spacing-lg;
-		box-shadow: $glass-shadow-md;
+		background: $color-bg;
+		border: 1px solid $color-border;
+		border-radius: $radius-lg;
+		padding: $spacing-lg;
 
 		&:after {
 			content: '';
@@ -156,37 +144,25 @@
 		align-items: center;
 		flex-direction: column;
 		width: 200upx;
-		font-size: $glass-font-sm;
-		font-family: $glass-font-body;
+		font-size: $font-sm;
 		font-weight: 500;
 		color: $font-color-dark;
-		padding: $glass-spacing-base;
-		margin: $glass-spacing-xs;
-		@include glass-card;
-		transition: all $glass-transition-base;
+		padding: $spacing-base;
+		margin: $spacing-xs;
+		background: $color-bg-secondary;
+		border: 1px solid $color-border;
+		border-radius: $radius-lg;
 		cursor: pointer;
 
 		&:hover {
-			transform: translateY(-4px);
-			box-shadow: $glass-shadow-lg;
-			background: rgba(255, 255, 255, 0.9);
-		}
-
-		&:active {
-			transform: translateY(-2px);
+			opacity: 0.8;
 		}
 
 		image {
 			width: 140upx;
 			height: 140upx;
-			border-radius: $glass-radius-base;
-			margin-bottom: $glass-spacing-sm;
-			box-shadow: $glass-shadow-sm;
-			transition: transform $glass-transition-base;
-		}
-
-		&:hover image {
-			transform: scale(1.05);
+			border-radius: $radius-base;
+			margin-bottom: $spacing-sm;
 		}
 	}
 </style>

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Maven 项目配置文件：定义 mall-search 模块的依赖和构建配置 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -9,7 +10,7 @@
     <packaging>jar</packaging>
 
     <name>mall-search</name>
-    <description>mall-search project for mall</description>
+    <description>mall-search project for mall - 基于 Elasticsearch 的商品搜索微服务</description>
 
     <parent>
         <groupId>com.macro.mall</groupId>
@@ -18,6 +19,7 @@
     </parent>
 
     <dependencies>
+        <!-- 引入 mall-mbg 模块（MyBatis Generator 生成的代码），排除 Redis 依赖避免冲突 -->
         <dependency>
             <groupId>com.macro.mall</groupId>
             <artifactId>mall-mbg</artifactId>
@@ -28,11 +30,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- Spring Data Elasticsearch：提供 Elasticsearch 操作接口 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
         </dependency>
-        <!--集成消息队列-->
+        <!-- Spring AMQP：集成 RabbitMQ 消息队列，实现商品数据异步同步 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>

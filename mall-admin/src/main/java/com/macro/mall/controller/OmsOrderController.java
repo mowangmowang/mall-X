@@ -15,15 +15,28 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 订单管理Controller */
+ * 订单管理 Controller
+ * 提供订单查询、发货、关闭、删除、修改等功能
+ */
 @Controller
 @Api(tags = "OmsOrderController")
 @Tag(name = "OmsOrderController", description = "订单管理")
 @RequestMapping("/order")
 public class OmsOrderController {
+    /**
+     * 订单服务
+     */
     @Autowired
     private OmsOrderService orderService;
 
+    /**
+     * 分页查询订单列表
+     * 支持按多种条件筛选（订单号、状态、时间等）
+     * @param queryParam 查询参数
+     * @param pageSize 每页条数，默认5条
+     * @param pageNum 页码，默认第1页
+     * @return 分页订单列表
+     */
     @ApiOperation("查询订单")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
@@ -34,6 +47,12 @@ public class OmsOrderController {
         return CommonResult.success(CommonPage.restPage(orderList));
     }
 
+    /**
+     * 批量发货
+     * 更新订单的物流信息并修改状态为已发货
+     * @param deliveryParamList 发货参数列表（包含订单ID、物流公司、物流单号）
+     * @return 操作结果
+     */
     @ApiOperation("批量发货")
     @RequestMapping(value = "/update/delivery", method = RequestMethod.POST)
     @ResponseBody
@@ -45,6 +64,13 @@ public class OmsOrderController {
         return CommonResult.failed();
     }
 
+    /**
+     * 批量关闭订单
+     * 通常用于超时未支付的订单
+     * @param ids 订单 ID 列表
+     * @param note 关闭原因/备注
+     * @return 操作结果
+     */
     @ApiOperation("批量关闭订单")
     @RequestMapping(value = "/update/close", method = RequestMethod.POST)
     @ResponseBody
@@ -56,6 +82,12 @@ public class OmsOrderController {
         return CommonResult.failed();
     }
 
+    /**
+     * 批量删除订单
+     * 逻辑删除，仅删除已完成或已关闭的订单
+     * @param ids 订单 ID 列表
+     * @return 操作结果
+     */
     @ApiOperation("批量删除订单")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
@@ -67,6 +99,12 @@ public class OmsOrderController {
         return CommonResult.failed();
     }
 
+    /**
+     * 获取订单详细信息
+     * 包括订单基本信息、商品列表、操作记录等
+     * @param id 订单 ID
+     * @return 订单详情
+     */
     @ApiOperation("获取订单详情：订单信息、商品信息、操作记录")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
@@ -75,6 +113,11 @@ public class OmsOrderController {
         return CommonResult.success(orderDetailResult);
     }
 
+    /**
+     * 修改订单收货人信息
+     * @param receiverInfoParam 收货人信息参数
+     * @return 操作结果
+     */
     @ApiOperation("修改收货人信息")
     @RequestMapping(value = "/update/receiverInfo", method = RequestMethod.POST)
     @ResponseBody
@@ -86,6 +129,12 @@ public class OmsOrderController {
         return CommonResult.failed();
     }
 
+    /**
+     * 修改订单费用信息
+     * 如运费、优惠金额等
+     * @param moneyInfoParam 费用信息参数
+     * @return 操作结果
+     */
     @ApiOperation("修改订单费用信息")
     @RequestMapping(value = "/update/moneyInfo", method = RequestMethod.POST)
     @ResponseBody
@@ -97,6 +146,13 @@ public class OmsOrderController {
         return CommonResult.failed();
     }
 
+    /**
+     * 添加订单备注
+     * @param id 订单 ID
+     * @param note 备注内容
+     * @param status 当前订单状态
+     * @return 操作结果
+     */
     @ApiOperation("备注订单")
     @RequestMapping(value = "/update/note", method = RequestMethod.POST)
     @ResponseBody
@@ -110,6 +166,13 @@ public class OmsOrderController {
         return CommonResult.failed();
     }
 
+    /**
+     * 取消订单
+     * 通常由管理员手动取消
+     * @param id 订单 ID
+     * @param note 取消原因
+     * @return 操作结果
+     */
     @ApiOperation("取消订单")
     @RequestMapping(value = "/update/cancel", method = RequestMethod.POST)
     @ResponseBody

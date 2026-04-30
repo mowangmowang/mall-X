@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 退货申请管理Controller */
+ * 退货申请管理控制器
+ * 提供退货申请创建、查询、取消等功能，处理用户售后请求
+ */
 @RestController
 @Api(tags = "OmsPortalOrderReturnApplyController")
 @Tag(name = "OmsPortalOrderReturnApplyController",description = "退货申请管理")
@@ -26,6 +28,7 @@ public class OmsPortalOrderReturnApplyController {
     @ApiOperation("申请退货")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public CommonResult create(@RequestBody OmsOrderReturnApplyParam returnApply) {
+        // 创建退货申请记录，等待后台审核
         int count = returnApplyService.create(returnApply);
         if (count > 0) {
             return CommonResult.success(count);
@@ -36,6 +39,7 @@ public class OmsPortalOrderReturnApplyController {
     @ApiOperation("查询退货申请")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public CommonResult<java.util.List<com.macro.mall.model.OmsOrderReturnApply>> list() {
+        // 查询当前用户的所有退货申请列表
         java.util.List<com.macro.mall.model.OmsOrderReturnApply> list = returnApplyService.list();
         return CommonResult.success(list);
     }
@@ -43,6 +47,7 @@ public class OmsPortalOrderReturnApplyController {
     @ApiOperation("取消退货申请")
     @RequestMapping(value = "/cancel/{id}", method = RequestMethod.POST)
     public CommonResult cancel(@PathVariable Long id) {
+        // 取消待审核的退货申请
         int count = returnApplyService.cancel(id);
         if (count > 0) {
             return CommonResult.success(count);

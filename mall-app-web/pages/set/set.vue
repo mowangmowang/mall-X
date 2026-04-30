@@ -1,13 +1,13 @@
-<template>
+﻿<template>
 	<view class="container">
 		<view class="list-cell b-b" @click="navTo('/pages/address/address')" hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">收货地址</text>
 			<text class="cell-more yticon icon-you"></text>
 		</view>
-		
+
 		<view class="list-cell m-t">
 			<text class="cell-tit">消息推送</text>
-			<switch checked color="#fa436a" @change="switchChange" />
+			<switch checked color="#07c160" @change="switchChange" />
 		</view>
 		<view class="list-cell m-t b-b" @click="navTo('清除缓存')" hover-class="cell-hover" :hover-stay-time="50">
 			<text class="cell-tit">清除缓存</text>
@@ -29,13 +29,13 @@
 </template>
 
 <script>
-	import {  
-	    mapMutations  
+	import {
+	    mapMutations
 	} from 'vuex';
 	export default {
 		data() {
 			return {
-				
+
 			};
 		},
 		methods:{
@@ -78,7 +78,7 @@
 
 <style lang='scss'>
 	page{
-		background: $page-color-base;
+		background: $color-bg-secondary;
 	}
 	.list-cell{
 		display:flex;
@@ -86,24 +86,24 @@
 		padding: 20upx $page-row-spacing;
 		line-height:60upx;
 		position:relative;
-		background: #fff;
+		background: $color-bg;
 		justify-content: center;
 		&.log-out-btn{
 			margin-top: 40upx;
 			.cell-tit{
-				color: $uni-color-primary;
+				color: $color-primary;
 				text-align: center;
 				margin-right: 0;
 			}
 		}
 		&.cell-hover{
-			background:#fafafa;
+			background:$color-bg-secondary;
 		}
 		&.b-b:after{
 			left: 30upx;
 		}
 		&.m-t{
-			margin-top: 16upx; 
+			margin-top: 16upx;
 		}
 		.cell-more{
 			align-self: baseline;

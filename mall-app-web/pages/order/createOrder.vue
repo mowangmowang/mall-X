@@ -302,7 +302,7 @@
 
 <style lang="scss">
 	page {
-		background: $page-color-base;
+		background: $color-bg-secondary;
 		padding-bottom: 100upx;
 	}
 
@@ -322,7 +322,7 @@
 			align-items: center;
 			justify-content: center;
 			width: 90upx;
-			color: #888;
+			color: $color-secondary;
 			font-size: 44upx;
 		}
 
@@ -471,16 +471,16 @@
 			color: #fff;
 			text-align: center;
 			line-height: 32upx;
-			background: #f85e52;
+			background: $color-secondary;
 			border-radius: 4upx;
 			margin-right: 12upx;
 
 			&.hb {
-				background: #ffaa0e;
+				background: $color-secondary;
 			}
 
 			&.lpk {
-				background: #3ab54a;
+				background: $color-secondary;
 			}
 
 		}
@@ -555,13 +555,13 @@
 		.icon-weixinzhifu {
 			width: 80upx;
 			font-size: 40upx;
-			color: #6BCC03;
+			color: $color-secondary;
 		}
 
 		.icon-alipay {
 			width: 80upx;
 			font-size: 40upx;
-			color: #06B4FD;
+			color: $color-secondary;
 		}
 
 		.icon-xuanzhong2 {
@@ -585,7 +585,7 @@
 		position: fixed;
 		left: 0;
 		bottom: 0;
-		z-index: 995;
+		z-index: $z-sticky;
 		display: flex;
 		align-items: center;
 		width: 100%;
@@ -593,7 +593,7 @@
 		justify-content: space-between;
 		font-size: 30upx;
 		background-color: #fff;
-		z-index: 998;
+		z-index: $z-sticky;
 		color: $font-color-base;
 		box-shadow: 0 -1px 5px rgba(0, 0, 0, .1);
 
@@ -633,14 +633,14 @@
 		bottom: 0;
 		width: 100%;
 		background: rgba(0, 0, 0, 0);
-		z-index: 9995;
+		z-index: $z-modal;
 		transition: .3s;
 
 		.mask-content {
 			width: 100%;
 			min-height: 30vh;
 			max-height: 70vh;
-			background: #f3f3f3;
+			background: $color-bg-secondary;
 			transform: translateY(100%);
 			transition: .3s;
 			overflow-y: scroll;
@@ -680,7 +680,7 @@
 				content: '';
 				width: 100%;
 				height: 0;
-				border-bottom: 1px dashed #f3f3f3;
+				border-bottom: 1px dashed $color-border;
 				transform: scaleY(50%);
 			}
 		}
@@ -739,7 +739,7 @@
 			z-index: 10;
 			width: 20upx;
 			height: 20upx;
-			background: #f3f3f3;
+			background: $color-bg-secondary;
 			border-radius: 100px;
 
 			&.r {

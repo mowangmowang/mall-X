@@ -43,6 +43,8 @@ public class HomeServiceImpl implements HomeService {
     private CmsPrefrenceAreaMapper prefrenceAreaMapper;
     @Autowired
     private CmsPrefrenceAreaProductRelationMapper prefrenceAreaProductRelationMapper;
+    @Autowired
+    private CmsTopicMapper topicMapper;
 
     @Override
     public HomeContentResult content() {
@@ -220,6 +222,22 @@ public class HomeServiceImpl implements HomeService {
             resultList.add(result);
         }
         return resultList;
+    }
+
+    @Override
+    public CmsTopic getTopicDetail(Long topicId) {
+        return topicMapper.selectByPrimaryKey(topicId);
+    }
+
+    @Override
+    public List<CmsTopic> getTopicList(Integer pageSize, Integer pageNum) {
+        PageHelper.startPage(pageNum, pageSize);
+        CmsTopicExample example = new CmsTopicExample();
+        // 只查询未结束的话题（endTime 为空或大于当前时间），按参与人数降序
+        Date now = new Date();
+        example.createCriteria().andEndTimeGreaterThanOrEqualTo(now);
+        example.setOrderByClause("attend_count desc");
+        return topicMapper.selectByExampleWithBLOBs(example);
     }
 
     private HomeFlashPromotion getHomeFlashPromotion() {

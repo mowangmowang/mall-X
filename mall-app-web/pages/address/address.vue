@@ -167,7 +167,7 @@
 		left: 30upx;
 		right: 30upx;
 		bottom: 16upx;
-		z-index: 95;
+		z-index: $z-sticky;
 		display: flex;
 		align-items: center;
 		justify-content: center;

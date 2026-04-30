@@ -17,7 +17,7 @@
 					<view v-for="(item,index) in orderList" :key="index" class="order-item">
 						<view class="i-top b-b">
 							<text class="time" @click="showOrderDetail(item.id)">{{item.createTime | formatDateTime}}</text>
-							<text class="state" :style="{color: '#fa436a'}">{{item.status | formatStatus}}</text>
+							<text class="state" :style="{color: '#171717'}">{{item.status | formatStatus}}</text>
 							<text v-if="item.status===3||item.status===4" class="del-btn yticon icon-iconfontshanchu1" @click="deleteOrder(item.id)"></text>
 						</view>
 						<view class="goods-box-single" v-for="(orderItem, itemIndex) in item.orderItemList"
@@ -295,7 +295,7 @@
 <style lang="scss">
 	page,
 	.content {
-		background: $page-color-base;
+		background: $color-bg-secondary;
 		height: 100%;
 	}
 
@@ -431,7 +431,7 @@
 				.title {
 					font-size: $font-base + 2upx;
 					color: $font-color-dark;
-					line-height: 1;
+					line-height: 1.4;
 				}
 
 				.attr-box {
@@ -505,11 +505,11 @@
 			}
 
 			&.recom {
-				background: #fff9f9;
+				background: $color-bg-secondary;
 				color: $base-color;
 
 				&:after {
-					border-color: #f7bcc8;
+					border-color: $color-border;
 				}
 			}
 		}

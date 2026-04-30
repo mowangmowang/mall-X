@@ -101,6 +101,7 @@
 					return;
 				}
 				this.registering = true;
+				uni.showLoading({ title: '注册中...' });
 				try {
 					await memberRegister({
 						username: this.username,
@@ -108,6 +109,7 @@
 						telephone: this.telephone,
 						authCode: this.authCode
 					});
+					uni.hideLoading();
 					uni.showToast({
 						title: '注册成功，请登录',
 						icon: 'success'
@@ -117,8 +119,8 @@
 						uni.navigateTo({url:'/pages/public/login'});
 					}, 1500);
 				} catch (error) {
+					uni.hideLoading();
 					console.error('注册失败:', error);
-					// 错误信息已在requestUtil中统一处理
 				} finally {
 					this.registering = false;
 				}
@@ -163,9 +165,8 @@
 
 <style lang='scss'>
 	page {
-		background: #fff;
+		background: $color-bg;
 	}
-	
 
 	.container {
 		padding-top: 115px;
@@ -173,29 +174,30 @@
 		width: 100vw;
 		height: 100vh;
 		overflow: hidden;
-		background: #fff;
+		background: $color-bg;
 	}
 
 	.wrapper {
 		position: relative;
-		z-index: 90;
-		background: #fff;
+		z-index: $z-sticky;
+		background: $color-bg;
 		padding-bottom: 40upx;
 	}
 
 	.back-btn {
 		position: absolute;
-		left: 40upx;
-		z-index: 9999;
-		padding-top: var(--status-bar-height);
-		top: 40upx;
+		left: 24upx;
+		z-index: $z-modal;
+		padding: 20upx 24upx;
+		padding-top: calc(var(--status-bar-height) + 20upx);
+		top: 20upx;
 		font-size: 40upx;
 		color: $font-color-dark;
 	}
 
 	.left-top-sign {
 		font-size: 120upx;
-		color: $page-color-base;
+		color: $color-bg-secondary;
 		position: relative;
 		left: -16upx;
 	}
@@ -204,7 +206,7 @@
 		position: absolute;
 		top: 80upx;
 		right: -30upx;
-		z-index: 95;
+		z-index: $z-sticky;
 
 		&:before,
 		&:after {
@@ -212,7 +214,7 @@
 			content: "";
 			width: 400upx;
 			height: 80upx;
-			background: #b4f3e2;
+			background: $color-bg-secondary;
 		}
 
 		&:before {
@@ -226,7 +228,6 @@
 			top: 0;
 			transform: rotate(-50deg);
 			border-radius: 50px 0 0 0;
-			/* background: pink; */
 		}
 	}
 
@@ -234,7 +235,7 @@
 		position: absolute;
 		left: -270upx;
 		bottom: -320upx;
-		border: 100upx solid #d0d1fd;
+		border: 100upx solid $color-bg-secondary;
 		border-radius: 50%;
 		padding: 180upx;
 	}
@@ -244,8 +245,7 @@
 		left: 50upx;
 		top: -90upx;
 		font-size: 46upx;
-		color: #555;
-		text-shadow: 1px 0px 1px rgba(0, 0, 0, .3);
+		color: $font-color-dark;
 	}
 
 	.input-content {
@@ -258,7 +258,7 @@
 		align-items: flex-start;
 		justify-content: center;
 		padding: 0 30upx;
-		background: $page-color-light;
+		background: $color-bg-secondary;
 		height: 120upx;
 		border-radius: 4px;
 		margin-bottom: 50upx;
@@ -288,15 +288,18 @@
 		line-height: 76upx;
 		border-radius: 50px;
 		margin-top: 70upx;
-		background: $uni-color-primary;
+		background: $color-primary;
 		color: #fff;
 		font-size: $font-lg;
 
 		&:after {
 			border-radius: 100px;
 		}
-	}
 
+		&[disabled] {
+			opacity: 0.5;
+		}
+	}
 
 	.login-section {
 		position: absolute;
@@ -308,8 +311,9 @@
 		text-align: center;
 
 		text {
-			color: $font-color-spec;
+			color: $font-color-dark;
 			margin-left: 10upx;
+			font-weight: 600;
 		}
 	}
 
@@ -323,7 +327,7 @@
 		padding: 0 20upx;
 		font-size: 24upx;
 		color: #fff;
-		background: #fa436a;
+		background: $color-primary;
 		border-radius: 28upx;
 		border: none;
 		min-width: 160upx;

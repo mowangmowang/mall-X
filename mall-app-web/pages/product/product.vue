@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 	<view class="container">
 		<view class="carousel">
 			<swiper indicator-dots circular=true duration="400">
@@ -60,7 +60,7 @@
 			</view>
 			<view class="c-row b-b" @click="toggleCoupon('show')">
 				<text class="tit">优惠券</text>
-				<text class="con t-r red">领取优惠券</text>
+				<text class="con t-r">领取优惠券</text>
 				<text class="yticon icon-you"></text>
 			</view>
 			<view class="c-row b-b">
@@ -560,7 +560,7 @@
 				// 小程序环境无法使用document对象，可以直接通过CSS控制样式
 				this.desc = this.product.detailMobileHtml;
 				// #endif
-				
+
 				// #ifdef H5
 				let rawhtml = this.product.detailMobileHtml;
 				let tempNode = document.createElement('div');
@@ -695,26 +695,24 @@
 </script>
 
 <style lang='scss'>
-	@import '../../uni.scss';
-
 	page {
-		background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+		background: $color-bg;
 		padding-bottom: 160upx;
 	}
 
 	.icon-you {
 		font-size: $font-base + 2upx;
-		color: #888;
+		color: $color-secondary;
 	}
 
 	.carousel {
 		height: 722upx;
 		position: relative;
-		margin: $glass-spacing-base;
-		border-radius: $glass-radius-lg;
+		margin: $spacing-base;
+		border-radius: $radius-lg;
 		overflow: hidden;
-		@include glass-effect(0.9, 20px);
-		box-shadow: $glass-shadow-lg;
+		background: $color-bg;
+		border: 1px solid $color-border;
 
 		swiper {
 			height: 100%;
@@ -742,63 +740,63 @@
 
 	/* 标题简介 */
 	.introduce-section {
-		@include glass-card;
-		margin: $glass-spacing-base;
-		padding: $glass-spacing-xl;
-		font-family: $glass-font-body;
+		background: $color-bg;
+		border: 1px solid $color-border;
+		border-radius: $radius-lg;
+		margin: $spacing-base;
+		padding: $spacing-xl;
 
 		.title {
-			font-size: $glass-font-xl;
-			font-family: $glass-font-heading;
+			font-size: $font-xl;
 			font-weight: 700;
 			color: $font-color-dark;
 			height: 60upx;
 			line-height: 60upx;
-			margin-bottom: $glass-spacing-xs;
+			margin-bottom: $spacing-xs;
 		}
 
 		.title2 {
-			font-size: $glass-font-base;
+			font-size: $font-base;
 			color: $font-color-light;
 			height: 46upx;
 			line-height: 46upx;
-			margin-bottom: $glass-spacing-base;
+			margin-bottom: $spacing-base;
 		}
 
 		.price-box {
 			display: flex;
 			align-items: baseline;
 			height: 70upx;
-			padding: $glass-spacing-sm 0;
-			font-size: $glass-font-base;
-			color: $glass-primary;
+			padding: $spacing-sm 0;
+			font-size: $font-base;
+			color: $color-primary;
 			font-weight: 600;
 		}
 
 		.price {
-			font-size: $glass-font-2xl;
+			font-size: $font-2xl;
 			font-weight: 700;
-			margin-left: $glass-spacing-xs;
+			margin-left: $spacing-xs;
 		}
 
 		.price-tip {
-			font-size: $glass-font-lg;
+			font-size: $font-lg;
 		}
 
 		.m-price {
-			margin: 0 $glass-spacing-base;
+			margin: 0 $spacing-base;
 			color: $font-color-light;
 			text-decoration: line-through;
-			font-size: $glass-font-base;
+			font-size: $font-base;
 		}
 
 		.coupon-tip {
 			align-items: center;
-			padding: $glass-spacing-xs $glass-spacing-sm;
-			background: $glass-primary;
-			font-size: $glass-font-sm;
+			padding: $spacing-xs $spacing-sm;
+			background: $color-primary;
+			font-size: $font-sm;
 			color: #fff;
-			border-radius: $glass-radius-sm;
+			border-radius: $radius-sm;
 			line-height: 1;
 			transform: translateY(-4upx);
 		}
@@ -807,11 +805,11 @@
 			display: flex;
 			align-items: center;
 			height: 50upx;
-			font-size: $glass-font-sm;
+			font-size: $font-sm;
 			color: $font-color-light;
-			margin-top: $glass-spacing-sm;
-			padding-top: $glass-spacing-sm;
-			border-top: 1px solid $glass-border-dark;
+			margin-top: $spacing-sm;
+			padding-top: $spacing-sm;
+			border-top: 1px solid $color-border;
 
 			text {
 				flex: 1;
@@ -824,20 +822,16 @@
 		display: flex;
 		align-items: center;
 		color: $font-color-dark;
-		@include glass-card;
-		margin: $glass-spacing-base;
-		padding: $glass-spacing-lg $glass-spacing-xl;
+		background: $color-bg;
+		border: 1px solid $color-border;
+		border-radius: $radius-lg;
+		margin: $spacing-base;
+		padding: $spacing-lg $spacing-xl;
 		cursor: pointer;
-		transition: all $glass-transition-base;
+		transition: background 0.2s;
 
 		&:hover {
-			transform: translateY(-2px);
-			box-shadow: $glass-shadow-lg;
-			background: rgba(255, 255, 255, 0.9);
-		}
-
-		&:active {
-			transform: translateY(0);
+			background: $color-bg-secondary;
 		}
 
 		.share-icon {
@@ -847,13 +841,13 @@
 			width: 80upx;
 			height: 40upx;
 			line-height: 1;
-			border: 2px solid $glass-primary;
-			border-radius: $glass-radius-sm;
+			border: 2px solid $color-primary;
+			border-radius: $radius-sm;
 			position: relative;
 			overflow: hidden;
-			font-size: $glass-font-sm;
+			font-size: $font-sm;
 			color: #fff;
-			background: $glass-primary;
+			background: $color-primary;
 			font-weight: 600;
 
 			&:after {
@@ -864,15 +858,15 @@
 				left: -20upx;
 				top: -12upx;
 				position: absolute;
-				background: $glass-primary-dark;
-				opacity: 0.7;
+				background: $color-primary;
+				opacity: 0.15;
 			}
 		}
 
 		.icon-xingxing {
 			position: relative;
 			z-index: 1;
-			font-size: $glass-font-base;
+			font-size: $font-base;
 			margin-left: 2upx;
 			margin-right: 10upx;
 			color: #fff;
@@ -880,24 +874,24 @@
 		}
 
 		.tit {
-			font-size: $glass-font-base;
-			margin-left: $glass-spacing-base;
+			font-size: $font-base;
+			margin-left: $spacing-base;
 			font-weight: 500;
 			flex: 1;
 		}
 
 		.icon-bangzhu1 {
-			padding: $glass-spacing-xs;
-			font-size: $glass-font-lg;
+			padding: $spacing-xs;
+			font-size: $font-lg;
 			line-height: 1;
-			color: $glass-accent;
+			color: $color-secondary;
 		}
 
 		.share-btn {
 			flex: 1;
 			text-align: right;
-			font-size: $glass-font-sm;
-			color: $glass-primary;
+			font-size: $font-sm;
+			color: $color-primary;
 			font-weight: 600;
 			display: flex;
 			align-items: center;
@@ -905,39 +899,40 @@
 		}
 
 		.icon-you {
-			font-size: $glass-font-sm;
-			margin-left: $glass-spacing-xs;
-			color: $glass-primary;
+			font-size: $font-sm;
+			margin-left: $spacing-xs;
+			color: $color-primary;
 		}
 	}
 
 	.c-list {
-		font-size: $glass-font-base;
+		font-size: $font-base;
 		color: $font-color-dark;
-		@include glass-card;
-		margin: $glass-spacing-base;
+		background: $color-bg;
+		border: 1px solid $color-border;
+		border-radius: $radius-lg;
+		margin: $spacing-base;
 		padding: 0;
 		overflow: hidden;
 
 		.c-row {
 			display: flex;
 			align-items: center;
-			padding: $glass-spacing-lg $glass-spacing-xl;
+			padding: $spacing-lg $spacing-xl;
 			position: relative;
-			border-bottom: 1px solid $glass-border-dark;
+			border-bottom: 1px solid $color-border;
 			cursor: pointer;
-			transition: all $glass-transition-fast;
 
 			&:last-child {
 				border-bottom: none;
 			}
 
 			&:hover {
-				background: rgba($glass-primary, 0.05);
+				background: $color-bg-secondary;
 			}
 
 			&:active {
-				background: rgba($glass-primary, 0.1);
+				background: $color-bg-secondary;
 			}
 		}
 
@@ -945,7 +940,6 @@
 			width: 160upx;
 			font-weight: 600;
 			color: $font-color-dark;
-			font-family: $glass-font-heading;
 		}
 
 		.con {
@@ -954,38 +948,38 @@
 			font-weight: 500;
 
 			.selected-text {
-				margin-right: $glass-spacing-base;
-				padding: $glass-spacing-xs $glass-spacing-sm;
-				background: rgba($glass-primary, 0.1);
-				border-radius: $glass-radius-sm;
-				color: $glass-primary;
-				font-size: $glass-font-sm;
+				margin-right: $spacing-base;
+				padding: $spacing-xs $spacing-sm;
+				background: $color-bg-secondary;
+				border-radius: $radius-sm;
+				color: $color-primary;
+				font-size: $font-sm;
 			}
 		}
 
 		.t-r {
 			text-align: right;
-			color: $glass-accent;
+			color: $color-secondary;
 			font-weight: 600;
 		}
 
 		.red {
-			color: $glass-primary !important;
+			color: $color-primary !important;
 			font-weight: 600;
 		}
 
 		.bz-list {
 			height: auto;
-			font-size: $glass-font-sm;
+			font-size: $font-sm;
 			color: $font-color-base;
 
 			text {
 				display: inline-block;
-				margin-right: $glass-spacing-lg;
-				padding: $glass-spacing-xs $glass-spacing-sm;
-				background: rgba($glass-accent, 0.1);
-				border-radius: $glass-radius-sm;
-				color: $glass-accent;
+				margin-right: $spacing-lg;
+				padding: $spacing-xs $spacing-sm;
+				background: $color-bg-secondary;
+				border-radius: $radius-sm;
+				color: $color-secondary;
 			}
 		}
 
@@ -997,8 +991,8 @@
 			line-height: 1.6;
 
 			text {
-				padding: $glass-spacing-xs 0;
-				color: $glass-primary;
+				padding: $spacing-xs 0;
+				color: $color-primary;
 				font-weight: 500;
 			}
 		}
@@ -1006,7 +1000,9 @@
 
 	/*  详情 */
 	.detail-desc {
-		@include glass-card;
+		background: $color-bg;
+		border: 1px solid $color-border;
+		border-radius: $radius-lg;
 		margin-top: 16upx;
 
 		.d-header {
@@ -1020,7 +1016,7 @@
 
 			text {
 				padding: 0 20upx;
-				background: transparent;
+				background: $color-bg;
 				position: relative;
 				z-index: 1;
 			}
@@ -1033,7 +1029,7 @@
 				width: 300upx;
 				height: 0;
 				content: '';
-				border-bottom: 1px solid $glass-border-dark;
+				border-bottom: 1px solid $color-border;
 			}
 		}
 	}
@@ -1068,8 +1064,8 @@
 				line-height: 42upx;
 
 				.price {
-					font-size: $glass-font-lg;
-					color: $glass-primary;
+					font-size: $font-lg;
+					color: $color-primary;
 					margin-bottom: 10upx;
 					font-weight: 700;
 				}
@@ -1098,7 +1094,7 @@
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				background: rgba($glass-border-dark, 0.5);
+				background: $color-bg-secondary;
 				margin-right: 20upx;
 				margin-bottom: 20upx;
 				border-radius: 100upx;
@@ -1107,12 +1103,13 @@
 				padding: 0 20upx;
 				font-size: $font-base;
 				color: $font-color-dark;
+				border: 1px solid $color-border;
 			}
 
 			.selected {
-				background: rgba($glass-primary, 0.1);
-				color: $glass-primary;
-				border: 1px solid rgba($glass-primary, 0.3);
+				background: $color-bg;
+				color: $color-primary;
+				border: 1px solid $color-primary;
 				font-weight: 600;
 			}
 		}
@@ -1129,7 +1126,7 @@
 		top: 0;
 		right: 0;
 		bottom: 0;
-		z-index: 99;
+		z-index: $z-overlay;
 
 		&.show {
 			display: block;
@@ -1168,25 +1165,27 @@
 
 		.layer {
 			position: fixed;
-			z-index: 99;
+			z-index: $z-overlay;
 			bottom: 0;
 			width: 100%;
 			min-height: 40vh;
-			border-radius: $glass-radius-lg $glass-radius-lg 0 0;
-			@include glass-effect(0.9, 20px);
+			border-radius: $radius-lg $radius-lg 0 0;
+			background: $color-bg;
+			border: 1px solid $color-border;
+			border-bottom: none;
 
 			.btn {
 				height: 66upx;
 				line-height: 66upx;
 				border-radius: 100upx;
-				background: $glass-primary;
+				background: $color-primary;
 				font-size: $font-base + 2upx;
 				color: #fff;
 				margin: 30upx auto 20upx;
-				transition: background $glass-transition-base;
+				transition: opacity 0.2s;
 
 				&:active {
-					background: $glass-primary-dark;
+					opacity: 0.8;
 				}
 			}
 		}
@@ -1237,14 +1236,15 @@
 		position: fixed;
 		left: 30upx;
 		bottom: 30upx;
-		z-index: 95;
+		z-index: $z-sticky;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		width: 690upx;
 		height: 100upx;
-		@include glass-effect(0.9, 20px);
-		border-radius: $glass-radius-lg;
+		background: $color-bg;
+		border: 1px solid $color-border;
+		border-radius: $radius-lg;
 
 		.p-b-btn {
 			display: flex;
@@ -1264,7 +1264,7 @@
 
 			&.active,
 			&.active .yticon {
-				color: $glass-primary;
+				color: $color-primary;
 			}
 
 			.icon-fenxiang2 {
@@ -1282,22 +1282,7 @@
 			height: 76upx;
 			border-radius: 100px;
 			overflow: hidden;
-			box-shadow: 0 20upx 40upx -16upx #fa436a;
-			box-shadow: 1px 2px 5px rgba(219, 63, 96, 0.4);
-			background: linear-gradient(to right, #ffac30, #fa436a, #F56C6C);
 			margin-left: 20upx;
-			position: relative;
-
-			&:after {
-				content: '';
-				position: absolute;
-				top: 50%;
-				right: 50%;
-				transform: translateY(-50%);
-				height: 28upx;
-				width: 0;
-				border-right: 1px solid rgba(255, 255, 255, .5);
-			}
 
 			.action-btn {
 				display: flex;
@@ -1308,7 +1293,17 @@
 				font-size: $font-base;
 				padding: 0;
 				border-radius: 0;
-				background: transparent;
+			}
+
+			.buy-now-btn {
+				background: $color-primary;
+				color: #fff;
+			}
+
+			.add-cart-btn {
+				background: $color-bg-secondary;
+				color: $color-primary;
+				border: 1px solid $color-border;
 			}
 		}
 	}
@@ -1323,14 +1318,16 @@
 		bottom: 0;
 		width: 100%;
 		background: rgba(0, 0, 0, 0);
-		z-index: 9995;
+		z-index: $z-modal;
 		transition: .3s;
 
 		.mask-content {
 			width: 100%;
 			min-height: 30vh;
 			max-height: 70vh;
-			@include glass-effect(0.9, 20px);
+			background: $color-bg;
+			border: 1px solid $color-border;
+			border-bottom: none;
 			transform: translateY(100%);
 			transition: .3s;
 			overflow-y: scroll;
@@ -1354,7 +1351,9 @@
 		display: flex;
 		flex-direction: column;
 		margin: 20upx 24upx;
-		@include glass-card;
+		background: $color-bg;
+		border: 1px solid $color-border;
+		border-radius: $radius-lg;
 
 		.con {
 			display: flex;
@@ -1370,7 +1369,7 @@
 				content: '';
 				width: 100%;
 				height: 0;
-				border-bottom: 1px dashed $glass-border-dark;
+				border-bottom: 1px dashed $color-border;
 				transform: scaleY(50%);
 			}
 		}
@@ -1407,7 +1406,7 @@
 
 		.price {
 			font-size: 44upx;
-			color: $glass-primary;
+			color: $color-primary;
 			font-weight: 700;
 
 			&:before {
@@ -1430,7 +1429,7 @@
 			z-index: 10;
 			width: 20upx;
 			height: 20upx;
-			background: $glass-border-light;
+			background: $color-bg;
 			border-radius: 100px;
 
 			&.r {
@@ -1442,7 +1441,9 @@
 
 	.brand-info {
 		margin-top: 16upx;
-		@include glass-card;
+		background: $color-bg;
+		border: 1px solid $color-border;
+		border-radius: $radius-lg;
 		display: flex;
 		flex-direction: column;
 
@@ -1474,7 +1475,7 @@
 					color: $font-color-light;
 					margin-top: 8upx;
 
-					&.Skeleton {
+					&Skeleton {
 						width: 220upx;
 					}
 				}
@@ -1489,14 +1490,14 @@
 			font-size: $font-base + 2upx;
 			color: $font-color-dark;
 			position: relative;
-		
+
 			text {
 				padding: 0 20upx;
-				background: transparent;
+				background: $color-bg;
 				position: relative;
 				z-index: 1;
 			}
-		
+
 			&:after {
 				position: absolute;
 				left: 50%;
@@ -1505,7 +1506,7 @@
 				width: 300upx;
 				height: 0;
 				content: '';
-				border-bottom: 1px solid $glass-border-dark;
+				border-bottom: 1px solid $color-border;
 			}
 		}
 	}

@@ -19,17 +19,34 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 商品管理Controller */
+ * 商品管理 Controller
+ * 提供商品的增删改查、上下架、审核、推荐等功能
+ * 集成 Elasticsearch 搜索引擎，通过 RabbitMQ 异步同步商品数据
+ */
 @Controller
 @Api(tags = "PmsProductController")
 @Tag(name = "PmsProductController", description = "商品管理")
 @RequestMapping("/product")
 public class PmsProductController {
+    /**
+     * 商品服务
+     */
     @Autowired
     private PmsProductService productService;
+    
+    /**
+     * ES 产品消息发送器（用于同步商品到 Elasticsearch）
+     */
     @Autowired
     private EsProductSender esProductSender;
 
+    /**
+     * 创建新商品
+     * 包括基本信息、SKU库存、属性值等完整信息
+     * 创建成功后通过 MQ 异步同步到 ES
+     * @param productParam 商品参数对象（包含所有商品信息）
+     * @return 操作结果
+     */
     @ApiOperation("创建商品")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseBody
@@ -44,6 +61,12 @@ public class PmsProductController {
         }
     }
 
+    /**
+     * 根据商品 ID 获取编辑信息
+     * 返回商品的完整信息，用于前端编辑页面展示
+     * @param id 商品 ID
+     * @return 商品编辑信息
+     */
     @ApiOperation("根据商品id获取商品编辑信息")
     @RequestMapping(value = "/updateInfo/{id}", method = RequestMethod.GET)
     @ResponseBody
@@ -52,6 +75,13 @@ public class PmsProductController {
         return CommonResult.success(productResult);
     }
 
+    /**
+     * 修改商品信息
+     * 更新后通过 MQ 异步同步到 ES
+     * @param id 商品 ID
+     * @param productParam 待更新的商品信息
+     * @return 操作结果
+     */
     @ApiOperation("根据ID修改商品信息")
     @RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
     @ResponseBody
@@ -66,6 +96,14 @@ public class PmsProductController {
         }
     }
 
+    /**
+     * 分页查询商品列表
+     * 支持按多种条件筛选（名称、货号、分类等）
+     * @param productQueryParam 查询参数
+     * @param pageSize 每页条数，默认5条
+     * @param pageNum 页码，默认第1页
+     * @return 分页商品列表
+     */
     @ApiOperation("查询商品")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
@@ -76,6 +114,12 @@ public class PmsProductController {
         return CommonResult.success(CommonPage.restPage(productList));
     }
 
+    /**
+     * 模糊查询商品（简单列表）
+     * 根据商品名称或货号进行模糊搜索
+     * @param keyword 搜索关键词
+     * @return 商品列表
+     */
     @ApiOperation("根据商品名称或货号模糊查询")
     @RequestMapping(value = "/simpleList", method = RequestMethod.GET)
     @ResponseBody
@@ -84,6 +128,13 @@ public class PmsProductController {
         return CommonResult.success(productList);
     }
 
+    /**
+     * 批量修改商品审核状态
+     * @param ids 商品 ID 列表
+     * @param verifyStatus 审核状态：0-未审核，1-审核通过，2-审核不通过
+     * @param detail 审核详情/原因
+     * @return 操作结果
+     */
     @ApiOperation("批量修改审核状态")
     @RequestMapping(value = "/update/verifyStatus", method = RequestMethod.POST)
     @ResponseBody
@@ -98,6 +149,12 @@ public class PmsProductController {
         }
     }
 
+    /**
+     * 批量上下架商品
+     * @param ids 商品 ID 列表
+     * @param publishStatus 上架状态：0-下架，1-上架
+     * @return 操作结果
+     */
     @ApiOperation("批量上下架商品")
     @RequestMapping(value = "/update/publishStatus", method = RequestMethod.POST)
     @ResponseBody
@@ -111,6 +168,12 @@ public class PmsProductController {
         }
     }
 
+    /**
+     * 批量推荐/取消推荐商品
+     * @param ids 商品 ID 列表
+     * @param recommendStatus 推荐状态：0-不推荐，1-推荐
+     * @return 操作结果
+     */
     @ApiOperation("批量推荐商品")
     @RequestMapping(value = "/update/recommendStatus", method = RequestMethod.POST)
     @ResponseBody
@@ -124,6 +187,12 @@ public class PmsProductController {
         }
     }
 
+    /**
+     * 批量设置/取消新品标签
+     * @param ids 商品 ID 列表
+     * @param newStatus 新品状态：0-非新品，1-新品
+     * @return 操作结果
+     */
     @ApiOperation("批量设为新品")
     @RequestMapping(value = "/update/newStatus", method = RequestMethod.POST)
     @ResponseBody
@@ -137,6 +206,13 @@ public class PmsProductController {
         }
     }
 
+    /**
+     * 批量修改商品删除状态（逻辑删除）
+     * 删除时同步从 ES 中移除
+     * @param ids 商品 ID 列表
+     * @param deleteStatus 删除状态：0-未删除，1-删除
+     * @return 操作结果
+     */
     @ApiOperation("批量修改删除状态")
     @RequestMapping(value = "/update/deleteStatus", method = RequestMethod.POST)
     @ResponseBody
@@ -156,6 +232,11 @@ public class PmsProductController {
         }
     }
     
+    /**
+     * 查询商品的审核记录历史
+     * @param productId 商品 ID
+     * @return 审核记录列表
+     */
     @ApiOperation("根据商品ID查询审核记录")
     @RequestMapping(value = "/vertifyRecord/{productId}", method = RequestMethod.GET)
     @ResponseBody

@@ -12,13 +12,6 @@
 			<text class="tit">邮政编码</text>
 			<input class="input" type="number" v-model="addressData.postCode" placeholder="收货人邮政编码" placeholder-class="placeholder" />
 		</view>
-<!-- 		<view class="row b-b">
-			<text class="tit">所在区域</text>
-			<text @click="chooseLocation" class="input">
-				{{addressData.province}} {{addressData.city}} {{addressData.region}}
-			</text>
-			<text class="yticon icon-shouhuodizhi" @click="chooseLocation"></text>
-		</view> -->
 		<view class="row b-b">
 			<text class="tit">所在区域</text>
 			<input class="input" type="text" v-model="addressData.prefixAddress" placeholder="所在区域" placeholder-class="placeholder" />
@@ -30,7 +23,7 @@
 
 		<view class="row default-row">
 			<text class="tit">设为默认</text>
-			<switch :checked="addressData.defaultStatus==1" color="#fa436a" @change="switchChange" />
+			<switch :checked="addressData.defaultStatus==1" color="#171717" @change="switchChange" />
 		</view>
 		<button class="add-btn" @click="confirm">提交</button>
 	</view>
@@ -151,7 +144,7 @@
 
 <style lang="scss">
 	page {
-		background: $page-color-base;
+		background: $color-bg-secondary;
 		padding-top: 16upx;
 	}
 
@@ -161,7 +154,7 @@
 		position: relative;
 		padding: 0 30upx;
 		height: 110upx;
-		background: #fff;
+		background: $color-bg;
 
 		.tit {
 			flex-shrink: 0;
@@ -203,8 +196,7 @@
 		margin: 60upx auto;
 		font-size: $font-lg;
 		color: #fff;
-		background-color: $base-color;
+		background-color: $color-primary;
 		border-radius: 10upx;
-		box-shadow: 1px 2px 5px rgba(219, 63, 96, 0.4);
 	}
 </style>

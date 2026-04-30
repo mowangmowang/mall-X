@@ -141,7 +141,7 @@
 <style lang="scss">
 	page,
 	.content {
-		background: $page-color-base;
+		background: $color-bg-secondary;
 	}
 
 	.hot-section {

@@ -94,7 +94,7 @@
 
 <style lang='scss'>
 	page {
-		background: $page-color-base;
+		background: $color-bg-secondary;
 		padding-bottom: 100upx;
 	}
 	
@@ -155,7 +155,7 @@
 				content: '';
 				width: 100%;
 				height: 0;
-				border-bottom: 1px dashed #f3f3f3;
+				border-bottom: 1px dashed $color-border;
 				transform: scaleY(50%);
 			}
 		}
@@ -214,7 +214,7 @@
 			z-index: 10;
 			width: 20upx;
 			height: 20upx;
-			background: #f3f3f3;
+			background: $color-bg-secondary;
 			border-radius: 100px;
 
 			&.r {

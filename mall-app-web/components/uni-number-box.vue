@@ -152,13 +152,13 @@
 		align-items: center;
 		width:230upx;
 		height: 70upx;
-		background:#f5f5f5;
+		background: $color-bg-secondary;
 	}
 
 	.uni-numbox-minus,
 	.uni-numbox-plus {
 		margin: 0;
-		background-color: #f5f5f5;
+		background-color: $color-bg-secondary;
 		width: 70upx;
 		height: 100%;
 		line-height: 70upx;
@@ -168,7 +168,7 @@
 	.uni-numbox-minus .yticon,
 	.uni-numbox-plus .yticon{
 		font-size: 36upx;
-		color: #555;
+		color: $color-secondary;
 	}
 
 	.uni-numbox-minus {
@@ -185,7 +185,7 @@
 
 	.uni-numbox-value {
 		position: relative;
-		background-color: #f5f5f5;
+		background-color: $color-bg-secondary;
 		width: 90upx;
 		height: 50upx;
 		text-align: center;
@@ -194,6 +194,6 @@
 	}
 
 	.uni-numbox-disabled.yticon {
-		color: #d6d6d6;
+		color: $color-disabled;
 	}
 </style>

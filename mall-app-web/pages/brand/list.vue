@@ -103,7 +103,7 @@
 <style lang="scss">
 	page,
 	.content {
-		background: $page-color-base;
+		background: $color-bg-secondary;
 	}
 	.banner-image{
 		width: 100%;
@@ -177,7 +177,7 @@
 		.price {
 			font-size: $font-lg;
 			color: $uni-color-primary;
-			line-height: 1;
+			line-height: 1.4;
 		}
 	}
 </style>

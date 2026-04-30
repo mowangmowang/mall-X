@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * 通用分页数据封装类
+ * 用于统一前后端分页数据格式，支持 PageHelper 和 Spring Data 两种分页方式
  * Created by macro
  */
 public class CommonPage<T> {
@@ -32,10 +33,15 @@ public class CommonPage<T> {
     private List<T> list;
 
     /**
-     * 将PageHelper分页后的list转为分页信息
+     * 将 PageHelper 分页后的 List 转换为统一分页格式
+     * 适用于使用 MyBatis PageHelper 插件的场景
+     *
+     * @param list PageHelper 分页查询结果
+     * @return 统一分页对象
      */
     public static <T> CommonPage<T> restPage(List<T> list) {
         CommonPage<T> result = new CommonPage<T>();
+        // 使用 PageInfo 包装 List，提取分页元数据
         PageInfo<T> pageInfo = new PageInfo<T>(list);
         result.setTotalPage(pageInfo.getPages());
         result.setPageNum(pageInfo.getPageNum());
@@ -46,10 +52,15 @@ public class CommonPage<T> {
     }
 
     /**
-     * 将SpringData分页后的list转为分页信息
+     * 将 Spring Data 分页后的 Page 转换为统一分页格式
+     * 适用于使用 Spring Data JPA 或 Spring Data Redis 等场景
+     *
+     * @param pageInfo Spring Data 分页查询结果
+     * @return 统一分页对象
      */
     public static <T> CommonPage<T> restPage(Page<T> pageInfo) {
         CommonPage<T> result = new CommonPage<T>();
+        // 注意：Spring Data 的页码从 0 开始，PageHelper 从 1 开始
         result.setTotalPage(pageInfo.getTotalPages());
         result.setPageNum(pageInfo.getNumber());
         result.setPageSize(pageInfo.getSize());

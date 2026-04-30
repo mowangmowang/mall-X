@@ -1,8 +1,8 @@
-<template>  
-    <view class="container">  
-		
+﻿<template>
+    <view class="container">
+
 		<view class="user-section">
-			
+
 			<view class="user-info-box">
 				<view class="portrait-box">
 					<image class="portrait" :src="userInfo.icon || '/static/missing-face.png'"></image>
@@ -12,7 +12,7 @@
 				</view>
 			</view>
 			<view class="vip-card-box">
-				
+
 				<view class="b-btn">
 					立即开通
 				</view>
@@ -24,8 +24,8 @@
 				<text class="e-b">黄金及以上会员可享有会员价优惠商品。</text>
 			</view>
 		</view>
-		
-		<view 
+
+		<view
 			class="cover-container"
 			:style="[{
 				transform: coverTransform,
@@ -36,7 +36,7 @@
 			@touchend="coverTouchend"
 		>
 			<image class="arc" src="/static/arc.png"></image>
-			
+
 			<view class="tj-sction">
 				<view class="tj-item">
 					<text class="num">{{userInfo.integration || '暂无'}}</text>
@@ -72,26 +72,26 @@
 			</view>
 			<!-- 浏览历史 -->
 			<view class="history-section icon">
-				<list-cell icon="icon-dizhi" iconColor="#5fcda2" title="地址管理" @eventClick="navTo('/pages/address/address')"></list-cell>
-				<list-cell icon="icon-lishijilu" iconColor="#e07472" title="我的足迹" @eventClick="navTo('/pages/user/readHistory')"></list-cell>
-				<list-cell icon="icon-shoucang" iconColor="#5fcda2" title="我的关注" @eventClick="navTo('/pages/user/brandAttention')"></list-cell>
-				<list-cell icon="icon-shoucang_xuanzhongzhuangtai" iconColor="#54b4ef" title="我的收藏" @eventClick="navTo('/pages/user/productCollection')"></list-cell>
+				<list-cell icon="icon-dizhi" iconColor="#404040" title="地址管理" @eventClick="navTo('/pages/address/address')"></list-cell>
+				<list-cell icon="icon-lishijilu" iconColor="#404040" title="我的足迹" @eventClick="navTo('/pages/user/readHistory')"></list-cell>
+				<list-cell icon="icon-shoucang" iconColor="#ff4443" title="我的关注" @eventClick="navTo('/pages/user/brandAttention')"></list-cell>
+				<list-cell icon="icon-shoucang_xuanzhongzhuangtai" iconColor="#ff4443" title="我的收藏" @eventClick="navTo('/pages/user/productCollection')"></list-cell>
 
-				<list-cell icon="icon-shezhi1" iconColor="#e07472" title="设置" border="" @eventClick="navTo('/pages/set/set')"></list-cell>
+				<list-cell icon="icon-shezhi1" iconColor="#171717" title="设置" border="" @eventClick="navTo('/pages/set/set')"></list-cell>
 			</view>
 		</view>
-			
-		
-    </view>  
-</template>  
-<script>  
+
+
+    </view>
+</template>
+<script>
 	import listCell from '@/components/mix-list-cell';
 	import {
 		fetchMemberCouponList
 	} from '@/api/coupon.js';
-    import {  
-        mapState 
-    } from 'vuex';  
+    import {
+        mapState
+    } from 'vuex';
 	let startY = 0, moveY = 0, pageAtTop = true;
     export default {
 		components: {
@@ -151,11 +151,11 @@
 				if(!this.hasLogin){
 					url = '/pages/public/login';
 				}
-				uni.navigateTo({  
+				uni.navigateTo({
 					url
-				})  
-			}, 
-	
+				})
+			},
+
 			/**
 			 *  会员卡下拉和回弹
 			 *  1.关闭bounce避免ios端下拉冲突
@@ -181,7 +181,7 @@
 				if(moveDistance >= 80 && moveDistance < 100){
 					moveDistance = 80;
 				}
-		
+
 				if(moveDistance > 0 && moveDistance <= 80){
 					this.coverTransform = `translateY(${moveDistance}px)`;
 				}
@@ -194,9 +194,9 @@
 				this.coverTransition = 'transform 0.3s cubic-bezier(.21,1.93,.53,.64)';
 				this.coverTransform = 'translateY(0px)';
 			}
-        }  
-    }  
-</script>  
+        }
+    }
+</script>
 <style lang='scss'>
 	%flex-center {
 	 display:flex;
@@ -216,6 +216,7 @@
 		height: 520upx;
 		padding: 100upx 30upx 0;
 		position:relative;
+		background: $color-bg;
 		.bg{
 			position:absolute;
 			left: 0;
@@ -248,9 +249,10 @@
 	.vip-card-box{
 		display:flex;
 		flex-direction: column;
-		color: #d4a017;
+		color: $color-primary;
 		height: 240upx;
-		background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+		background: $color-bg;
+		border: 1px solid #333;
 		border-radius: 16upx 16upx 0 0;
 		overflow: hidden;
 		position: relative;
@@ -264,32 +266,31 @@
 			text-align: center;
 			line-height: 40upx;
 			font-size: 22upx;
-			color: #1a1a1a;
+			color: #fff;
 			border-radius: 20px;
-			background: linear-gradient(135deg, #d4a017, #f0c040);
+			background: $color-primary;
 			z-index: 1;
 		}
 		.tit{
 			font-size: $font-base+2upx;
-			color: #d4a017;
+			color: $color-primary;
 			margin-bottom: 28upx;
 			.yticon{
-				color: #d4a017;
+				color: $color-primary;
 				margin-right: 16upx;
 			}
 		}
 		.e-b{
 			font-size: $font-sm;
-			color: #b8960f;
+			color: $color-secondary;
 			margin-top: 10upx;
 		}
 	}
 	.cover-container{
-		background: $page-color-base;
+		background: $color-bg;
 		margin-top: -150upx;
 		padding: 0 30upx;
 		position:relative;
-		background: #f5f5f5;
 		padding-bottom: 20upx;
 		.arc{
 			position:absolute;
@@ -329,7 +330,7 @@
 		.yticon{
 			font-size: 48upx;
 			margin-bottom: 18upx;
-			color: #fa436a;
+			color: $color-primary;
 		}
 		.icon-shouhoutuikuan{
 			font-size:44upx;
@@ -349,7 +350,7 @@
 			margin-left: 30upx;
 			.yticon{
 				font-size: 44upx;
-				color: #5eba8f;
+				color: $color-secondary;
 				margin-right: 16upx;
 				line-height: 40upx;
 			}
@@ -366,5 +367,5 @@
 			}
 		}
 	}
-	
+
 </style>

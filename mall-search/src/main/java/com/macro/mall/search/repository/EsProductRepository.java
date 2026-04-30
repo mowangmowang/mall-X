@@ -6,15 +6,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 /**
- * 搜索商品ES操作类 */
+ * Elasticsearch 商品操作仓储接口 (Repository Interface)
+ * 继承 Spring Data Elasticsearch 的 ElasticsearchRepository，提供基础 CRUD 功能
+ */
 public interface EsProductRepository extends ElasticsearchRepository<EsProduct, Long> {
     /**
-     * 搜索查询
+     * 根据商品名称、副标题或关键词进行全文搜索
+     * Spring Data 方法名自动推导查询（Derived Query）
      *
-     * @param name              商品名称
-     * @param subTitle          商品标题
-     * @param keywords          商品关键字
-     * @param page              分页信息
+     * @param name      商品名称
+     * @param subTitle  商品副标题
+     * @param keywords  商品关键词
+     * @param page      分页参数
+     * @return 分页的商品搜索结果
      */
     Page<EsProduct> findByNameOrSubTitleOrKeywords(String name, String subTitle, String keywords,Pageable page);
 

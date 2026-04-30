@@ -20,7 +20,7 @@
 					}
 				});
 			}
-			
+
 		},
 		onShow: function() {
 			console.log('App Show')
@@ -42,7 +42,7 @@
 		src: url('https://at.alicdn.com/t/font_1078604_w4kpxh0rafi.ttf') format('truetype');
 	}
 
-	/* Google Fonts for Glassmorphism Design System */
+	/* Google Fonts */
 	@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&family=Nunito+Sans:wght@300;400;600;700&display=swap');
 
 	.yticon {
@@ -337,10 +337,6 @@
 		content: "\e617";
 	}
 
-
-
-
-
 	view,
 	scroll-view,
 	swiper,
@@ -367,9 +363,25 @@
 	video {
 		box-sizing: border-box;
 	}
+
+	/* Focus visible for keyboard navigation */
+	*:focus-visible {
+		outline: 2px solid $color-primary;
+		outline-offset: 2px;
+	}
+
+	/* Cursor pointer on clickable elements (web only) */
+	@media (hover: hover) {
+		[role="button"],
+		button,
+		label[for] {
+			cursor: pointer;
+		}
+	}
+
 	/* 骨架屏替代方案 */
 	.Skeleton {
-		background: #f3f3f3;
+		background: $color-bg-secondary;
 		padding: 20upx 0;
 		border-radius: 8upx;
 	}
@@ -377,13 +389,13 @@
 	/* 图片载入替代方案 */
 	.image-wrapper {
 		font-size: 0;
-		background: #f3f3f3;
+		background: $color-bg-secondary;
 		border-radius: 4px;
 
 		image {
 			width: 100%;
 			height: 100%;
-			transition: .6s;
+			transition: opacity .3s;
 			opacity: 0;
 
 			&.loaded {
@@ -400,7 +412,7 @@
 	}
 
 	.common-hover {
-		background: #f5f5f5;
+		background: $color-bg-secondary;
 	}
 
 	/*边框*/
@@ -436,6 +448,11 @@
 		&.no-border:after {
 			border: 0;
 		}
+
+		/* Disabled state */
+		&[disabled] {
+			opacity: 0.5;
+		}
 	}
 
 	uni-button[type=default],
@@ -445,16 +462,16 @@
 
 	/* input 样式 */
 	.input-placeholder {
-		color: #999999;
+		color: $color-disabled;
 	}
 
 	.placeholder {
-		color: #999999;
+		color: $color-disabled;
 	}
 
-	/* Global page background for glassmorphism design */
+	/* Page background — clean white */
 	page {
-		background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+		background: $color-bg;
 		min-height: 100vh;
 	}
 </style>

@@ -10,7 +10,9 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Redis操作Service实现类 */
+ * Redis 操作 Service 实现类 (Redis Service Implementation)
+ * 基于 Spring Data RedisTemplate 实现 RedisService 接口
+ */
 public class RedisServiceImpl implements RedisService {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
