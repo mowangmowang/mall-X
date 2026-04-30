@@ -2,7 +2,7 @@
     <view class="container">  
 		
 		<view class="user-section">
-			<image class="bg" src="/static/user-bg.jpg"></image>
+			
 			<view class="user-info-box">
 				<view class="portrait-box">
 					<image class="portrait" :src="userInfo.icon || '/static/missing-face.png'"></image>
@@ -12,7 +12,7 @@
 				</view>
 			</view>
 			<view class="vip-card-box">
-				<image class="card-bg" src="/static/vip-card-bg.png" mode=""></image>
+				
 				<view class="b-btn">
 					立即开通
 				</view>
@@ -248,20 +248,13 @@
 	.vip-card-box{
 		display:flex;
 		flex-direction: column;
-		color: #f7d680;
+		color: #d4a017;
 		height: 240upx;
-		background: linear-gradient(left, rgba(0,0,0,.7), rgba(0,0,0,.8));
+		background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
 		border-radius: 16upx 16upx 0 0;
 		overflow: hidden;
 		position: relative;
 		padding: 20upx 24upx;
-		.card-bg{
-			position:absolute;
-			top: 20upx;
-			right: 0;
-			width: 380upx;
-			height: 260upx;
-		}
 		.b-btn{
 			position: absolute;
 			right: 20upx;
@@ -271,23 +264,23 @@
 			text-align: center;
 			line-height: 40upx;
 			font-size: 22upx;
-			color: #36343c;
+			color: #1a1a1a;
 			border-radius: 20px;
-			background: linear-gradient(left, #f9e6af, #ffd465);
+			background: linear-gradient(135deg, #d4a017, #f0c040);
 			z-index: 1;
 		}
 		.tit{
 			font-size: $font-base+2upx;
-			color: #f7d680;
+			color: #d4a017;
 			margin-bottom: 28upx;
 			.yticon{
-				color: #f6e5a3;
+				color: #d4a017;
 				margin-right: 16upx;
 			}
 		}
 		.e-b{
 			font-size: $font-sm;
-			color: #d8cba9;
+			color: #b8960f;
 			margin-top: 10upx;
 		}
 	}
