@@ -45,7 +45,7 @@
 				</view>
 				<text class="cell-tit clamp">优惠券</text>
 				<text class="cell-tip active">
-					选择优惠券
+					{{currCoupon ? currCoupon.name : '选择优惠券'}}
 				</text>
 				<text class="cell-more wanjia wanjia-gengduo-d"></text>
 			</view>

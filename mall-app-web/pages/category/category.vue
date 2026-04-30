@@ -90,6 +90,13 @@
 		position: relative;
 		cursor: pointer;
 
+		text {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			max-width: 90%;
+		}
+
 		&:hover {
 			background: $color-bg-secondary;
 		}
@@ -138,31 +145,39 @@
 	}
 
 	.s-item {
-		flex-shrink: 0;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		flex-direction: column;
-		width: 200upx;
+		width: calc(50% - 16upx);
 		font-size: $font-sm;
 		font-weight: 500;
 		color: $font-color-dark;
 		padding: $spacing-base;
-		margin: $spacing-xs;
+		margin: 8upx 8upx 0 0;
 		background: $color-bg-secondary;
 		border: 1px solid $color-border;
 		border-radius: $radius-lg;
 		cursor: pointer;
+		box-sizing: border-box;
 
 		&:hover {
 			opacity: 0.8;
 		}
 
 		image {
-			width: 140upx;
-			height: 140upx;
+			width: 120upx;
+			height: 120upx;
 			border-radius: $radius-base;
 			margin-bottom: $spacing-sm;
+		}
+
+		text {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			max-width: 100%;
+			text-align: center;
 		}
 	}
 </style>

@@ -330,8 +330,7 @@
 			position: relative;
 			padding-left: $spacing-lg;
 
-			.title,
-			.price {
+			.title {
 				font-size: $font-base;
 				color: $font-color-dark;
 				height: 40upx;
@@ -352,12 +351,20 @@
 			}
 
 			.price {
-				height: 50upx;
-				line-height: 50upx;
+				font-size: $font-lg;
 				color: $color-primary;
 				font-weight: 700;
-				font-size: $font-lg;
-				margin-top: auto;
+				margin-bottom: 8upx;
+			}
+
+			.step {
+				align-self: flex-start;
+			}
+
+			.step .uni-numbox {
+				position: relative;
+				left: auto;
+				bottom: auto;
 			}
 		}
 
