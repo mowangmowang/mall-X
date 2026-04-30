@@ -1,10 +1,9 @@
 <template>
 	<view>
-		<!-- 顶部大图 -->
-		<view class="top-image">
-			<view class="image-wrapper">
-				<image :src="subject.pic" mode="aspectFill"></image>
-			</view>
+		<!-- 顶部艺术色块 -->
+		<view class="top-art">
+			<text class="art-icon">✦</text>
+			<text class="art-title">{{subject.title || '专题详情'}}</text>
 		</view>
 		<!-- 专题信息 -->
 		<view class="info">
@@ -75,12 +74,34 @@
 <style lang="scss">
 	page { background: $color-bg-secondary; }
 
-	.top-image {
-		height: 200px;
-		.image-wrapper {
-			width: 100%; height: 100%; overflow: hidden;
-			image { width: 100%; height: 100%; }
+	.top-art {
+		height: 280upx;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		background: linear-gradient(135deg, #a18cd1, #fbc2eb, #a6c1ee, #84fab0);
+		background-size: 400% 400%;
+		animation: artFlow 5s ease infinite;
+
+		.art-icon {
+			font-size: 64upx;
+			color: rgba(255,255,255,0.85);
+			margin-bottom: 16upx;
 		}
+
+		.art-title {
+			font-size: 36upx;
+			color: #fff;
+			font-weight: 600;
+			text-shadow: 0 2upx 8upx rgba(0,0,0,0.1);
+		}
+	}
+
+	@keyframes artFlow {
+		0% { background-position: 0% 50%; }
+		50% { background-position: 100% 50%; }
+		100% { background-position: 0% 50%; }
 	}
 
 	.info {

@@ -2,9 +2,9 @@
 	<view>
 		<view class="subject-list">
 			<view v-for="(item, index) in subjectList" :key="index" class="subject-item" @click="navToDetail(item)">
-				<view class="image-wrapper">
-					<image :src="item.pic" mode="aspectFill" v-if="item.pic"></image>
-					<view class="img-placeholder" v-else></view>
+				<view class="art-block">
+					<text class="art-icon">✦</text>
+					<text class="art-label">{{item.title ? item.title.substring(0, 2) : 'ZT'}}</text>
 				</view>
 				<view class="info">
 					<text class="title clamp">{{item.title}}</text>
@@ -76,30 +76,37 @@
 
 		&:active { opacity: 0.8; }
 
-		.image-wrapper {
-			width: 200upx;
-			height: 200upx;
-			border-radius: 8upx;
-			overflow: hidden;
+		.art-block {
+			width: 160upx;
+			height: 160upx;
+			border-radius: 12upx;
 			flex-shrink: 0;
 			margin-right: 20upx;
-			image { width: 100%; height: 100%; }
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			background: linear-gradient(135deg, #a18cd1, #fbc2eb, #a6c1ee);
+			background-size: 300% 300%;
+			animation: artFlow 4s ease infinite;
+
+			.art-icon {
+				font-size: 42upx;
+				color: rgba(255,255,255,0.85);
+			}
+
+			.art-label {
+				font-size: 20upx;
+				color: rgba(255,255,255,0.75);
+				margin-top: 6upx;
+				font-weight: 500;
+			}
 		}
 
-		.img-placeholder {
-			width: 100%;
-			height: 100%;
-			background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-			background-size: 400% 400%;
-			animation: drift 8s ease infinite;
-		}
-
-		@keyframes drift {
-			0% { background-position: 0% 0%; }
-			25% { background-position: 100% 0%; }
-			50% { background-position: 100% 100%; }
-			75% { background-position: 0% 100%; }
-			100% { background-position: 0% 0%; }
+		@keyframes artFlow {
+			0% { background-position: 0% 50%; }
+			50% { background-position: 100% 50%; }
+			100% { background-position: 0% 50%; }
 		}
 
 		.info {
