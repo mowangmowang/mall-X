@@ -77,27 +77,6 @@
 			</view>
 		</view>
 
-		<!-- 评价 -->
-		<view class="eva-section">
-			<view class="e-header">
-				<text class="tit">评价</text>
-				<text>(86)</text>
-				<text class="tip">好评率 100%</text>
-				<text class="yticon icon-you"></text>
-			</view>
-			<view class="eva-box">
-				<image class="portrait" src="http://img3.imgtn.bdimg.com/it/u=1150341365,1327279810&fm=26&gp=0.jpg" mode="aspectFill"></image>
-				<view class="right">
-					<text class="name">Leo yo</text>
-					<text class="con">商品收到了，79元两件，质量不错，试了一下有点瘦，但是加个外罩很漂亮，我很喜欢</text>
-					<view class="bot">
-						<text class="attr">购买类型：XL 红色</text>
-						<text class="time">2019-04-01 19:21</text>
-					</view>
-				</view>
-			</view>
-		</view>
-
 		<!-- 品牌信息 -->
 		<view class="brand-info">
 			<view class="d-header">
@@ -1021,100 +1000,6 @@
 				padding: $glass-spacing-xs 0;
 				color: $glass-primary;
 				font-weight: 500;
-			}
-		}
-	}
-
-	/* 评价 */
-	.eva-section {
-		display: flex;
-		flex-direction: column;
-		padding: $glass-spacing-xl;
-		@include glass-card;
-		margin: $glass-spacing-base;
-		font-family: $glass-font-body;
-
-		.e-header {
-			display: flex;
-			align-items: center;
-			height: 80upx;
-			font-size: $glass-font-base;
-			color: $font-color-light;
-			margin-bottom: $glass-spacing-lg;
-			border-bottom: 1px solid $glass-border-dark;
-			padding-bottom: $glass-spacing-base;
-
-			.tit {
-				font-size: $glass-font-lg;
-				font-family: $glass-font-heading;
-				font-weight: 700;
-				color: $font-color-dark;
-				margin-right: $glass-spacing-sm;
-			}
-
-			.tip {
-				flex: 1;
-				text-align: right;
-				font-weight: 500;
-			}
-
-			.icon-you {
-				margin-left: $glass-spacing-base;
-				color: $glass-accent;
-				font-size: $glass-font-base;
-			}
-		}
-	}
-
-	.eva-box {
-		display: flex;
-		padding: $glass-spacing-lg 0;
-
-		.portrait {
-			flex-shrink: 0;
-			width: 100upx;
-			height: 100upx;
-			border-radius: $glass-radius-full;
-			box-shadow: $glass-shadow-sm;
-			object-fit: cover;
-		}
-
-		.right {
-			flex: 1;
-			display: flex;
-			flex-direction: column;
-			font-size: $glass-font-base;
-			color: $font-color-dark;
-			padding-left: $glass-spacing-xl;
-
-			.name {
-				font-weight: 700;
-				margin-bottom: $glass-spacing-xs;
-				color: $font-color-dark;
-			}
-
-			.con {
-				font-size: $glass-font-base;
-				color: $font-color-base;
-				padding: $glass-spacing-base 0;
-				line-height: 1.6;
-			}
-
-			.bot {
-				display: flex;
-				justify-content: space-between;
-				font-size: $glass-font-sm;
-				color: $font-color-light;
-				margin-top: $glass-spacing-sm;
-
-				.attr {
-					color: $glass-accent;
-					font-weight: 500;
-				}
-
-				.time {
-					color: $font-color-light;
-				}
 			}
 		}
 	}

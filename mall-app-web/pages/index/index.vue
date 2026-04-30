@@ -65,37 +65,6 @@
 			</view>
 		</view>
 
-		<!-- 秒杀专区 -->
-		<view class="f-header m-t" v-if="homeFlashPromotion">
-			<image src="/static/icon_flash_promotion.png"></image>
-			<view class="tit-box">
-				<text class="tit">秒杀专区</text>
-				<text class="tit2">下一场 {{homeFlashPromotion.nextStartTime | formatTime}} 开始</text>
-			</view>
-			<view class="tit-box">
-				<text class="tit2" style="text-align: right;">本场结束剩余：</text>
-				<view style="text-align: right;">
-					<text class="hour timer">{{cutDownTime.endHour}}</text>
-					<text>:</text>
-					<text class="minute timer">{{cutDownTime.endMinute}}</text>
-					<text>:</text>
-					<text class="second timer">{{cutDownTime.endSecond}}</text>
-				</view>
-			</view>
-			<text class="yticon icon-you" v-show="false"></text>
-		</view>
-
-		<view class="guess-section">
-			<view v-for="(item, index) in homeFlashPromotion.productList" :key="index" class="guess-item" @click="navToDetailPage(item)">
-				<view class="image-wrapper">
-					<image :src="item.pic" mode="aspectFill"></image>
-				</view>
-				<text class="title clamp">{{item.name}}</text>
-				<text class="title2 clamp">{{item.subTitle}}</text>
-				<text class="price">￥{{item.price}}</text>
-			</view>
-		</view>
-
 		<!-- 新鲜好物 -->
 		<view class="f-header m-t" @click="navToNewProudctListPage()">
 			<image src="/static/icon_new_product.png"></image>
@@ -188,7 +157,6 @@
 				goodsList: [],
 				advertiseList: [],
 				brandList: [],
-				homeFlashPromotion: null,
 				newProductList: [],
 				hotProductList: [],
 				recommendProductList: [],
@@ -223,37 +191,6 @@
 				}
 			})
 		},
-		computed: {
-			cutDownTime() {
-					if (!this.homeFlashPromotion) return { endHour: "00", endMinute: "00", endSecond: "00" };
-				let endTime = new Date(this.homeFlashPromotion.endTime);
-				let endDateTime = new Date();
-				let startDateTime = new Date();
-				endDateTime.setHours(endTime.getHours());
-				endDateTime.setMinutes(endTime.getMinutes());
-				endDateTime.setSeconds(endTime.getSeconds());
-				let offsetTime = (endDateTime.getTime() - startDateTime.getTime());
-				let endHour = Math.floor(offsetTime / (60 * 60 * 1000));
-				let offsetMinute = offsetTime % (60 * 60 * 1000);
-				let endMinute = Math.floor(offsetMinute / (60 * 1000));
-				let offsetSecond = offsetTime % (60 * 1000);
-				let endSecond = Math.floor(offsetSecond / 1000);
-				return {
-					endHour: endHour,
-					endMinute: endMinute,
-					endSecond: endSecond
-				}
-			}
-		},
-		filters: {
-			formatTime(time) {
-				if (time == null || time === '') {
-					return 'N/A';
-				}
-				let date = new Date(time);
-				return formatDate(date, 'hh:mm:ss')
-			},
-		},
 		methods: {
 			/**
 			 * 加载数据
@@ -265,7 +202,6 @@
 					this.swiperLength = this.advertiseList.length;
 					this.titleNViewBackground = this.titleNViewBackgroundList[0];
 					this.brandList = response.data.brandList;
-					this.homeFlashPromotion = response.data.homeFlashPromotion || null;
 					this.newProductList = response.data.newProductList;
 					this.hotProductList = response.data.hotProductList;
 					fetchRecommendProductList(this.recommendParams).then(response => {
@@ -319,31 +255,6 @@
 				})
 			},
 		},
-		// #ifndef MP
-		// 标题栏input搜索框点击
-		onNavigationBarSearchInputClicked: async function(e) {
-			this.$api.msg('点击了搜索框');
-		},
-		//点击导航栏 buttons 时触发
-		onNavigationBarButtonTap(e) {
-			const index = e.index;
-			if (index === 0) {
-				this.$api.msg('点击了扫描');
-			} else if (index === 1) {
-				// #ifdef APP-PLUS
-				const pages = getCurrentPages();
-				const page = pages[pages.length - 1];
-				const currentWebview = page.$getAppWebview();
-				currentWebview.hideTitleNViewButtonRedDot({
-					index
-				});
-				// #endif
-				uni.navigateTo({
-					url: '/pages/notice/notice'
-				})
-			}
-		}
-		// #endif
 	}
 </script>
 
@@ -546,55 +457,6 @@
 		}
 	}
 
-	/* 秒杀专区 */
-	.seckill-section {
-		padding: $glass-spacing-base $page-row-spacing;
-		margin: $glass-spacing-base $page-row-spacing;
-		@include glass-card;
-		border-radius: $glass-radius-xl;
-
-		.s-header {
-			display: flex;
-			align-items: center;
-			height: 92upx;
-			line-height: 1;
-			margin-bottom: $glass-spacing-base;
-			font-family: $glass-font-heading;
-
-			.s-img {
-				width: 140upx;
-				height: 30upx;
-			}
-
-			.tip {
-				font-size: $glass-font-base;
-				color: $font-color-light;
-				margin: 0 20upx 0 40upx;
-			}
-
-			.timer {
-				display: inline-block;
-				width: 40upx;
-				height: 36upx;
-				text-align: center;
-				line-height: 36upx;
-				margin-right: 14upx;
-				font-size: $glass-font-sm;
-				color: #fff;
-				border-radius: $glass-radius-sm;
-				background: rgba($glass-primary, 0.9);
-				font-weight: 600;
-			}
-
-			.icon-you {
-				font-size: $glass-font-lg;
-				color: $glass-accent;
-				flex: 1;
-				text-align: right;
-				font-weight: 600;
-			}
-		}
-
 		.floor-list {
 			white-space: nowrap;
 		}
@@ -641,18 +503,6 @@
 				margin-top: $glass-spacing-sm;
 			}
 		}
-
-		.title2 {
-			font-size: $glass-font-sm;
-			color: $font-color-light;
-			line-height: 1.4;
-			margin-bottom: $glass-spacing-xs;
-			display: -webkit-box;
-			-webkit-line-clamp: 2;
-			-webkit-box-orient: vertical;
-			overflow: hidden;
-		}
-	}
 
 	.f-header {
 		display: flex;
@@ -701,20 +551,6 @@
 		.icon-you {
 			font-size: $glass-font-lg;
 			color: $glass-accent;
-			font-weight: 600;
-		}
-
-		.timer {
-			display: inline-block;
-			width: 40upx;
-			height: 36upx;
-			text-align: center;
-			line-height: 36upx;
-			margin-right: 14upx;
-			font-size: $glass-font-sm;
-			color: #fff;
-			border-radius: $glass-radius-sm;
-			background: rgba($glass-primary, 0.9);
 			font-weight: 600;
 		}
 	}

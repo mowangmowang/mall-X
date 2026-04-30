@@ -4,10 +4,10 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				// #ifdef MP 
+				// #ifdef MP
 				"navigationBarTitleText": "Mall商城",
 				//"navigationStyle": "custom",
-				// #endif 
+				// #endif
 				"enablePullDownRefresh": true,
 				"app-plus": {
 					"titleNView": {
@@ -18,24 +18,7 @@
 							"placeholder": "请输入商品 如：手机",
 							"disabled": true,
 							"placeholderColor": "#606266"
-						},
-						"buttons": [{
-								"fontSrc": "/static/yticon.ttf",
-								"text": "\ue60d",
-								"fontSize": "26",
-								"color": "#303133",
-								"float": "left",
-								"background": "rgba(0,0,0,0)"
-							},
-							{
-								"fontSrc": "/static/yticon.ttf",
-								"text": "\ue744",
-								"fontSize": "27",
-								"color": "#303133",
-								"background": "rgba(0,0,0,0)",
-								"redDot": true
-							}
-						]
+						}
 					}
 				}
 			}
@@ -54,13 +37,6 @@
 			"path": "pages/set/set",
 			"style": {
 				"navigationBarTitleText": "设置"
-			}
-		},
-
-		{
-			"path": "pages/userinfo/userinfo",
-			"style": {
-				"navigationBarTitleText": "修改资料"
 			}
 		}, {
 			"path": "pages/cart/cart",
@@ -99,22 +75,13 @@
 					"titleNView": {
 						"type": "transparent",
 						"buttons": [{
-								"fontSrc": "/static/yticon.ttf",
-								"text": "\ue60f",
-								"fontSize": "24",
-								"color": "#303133",
-								"width": "46px",
-								"background": "rgba(0,0,0,0)"
-							},
-							{
-								"fontSrc": "/static/yticon.ttf",
-								"text": "\ue744",
-								"fontSize": "28",
-								"color": "#303133",
-								"background": "rgba(0,0,0,0)",
-								"redDot": true
-							}
-						]
+							"fontSrc": "/static/yticon.ttf",
+							"text": "",
+							"fontSize": "24",
+							"color": "#303133",
+							"width": "46px",
+							"background": "rgba(0,0,0,0)"
+						}]
 					}
 				}
 			}
@@ -126,9 +93,6 @@
 					"bounce": "none"
 				}
 			}
-		}, {
-			"path": "pages/money/money",
-			"style": {}
 		}, {
 			"path": "pages/order/createOrder",
 			"style": {
@@ -159,11 +123,6 @@
 			"path": "pages/money/paySuccess",
 			"style": {
 				"navigationBarTitleText": "支付成功"
-			}
-		}, {
-			"path": "pages/notice/notice",
-			"style": {
-				"navigationBarTitleText": "通知"
 			}
 		}, {
 			"path": "pages/category/category",
