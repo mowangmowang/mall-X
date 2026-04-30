@@ -234,6 +234,11 @@
 			"style": {
 				"navigationBarTitleText": "领券中心"
 			}
+		}, {
+			"path": "pages/order/returnApply",
+			"style": {
+				"navigationBarTitleText": "申请售后"
+			}
 		}
 	],
 	"globalStyle": {

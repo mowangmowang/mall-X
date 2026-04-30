@@ -75,6 +75,28 @@ export function deleteUserOrder(data) {
 	})
 }
 
+export function createReturnApply(data) {
+	return request({
+		method: 'POST',
+		url: '/returnApply/create',
+		data: data
+	})
+}
+
+export function fetchReturnApplyList() {
+	return request({
+		method: 'GET',
+		url: '/returnApply/list'
+	})
+}
+
+export function cancelReturnApply(id) {
+	return request({
+		method: 'POST',
+		url: `/returnApply/cancel/${id}`
+	})
+}
+
 export function fetchAliapyStatus(params) {
 	return request({
 		method: 'GET',

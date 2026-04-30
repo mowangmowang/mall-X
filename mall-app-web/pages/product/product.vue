@@ -191,36 +191,43 @@
 		</view>
 		<!-- 分享 -->
 		<share ref="share" :contentHeight="580" :shareList="shareList"></share>
+		<!-- AI 购物助手 -->
+		<view class="ai-float-btn" @click="showAiChat = true">
+			<text class="ai-float-icon">AI</text>
+		</view>
+		<ai-chat :visible="showAiChat" :onSend="handleAiChatSend" @close="showAiChat = false"></ai-chat>
 	</view>
 </template>
 
 <script>
-	import share from '@/components/share';
-	import {
-		fetchProductDetail
-	} from '@/api/product.js';
-	import {
-		addCartItem
-	} from '@/api/cart.js';
-	import {
-		fetchProductCouponList,
-		addMemberCoupon
-	} from '@/api/coupon.js';
-	import {
-		createReadHistory
-	} from '@/api/memberReadHistory.js';
-	import {
-		createProductCollection,
-		deleteProductCollection,
-		productCollectionDetail
-	} from '@/api/memberProductCollection.js';
-	import {
-		mapState
-	} from 'vuex';
-	import {
-		formatDate
-	} from '@/utils/date';
-	const defaultServiceList = [{
+		import share from '@/components/share';
+		import aiChat from '@/components/ai-chat/ai-chat.vue';
+		import {
+			fetchProductDetail
+		} from '@/api/product.js';
+		import { aiProductQa } from '@/api/ai.js';
+		import {
+			addCartItem
+		} from '@/api/cart.js';
+		import {
+			fetchProductCouponList,
+			addMemberCoupon
+		} from '@/api/coupon.js';
+		import {
+			createReadHistory
+		} from '@/api/memberReadHistory.js';
+		import {
+			createProductCollection,
+			deleteProductCollection,
+			productCollectionDetail
+		} from '@/api/memberProductCollection.js';
+		import {
+			mapState
+		} from 'vuex';
+		import {
+			formatDate
+		} from '@/utils/date';
+		const defaultServiceList = [{
 		id: 1,
 		name: "无忧退货"
 	}, {
@@ -689,6 +696,17 @@
 					url: `/pages/brand/brandDetail?id=${id}`
 				})
 			},
+				handleAiChatSend(msg) {
+					const product = this.product;
+					return aiProductQa({
+						productId: product.id,
+						question: msg,
+						productName: product.name,
+						productBrand: product.brandName,
+						productPrice: product.price,
+						productSubTitle: product.subTitle
+					}).then(res => res.data.reply);
+				},
 		},
 
 	}
@@ -1510,4 +1528,36 @@
 			}
 		}
 	}
+	/* AI 购物助手悬浮按钮 */
+	.ai-float-btn {
+		position: fixed;
+		bottom: 200upx;
+		right: 30upx;
+		width: 96upx;
+		height: 96upx;
+		border-radius: 50%;
+		background: #171717;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 99;
+		box-shadow: 0 4upx 16upx rgba(0, 0, 0, 0.25);
+		cursor: pointer;
+		transition: transform 0.2s;
+
+		&:active {
+			transform: scale(0.92);
+		}
+
+		.ai-float-icon {
+			color: #fff;
+			font-size: 32upx;
+			font-weight: 700;
+			letter-spacing: 2upx;
+		}
+	}
 </style>
+
+
+
+

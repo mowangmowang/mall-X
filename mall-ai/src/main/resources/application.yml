@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: mall-ai
+  profiles:
+    active: dev
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+server:
+  port: 8086
+
+ai:
+  client:
+    base-url: https://api.deepseek.com/v1
+    model: deepseek-chat
+    temperature: 0.7
+    max-tokens: 1024

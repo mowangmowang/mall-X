@@ -102,7 +102,7 @@
 				<button class="action-btn recom" @click="receiveOrder(order.id)">确认收货</button>
 			</view>
 			<view class="action-box b-t" v-if="order.status == 3">
-				<button class="action-btn">申请售后</button>
+				<button class="action-btn" @click="navToReturnApply(order)">申请售后</button>
 			</view>
 			<view class="price-content" v-if="order.status==0">
 				<text>应付金额</text>
@@ -226,6 +226,19 @@
 							console.log('用户点击取消');
 						}
 					}
+				});
+			},
+			//跳转到售后申请
+			navToReturnApply(order) {
+				const item = order.orderItemList[0];
+				if (!item) {
+					uni.showToast({ title: '商品信息不存在', icon: 'none' });
+					return;
+				}
+				const productAttr = item.productAttr ? encodeURIComponent(item.productAttr) : '';
+				const productBrand = item.productBrand ? encodeURIComponent(item.productBrand) : '';
+				uni.navigateTo({
+					url: `/pages/order/returnApply?orderId=${order.id}&orderSn=${order.orderSn}&productId=${item.productId}&productName=${encodeURIComponent(item.productName)}&productPic=${encodeURIComponent(item.productPic)}&productBrand=${productBrand}&productAttr=${productAttr}&productCount=${item.productQuantity}&productPrice=${item.productPrice}&productRealPrice=${item.productRealPrice || item.productPrice}`
 				});
 			},
 			//设置订单状态信息
