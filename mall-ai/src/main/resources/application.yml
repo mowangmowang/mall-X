@@ -12,6 +12,7 @@ server:
 
 ai:
   client:
+    api-key: ${AI_API_KEY:your-api-key-here}  # 请替换为你的真实API Key，或设置环境变量 AI_API_KEY
     base-url: https://api.deepseek.com/v1
     model: deepseek-chat
     temperature: 0.7
