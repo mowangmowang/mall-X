@@ -21,6 +21,12 @@ public class ReturnSuggestionRequest {
     @ApiModelProperty(value = "订单编号", example = "202401010001")
     private String orderSn;
 
+    @ApiModelProperty(value = "会话ID，用于多轮对话状态管理", example = "session_123456")
+    private String sessionId;
+
+    @ApiModelProperty(value = "当前引导步骤 (1-3)", example = "1")
+    private Integer step;
+
     public String getIssue() { return issue; }
     public void setIssue(String issue) { this.issue = issue; }
     public String getProductName() { return productName; }
@@ -29,4 +35,8 @@ public class ReturnSuggestionRequest {
     public void setProductAttr(String productAttr) { this.productAttr = productAttr; }
     public String getOrderSn() { return orderSn; }
     public void setOrderSn(String orderSn) { this.orderSn = orderSn; }
+    public String getSessionId() { return sessionId; }
+    public void setSessionId(String sessionId) { this.sessionId = sessionId; }
+    public Integer getStep() { return step; }
+    public void setStep(Integer step) { this.step = step; }
 }

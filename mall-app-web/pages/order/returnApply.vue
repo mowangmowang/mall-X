@@ -87,15 +87,27 @@
 			<view class="mask" @click="closeAiSuggest"></view>
 			<view class="layer">
 				<view class="ai-suggest-header">
-					<view class="ai-suggest-title">AI售后建议</view>
+					<view class="ai-suggest-title">AI售后助手 ({{currentStep}}/3)</view>
 					<text class="close-icon" @click="closeAiSuggest">✕</text>
 				</view>
-				<textarea class="ai-issue-input" v-model="aiIssue" placeholder="请描述您遇到的问题..." maxlength="500" />
-				<view class="ai-actions">
-					<button class="ai-cancel-btn" @click="closeAiSuggest">取消</button>
-					<button class="ai-submit-btn" :disabled="aiSuggesting" @click="getAiSuggest">
-						{{aiSuggesting ? '建议生成中...' : '获取建议'}}
-					</button>
+				
+				<!-- 对话记录区域 -->
+				<scroll-view scroll-y class="chat-history" :scroll-into-view="scrollToId">
+					<view v-for="(msg, index) in chatMessages" :key="index" :id="'msg-' + index" 
+						:class="['chat-item', msg.role === 'user' ? 'user-msg' : 'ai-msg']">
+						<text>{{msg.content}}</text>
+					</view>
+					<view id="msg-bottom"></view>
+				</scroll-view>
+
+				<view class="ai-input-area">
+					<textarea class="ai-issue-input" v-model="aiIssue" placeholder="请回复AI的问题..." maxlength="200" />
+					<view class="ai-actions">
+						<button class="ai-cancel-btn" @click="closeAiSuggest">取消</button>
+						<button class="ai-submit-btn" :disabled="aiSuggesting" @click="handleNextStep">
+							{{aiSuggesting ? '思考中...' : '发送'}}
+						</button>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -110,6 +122,8 @@
 <script>
 	import { createReturnApply } from '@/api/order.js';
 	import { aiReturnSuggest } from '@/api/ai.js';
+	import { getEnabledReturnReasons } from '@/api/returnReason.js';
+	
 	export default {
 		data() {
 			return {
@@ -132,7 +146,12 @@
 				showAiSuggest: false,
 				aiIssue: '',
 				aiSuggesting: false,
-				highlightDescription: false
+				highlightDescription: false,
+				// 多轮对话相关状态
+				chatMessages: [],
+				currentStep: 1,
+				sessionId: '',
+				scrollToId: ''
 			}
 		},
 		computed: {
@@ -151,9 +170,39 @@
 			this.productCount = parseInt(option.productCount || 1);
 			this.productPrice = parseFloat(option.productPrice || 0);
 			this.productRealPrice = parseFloat(option.productRealPrice || option.productPrice || 0);
+			
+			// 动态加载退货原因
+			this.loadReturnReasons();
 		},
 		methods: {
 				stopPrevent() {},
+			/**
+			 * 动态加载退货原因列表
+			 * 从后端 API 获取，确保与数据库配置一致
+			 */
+			async loadReturnReasons() {
+				try {
+					const res = await getEnabledReturnReasons();
+					if (res.code === 200 && res.data && res.data.list) {
+						this.reasonList = res.data.list.map(item => item.name);
+						console.log('加载退货原因成功:', this.reasonList);
+					} else {
+						console.warn('退货原因 API 返回数据异常，使用默认列表');
+						this.useDefaultReasons();
+					}
+				} catch (e) {
+					console.error('加载退货原因失败', e);
+					// 降级策略：使用默认列表
+					this.useDefaultReasons();
+				}
+			},
+			/**
+			 * 使用默认退货原因列表（降级策略）
+			 */
+			useDefaultReasons() {
+				this.reasonList = ['质量问题', '尺码太大', '颜色不喜欢', '7天无理由退货', '其他'];
+				console.log('使用默认退货原因列表:', this.reasonList);
+			},
 			formatAttr(attr) {
 				if (!attr) return '';
 				try {
@@ -223,41 +272,72 @@
 			},
 			openAiSuggest() {
 				this.aiIssue = "";
+				this.chatMessages = [{ role: 'ai', content: '您好，我是AI售后助手。为了更准确地帮您处理退货，我需要了解一些细节。' }];
+				this.currentStep = 1;
+				this.sessionId = 'session_' + Date.now();
 				this.showAiSuggest = true;
+				// 自动触发第一步引导
+				this.handleNextStep();
 			},
 			closeAiSuggest() {
 				this.showAiSuggest = false;
 			},
-			getAiSuggest() {
-				if (!this.aiIssue.trim()) return;
+			async handleNextStep() {
+				const text = this.aiIssue.trim();
+				if (!text || this.aiSuggesting) return;
+
+				// 添加用户消息到历史记录
+				this.chatMessages.push({ role: 'user', content: text });
+				this.aiIssue = '';
+				this.scrollToId = 'msg-' + (this.chatMessages.length - 1);
+
 				this.aiSuggesting = true;
-				aiReturnSuggest({
-					issue: this.aiIssue,
-					productName: this.productName,
-					productAttr: this.productAttr,
-					orderSn: this.orderSn
-				}).then(res => {
+				try {
+					const res = await aiReturnSuggest({
+						issue: text,
+						productName: this.productName,
+						productAttr: this.productAttr,
+						orderSn: this.orderSn,
+						sessionId: this.sessionId,
+						step: this.currentStep
+					});
+
 					const data = res.data;
-					const idx = this.reasonList.indexOf(data.suggestedReason);
-					if (idx !== -1) {
-						this.reason = data.suggestedReason;
-						this.reasonIndex = idx;
+					// 添加AI回复到历史记录
+					this.chatMessages.push({ role: 'ai', content: data.guideQuestion || '收到。' });
+					this.scrollToId = 'msg-' + (this.chatMessages.length - 1);
+
+					if (data.finished) {
+						// 引导完成，自动填写表单
+						setTimeout(() => {
+							this.applyAiResult(data);
+						}, 1000);
+					} else {
+						// 进入下一步
+						this.currentStep++;
 					}
-					this.description = data.suggestedDescription;
-					this.closeAiSuggest();
-					uni.showToast({ title: "已自动填写建议内容", icon: "success" });
-					
-					// 高亮显示被修改的字段
-					this.highlightDescription = true;
-					setTimeout(() => {
-						this.highlightDescription = false;
-					}, 2000);
-				}).catch(() => {
+				} catch (e) {
 					uni.showToast({ title: "获取建议失败", icon: "none" });
-				}).finally(() => {
+				} finally {
 					this.aiSuggesting = false;
-				});
-			}
+				}
+			},
+			applyAiResult(data) {
+				const idx = this.reasonList.indexOf(data.suggestedReason);
+				if (idx !== -1) {
+					this.reason = data.suggestedReason;
+					this.reasonIndex = idx;
+				}
+				this.description = data.suggestedDescription;
+				this.closeAiSuggest();
+				uni.showToast({ title: "已自动填写建议内容", icon: "success" });
+				
+				// 高亮显示被修改的字段
+				this.highlightDescription = true;
+				setTimeout(() => {
+					this.highlightDescription = false;
+				}, 2000);
+			},
 		}
 	}
 </script>
@@ -558,16 +638,38 @@
 		}
 	}
 	
-	.ai-issue-input {
-		width: 85%;
-		height: 200upx;
-		margin: 30upx auto 0;
+	.chat-history {
+		flex: 1;
+		max-height: 60vh;
 		padding: 20upx;
-		border: 1px solid #e0e0e0;
-		border-radius: 8upx;
+	}
+
+	.chat-item {
+		margin-bottom: 20upx;
+		padding: 20upx;
+		border-radius: 12upx;
 		font-size: 28upx;
+		line-height: 1.5;
+		max-width: 90%;
+	}
+
+	.user-msg {
+		background: #f0f0f0;
 		color: #333;
-		display: block;
+		margin-left: auto;
+		border-bottom-right-radius: 4upx;
+	}
+
+	.ai-msg {
+		background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+		color: #333;
+		margin-right: auto;
+		border-bottom-left-radius: 4upx;
+	}
+
+	.ai-input-area {
+		padding: 20upx;
+		border-top: 1px solid #f0f0f0;
 	}
 	
 	.ai-actions {
@@ -631,9 +733,10 @@
 		z-index: 999;
 		bottom: 0;
 		width: 100%;
-		min-height: 40vh;
+		height: 80vh; /* 固定高度以便内部滚动 */
 		border-radius: 24upx 24upx 0 0;
 		background: #fff;
-		padding: 20upx 0;
+		display: flex;
+		flex-direction: column;
 	}
 </style>
