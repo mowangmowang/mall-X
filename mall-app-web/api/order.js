@@ -97,6 +97,18 @@ export function cancelReturnApply(id) {
 	})
 }
 
+/**
+ * 获取售后申请详情
+ * @param {Number} id 售后申请ID
+ * @returns {Promise} 售后详情
+ */
+export function fetchReturnApplyDetail(id) {
+	return request({
+		method: 'GET',
+		url: `/returnApply/${id}`
+	})
+}
+
 export function fetchAliapyStatus(params) {
 	return request({
 		method: 'GET',

@@ -38,7 +38,12 @@ public class OmsCartItemServiceImpl implements OmsCartItemService {
         int count;
         UmsMember currentMember =memberService.getCurrentMember();
         cartItem.setMemberId(currentMember.getId());
-        cartItem.setMemberNickname(currentMember.getNickname());
+        // 当 nickname 为 NULL 时，使用 username 作为 fallback
+        String nickname = currentMember.getNickname();
+        if (nickname == null || nickname.trim().isEmpty()) {
+            nickname = currentMember.getUsername();
+        }
+        cartItem.setMemberNickname(nickname);
         cartItem.setDeleteStatus(0);
         OmsCartItem existCartItem = getCartItem(cartItem);
         if (existCartItem == null) {

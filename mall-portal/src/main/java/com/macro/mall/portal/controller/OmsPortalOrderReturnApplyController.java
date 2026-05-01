@@ -44,6 +44,17 @@ public class OmsPortalOrderReturnApplyController {
         return CommonResult.success(list);
     }
 
+    @ApiOperation("获取退货申请详情")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public CommonResult<com.macro.mall.model.OmsOrderReturnApply> getDetail(@PathVariable Long id) {
+        // 获取指定退货申请的详情
+        com.macro.mall.model.OmsOrderReturnApply apply = returnApplyService.getDetail(id);
+        if (apply != null) {
+            return CommonResult.success(apply);
+        }
+        return CommonResult.failed("售后申请不存在");
+    }
+
     @ApiOperation("取消退货申请")
     @RequestMapping(value = "/cancel/{id}", method = RequestMethod.POST)
     public CommonResult cancel(@PathVariable Long id) {

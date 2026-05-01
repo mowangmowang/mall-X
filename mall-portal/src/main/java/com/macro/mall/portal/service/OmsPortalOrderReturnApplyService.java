@@ -16,6 +16,11 @@ public interface OmsPortalOrderReturnApplyService {
     java.util.List<com.macro.mall.model.OmsOrderReturnApply> list();
 
     /**
+     * 获取申请详情
+     */
+    com.macro.mall.model.OmsOrderReturnApply getDetail(Long id);
+
+    /**
      * 取消申请
      */
     int cancel(Long id);

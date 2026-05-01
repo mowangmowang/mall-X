@@ -264,7 +264,8 @@
 					this.submitting = false;
 					uni.showToast({ title: '申请提交成功', icon: 'success' });
 					setTimeout(() => {
-						uni.redirectTo({ url: '/pages/order/order?state=5' });
+						// 跳转到售后/退款标签页 (state=99)
+						uni.redirectTo({ url: '/pages/order/order?state=99' });
 					}, 1000);
 				}).catch(() => {
 					this.submitting = false;

@@ -40,13 +40,16 @@ public class OmsPortalOrderReturnApplyServiceImpl implements OmsPortalOrderRetur
         }
             
         // 4. 检查是否已申请过退货
+        // 注意：status=3 表示已拒绝，允许用户重新申请
         com.macro.mall.model.OmsOrderReturnApplyExample example = new com.macro.mall.model.OmsOrderReturnApplyExample();
         example.createCriteria()
             .andOrderIdEqualTo(returnApply.getOrderId())
-            .andStatusNotEqualTo(3); // 排除已拒绝的申请
+            .andStatusIn(java.util.Arrays.asList(0, 1, 2)); // 只排除待处理(0)、退货中(1)、已完成(2)
         long count = returnApplyMapper.countByExample(example);
         if (count > 0) {
-            com.macro.mall.common.exception.Asserts.fail("该订单已有退货申请在处理中");
+            com.macro.mall.common.exception.Asserts.fail("该订单已有退货申请在处理中，请勿重复提交");
+        } else {
+            System.out.println("[DEBUG] 订单 " + returnApply.getOrderId() + " 无进行中的售后申请，允许提交");
         }
             
         // 5. 验证退货原因是否为空
@@ -70,12 +73,42 @@ public class OmsPortalOrderReturnApplyServiceImpl implements OmsPortalOrderRetur
     @Override
     public java.util.List<com.macro.mall.model.OmsOrderReturnApply> list() {
         com.macro.mall.model.UmsMember member = memberService.getCurrentMember();
-        System.out.println("[DEBUG] 查询售后列表 - 当前 memberUsername: " + member.getUsername());
+        String currentUsername = member.getUsername();
+        System.out.println("[DEBUG] 查询售后列表 - 当前 memberUsername: " + currentUsername);
+        
         com.macro.mall.model.OmsOrderReturnApplyExample example = new com.macro.mall.model.OmsOrderReturnApplyExample();
-        example.createCriteria().andMemberUsernameEqualTo(member.getUsername());
+        example.createCriteria().andMemberUsernameEqualTo(currentUsername);
+        // 按申请时间倒序排列，最新的在最前面
+        example.setOrderByClause("create_time DESC");
+        
         java.util.List<com.macro.mall.model.OmsOrderReturnApply> result = returnApplyMapper.selectByExample(example);
         System.out.println("[DEBUG] 查询结果数量: " + (result == null ? 0 : result.size()));
+        
+        if (result != null && !result.isEmpty()) {
+            for (com.macro.mall.model.OmsOrderReturnApply apply : result) {
+                System.out.println("[DEBUG] 售后记录 - ID: " + apply.getId() + ", orderSn: " + apply.getOrderSn() 
+                    + ", memberUsername: " + apply.getMemberUsername() + ", status: " + apply.getStatus());
+            }
+        } else {
+            System.out.println("[WARN] 未找到该用户的售后记录，请检查 memberUsername 是否匹配");
+        }
+        
         return result;
+    }
+
+    @Override
+    public com.macro.mall.model.OmsOrderReturnApply getDetail(Long id) {
+        com.macro.mall.model.UmsMember member = memberService.getCurrentMember();
+        com.macro.mall.model.OmsOrderReturnApply apply = returnApplyMapper.selectByPrimaryKey(id);
+        
+        // 验证申请是否存在且属于当前用户
+        if (apply != null && apply.getMemberUsername().equals(member.getUsername())) {
+            System.out.println("[DEBUG] 获取售后详情 - ID: " + id + ", orderSn: " + apply.getOrderSn());
+            return apply;
+        } else {
+            System.out.println("[WARN] 售后申请不存在或无权访问 - ID: " + id);
+            return null;
+        }
     }
 
     @Override

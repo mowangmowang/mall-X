@@ -19,7 +19,7 @@
 							<text class="empty-text">暂无售后记录</text>
 						</view>
 						<!-- 列表 -->
-						<view v-for="(item, index) in returnList" :key="item.id" class="order-item">
+						<view v-for="(item, index) in returnList" :key="item.id" class="order-item" @click="viewReturnApplyDetail(item.id)">
 							<view class="i-top b-b">
 								<text class="time">订单号：{{item.orderSn}}</text>
 								<text class="state" :style="{color: statusColor(item.status)}">{{item.status | formatReturnStatus}}</text>
@@ -96,8 +96,11 @@
 							<view class="action-box b-t" v-if="item.status == 2">
 								<button class="action-btn recom" @click="receiveOrder(item.id)">确认收货</button>
 							</view>
-							<view class="action-box b-t" v-if="item.status == 3">
+							<view class="action-box b-t" v-if="canApplyReturn(item)">
 								<button class="action-btn" @click="navToReturnApply(item)">申请售后</button>
+							</view>
+							<view class="action-box b-t" v-if="item.status == 3 && !canApplyReturn(item)">
+								<button class="action-btn" @click="viewReturnApply(item.id)">查看售后</button>
 							</view>
 						</view>
 						<uni-load-more :status="loadingType"></uni-load-more>
@@ -134,11 +137,15 @@
 					{ state: 4, text: '已取消' },
 					{ state: 99, text: '售后/退款' }
 				],
+				// 存储已有售后申请的订单 ID 集合
+				appliedReturnOrderIds: new Set()
 			};
 		},
 		onLoad(options) {
 			console.log('onLoad 触发, options:', options);
-			this.tabCurrentIndex = +options.state;
+			// 添加参数验证和默认值处理
+			const state = options && options.state !== undefined ? parseInt(options.state) : 0;
+			this.tabCurrentIndex = isNaN(state) ? 0 : state;
 			console.log('tabCurrentIndex 设置为:', this.tabCurrentIndex);
 			console.log('navList[this.tabCurrentIndex]:', this.navList[this.tabCurrentIndex]);
 			this.loadData();
@@ -167,6 +174,11 @@
 		methods: {
 			loadData(type='refresh') {
 				console.log('loadData 触发, tabCurrentIndex:', this.tabCurrentIndex);
+				// 添加边界检查，防止索引越界
+				if (this.tabCurrentIndex < 0 || this.tabCurrentIndex >= this.navList.length) {
+					console.error('tabCurrentIndex 越界:', this.tabCurrentIndex);
+					this.tabCurrentIndex = 0;
+				}
 				const state = this.navList[this.tabCurrentIndex].state;
 				console.log('当前 state:', state);
 				if (state === 99) {
@@ -184,6 +196,8 @@
 					if(type=='refresh'){
 						this.orderList = list;
 						this.loadingType = 'more';
+						// 加载订单列表后，检查哪些订单已有售后申请
+						this.checkReturnApplyStatus();
 					}else{
 						if(list&&list.length>0){
 							this.orderList = this.orderList.concat(list);
@@ -195,18 +209,104 @@
 					}
 				});
 			},
+			/**
+			 * 检查订单是否已有售后申请
+			 * 加载售后列表，提取 order_id 集合
+			 */
+			async checkReturnApplyStatus() {
+				try {
+					const response = await fetchReturnApplyList();
+					if (response.data && Array.isArray(response.data)) {
+						// 提取所有售后申请中的订单 ID
+						// 只排除状态为 0(待处理)、1(退货中)、2(已完成) 的申请
+						// 状态为 3(已拒绝) 的申请允许重新提交
+						this.appliedReturnOrderIds = new Set(
+							response.data
+								.filter(item => [0, 1, 2].includes(item.status))
+								.map(item => item.orderId)
+						);
+						console.log('已有售后申请的订单 IDs:', Array.from(this.appliedReturnOrderIds));
+					}
+				} catch (error) {
+					console.error('检查售后申请状态失败:', error);
+				}
+			},
+			/**
+			 * 判断订单是否可以申请售后
+			 * @param {Object} order 订单对象
+			 * @returns {Boolean} true 表示可以申请
+			 */
+			canApplyReturn(order) {
+				// 订单状态必须是已完成（3）
+				if (order.status !== 3) {
+					return false;
+				}
+				// 检查是否已有售后申请
+				return !this.appliedReturnOrderIds.has(order.id);
+			},
+			/**
+			 * 查看售后详情
+			 * @param {Number} orderId 订单ID
+			 */
+			viewReturnApply(orderId) {
+				// 找到对应的售后申请
+				const returnApply = this.returnList.find(item => item.orderId === orderId);
+				if (returnApply && returnApply.id) {
+					uni.navigateTo({
+						url: `/pages/order/returnApplyDetail?id=${returnApply.id}`
+					});
+				} else {
+					// 如果当前列表中没有，需要先加载售后列表
+					fetchReturnApplyList().then(response => {
+						if (response.data && Array.isArray(response.data)) {
+							const apply = response.data.find(item => item.orderId === orderId);
+							if (apply && apply.id) {
+								uni.navigateTo({
+									url: `/pages/order/returnApplyDetail?id=${apply.id}`
+								});
+							} else {
+								uni.showToast({ title: '未找到售后记录', icon: 'none' });
+							}
+						}
+					}).catch(() => {
+						uni.showToast({ title: '加载失败', icon: 'none' });
+					});
+				}
+			},
+			/**
+			 * 查看售后详情（售后列表调用）
+			 * @param {Number} applyId 售后申请ID
+			 */
+			viewReturnApplyDetail(applyId) {
+				uni.navigateTo({
+					url: `/pages/order/returnApplyDetail?id=${applyId}`
+				});
+			},
 			loadReturnList() {
 				console.log('loadReturnList 被调用');
 				uni.showLoading({ title: '加载中...', mask: true });
 				fetchReturnApplyList().then(response => {
 					console.log('售后列表请求成功, response:', response);
 					uni.hideLoading();
-					this.returnList = response.data || [];
+							
+					// 处理不同的响应格式
+					if (response.data) {
+						this.returnList = Array.isArray(response.data) ? response.data : [];
+					} else {
+						this.returnList = [];
+					}
+							
 					console.log('returnList 设置为:', this.returnList);
+					console.log('returnList 长度:', this.returnList.length);
 					this.loadingType = 'nomore';
+							
+					if (this.returnList.length === 0) {
+						console.log('提示：暂无售后记录');
+					}
 				}).catch(error => {
 					uni.hideLoading();
 					console.error('获取售后列表失败:', error);
+					console.error('错误详情:', error.message || error);
 					this.returnList = [];
 					this.loadingType = 'nomore';
 					uni.showToast({ title: '加载失败，请重试', icon: 'none', duration: 2000 });
@@ -466,6 +566,14 @@
 
 			&:after { border-radius: 100px; }
 			&.recom { background: $color-bg-secondary; color: $base-color; }
+		}
+
+		/* 已申请售后提示 */
+		.applied-tip {
+			font-size: $font-sm + 2upx;
+			color: $font-color-light;
+			padding: 0 30upx;
+			opacity: 0.6;
 		}
 
 		/* 售后列表信息行 */

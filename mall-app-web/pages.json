@@ -87,6 +87,16 @@
 				"navigationBarTitleText": "订单详情"
 			}
 		}, {
+			"path": "pages/order/returnApply",
+			"style": {
+				"navigationBarTitleText": "申请售后"
+			}
+		}, {
+			"path": "pages/order/returnApplyDetail",
+			"style": {
+				"navigationBarTitleText": "售后详情"
+			}
+		}, {
 			"path": "pages/address/address",
 			"style": {
 				"navigationBarTitleText": "收货地址"
@@ -233,11 +243,6 @@
 			"path": "pages/coupon/center",
 			"style": {
 				"navigationBarTitleText": "领券中心"
-			}
-		}, {
-			"path": "pages/order/returnApply",
-			"style": {
-				"navigationBarTitleText": "申请售后"
 			}
 		}
 	],
