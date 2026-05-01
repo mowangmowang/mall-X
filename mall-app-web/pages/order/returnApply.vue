@@ -1,62 +1,73 @@
-﻿<template>
+<template>
 	<view class="content">
-		<!-- è®¢å•ä¿¡æ¯ -->
+		<!-- 订单信息 -->
 		<view class="section">
-			<view class="section-header">è®¢å•ä¿¡æ¯</view>
+			<view class="section-header">订单信息</view>
 			<view class="info-row">
-				<text class="label">è®¢å•ç¼–å·</text>
+				<text class="label">订单编号</text>
 				<text class="value">{{orderSn}}</text>
 			</view>
 		</view>
 
-		<!-- å•†å“ä¿¡æ¯ -->
+		<!-- 商品信息 -->
 		<view class="section">
-			<view class="section-header">å•†å“ä¿¡æ¯</view>
+			<view class="section-header">商品信息</view>
 			<view class="product-info">
 				<image :src="productPic" mode="aspectFill"></image>
 				<view class="product-right">
 					<text class="product-name clamp">{{productName}}</text>
 					<text class="product-attr">{{formatAttr(productAttr)}}</text>
 					<view class="product-meta">
-						<text class="product-price">ï¿¥{{productPrice}}</text>
+						<text class="product-price">¥{{productPrice}}</text>
 						<text class="product-count">x {{productCount}}</text>
 					</view>
 				</view>
 			</view>
 		</view>
 
-		<!-- é€€è´§åŽŸå›  -->
+		<!-- 退货原因 -->
 		<view class="section">
 			<view class="info-row">
-				<text class="label">é€€è´§åŽŸå› </text>
+				<text class="label">退货原因</text>
 				<picker mode="selector" :range="reasonList" @change="onReasonChange">
-					<view class="picker-value">{{reason || 'è¯·é€‰æ‹©é€€è´§åŽŸå› '}}</view>
+					<view class="picker-value">{{reason || '请选择退货原因'}}</view>
 				</picker>
 				<text class="yticon icon-you"></text>
 			</view>
 		</view>
 
-		<!-- é€€æ¬¾é‡‘é¢ -->
+		<!-- 退款金额 -->
 		<view class="section">
 			<view class="info-row">
-				<text class="label">é€€æ¬¾é‡‘é¢</text>
-				<text class="value price">ï¿¥{{refundAmount}}</text>
+				<text class="label">退款金额</text>
+				<text class="value price">¥{{refundAmount}}</text>
 			</view>
 		</view>
 
-		<!-- é—®é¢˜æè¿° -->
+		<!-- 问题描述 -->
 		<view class="section">
 			<view class="section-header">
-				<text>é—®é¢˜æè¿°</text>
-				<button class="ai-suggest-btn" @click="openAiSuggest">AI建议</button>
+				<text>问题描述</text>
 			</view>
-			<textarea class="desc-input" v-model="description" placeholder="è¯·æè¿°é€€è´§åŽŸå› ï¼Œæœ€å¤š500å­—" maxlength="500" />
+			<!-- AI 建议提示按钮 -->
+			<view class="ai-suggest-tip" @click="openAiSuggest">
+				<text class="ai-tip-icon">✨</text>
+				<text class="ai-tip-text">不知道如何描述？让 AI 帮你生成问题描述</text>
+				<text class="yticon icon-you"></text>
+			</view>
+			<textarea 
+				class="desc-input" 
+				:class="{ 'highlight-change': highlightDescription }"
+				v-model="description" 
+				placeholder="请描述退货原因，最多500字" 
+				maxlength="500" 
+			/>
 			<text class="word-count">{{description.length}}/500</text>
 		</view>
 
-		<!-- å‡­è¯å›¾ç‰‡ -->
+		<!-- 凭证图片 -->
 		<view class="section">
-			<view class="section-header">å‡­è¯å›¾ç‰‡</view>
+			<view class="section-header">凭证图片</view>
 			<view class="upload-list">
 				<view class="upload-item" v-for="(img, index) in proofPicsList" :key="index">
 					<image :src="img" mode="aspectFill"></image>
@@ -64,10 +75,10 @@
 				</view>
 				<view class="upload-btn" v-if="proofPicsList.length < 3" @click="chooseImage">
 					<text class="plus">+</text>
-					<text class="upload-tip">ä¸Šä¼ å‡­è¯</text>
+					<text class="upload-tip">上传凭证</text>
 				</view>
 			</view>
-			<text class="upload-hint">æœ€å¤šä¸Šä¼ 3å¼ å›¾ç‰‡ï¼Œä»…æ”¯æŒjpg/pngæ ¼å¼</text>
+			<text class="upload-hint">最多上传3张图片，仅支持jpg/png格式</text>
 		</view>
 
 		
@@ -75,15 +86,23 @@
 		<view class="popup" :class="showAiSuggest ? 'show' : 'none'">
 			<view class="mask" @click="closeAiSuggest"></view>
 			<view class="layer">
-				<view class="ai-suggest-title">AI售后建议</view>
+				<view class="ai-suggest-header">
+					<view class="ai-suggest-title">AI售后建议</view>
+					<text class="close-icon" @click="closeAiSuggest">✕</text>
+				</view>
 				<textarea class="ai-issue-input" v-model="aiIssue" placeholder="请描述您遇到的问题..." maxlength="500" />
-				<button class="ai-submit-btn" :disabled="aiSuggesting" @click="getAiSuggest">{{aiSuggesting ? '建议生成中...' : '获取建议'}}</button>
+				<view class="ai-actions">
+					<button class="ai-cancel-btn" @click="closeAiSuggest">取消</button>
+					<button class="ai-submit-btn" :disabled="aiSuggesting" @click="getAiSuggest">
+						{{aiSuggesting ? '建议生成中...' : '获取建议'}}
+					</button>
+				</view>
 			</view>
 		</view>
 
-<!-- æäº¤æŒ‰é’® -->
+<!-- 提交按钮 -->
 		<view class="footer">
-			<button class="submit-btn" :disabled="submitting" @click="submit">{{submitting ? 'æäº¤ä¸­...' : 'æäº¤ç”³è¯·'}}</button>
+			<button class="submit-btn" :disabled="submitting" @click="submit">{{submitting ? '提交中...' : '提交申请'}}</button>
 		</view>
 	</view>
 </template>
@@ -104,7 +123,7 @@
 				productCount: 1,
 				productPrice: 0,
 				productRealPrice: 0,
-				reasonList: ['è´¨é‡é—®é¢˜', 'å•†å“ä¸Žæè¿°ä¸ç¬¦', 'ä¸æƒ³è¦äº†', 'å•†å“æŸå', 'å…¶ä»–'],
+				reasonList: ['质量问题', '商品与描述不符', '不想要了', '商品损坏', '其他'],
 				reason: '',
 				reasonIndex: -1,
 				description: '',
@@ -112,7 +131,8 @@
 				submitting: false,
 				showAiSuggest: false,
 				aiIssue: '',
-				aiSuggesting: false
+				aiSuggesting: false,
+				highlightDescription: false
 			}
 		},
 		computed: {
@@ -152,8 +172,8 @@
 					sourceType: ['album', 'camera'],
 					success: (res) => {
 						const tempFiles = res.tempFilePaths;
-						uni.showLoading({ title: 'ä¸Šä¼ ä¸­...', mask: true });
-						// ä½¿ç”¨ä¸´æ—¶è·¯å¾„ä½œä¸ºå‡­è¯ï¼ˆå®žé™…ç”Ÿäº§çŽ¯å¢ƒåº”ä¸Šä¼ åˆ°OSSï¼‰
+						uni.showLoading({ title: '上传中...', mask: true });
+						// 使用临时路径作为凭证（实际生产环境应上传到OSS）
 						for (let i = 0; i < tempFiles.length; i++) {
 							if (this.proofPicsList.length < 3) {
 								this.proofPicsList.push(tempFiles[i]);
@@ -168,11 +188,11 @@
 			},
 			submit() {
 				if (!this.reason) {
-					uni.showToast({ title: 'è¯·é€‰æ‹©é€€è´§åŽŸå› ', icon: 'none' });
+					uni.showToast({ title: '请选择退货原因', icon: 'none' });
 					return;
 				}
 				if (!this.description.trim()) {
-					uni.showToast({ title: 'è¯·æè¿°é€€è´§é—®é¢˜', icon: 'none' });
+					uni.showToast({ title: '请描述退货问题', icon: 'none' });
 					return;
 				}
 				this.submitting = true;
@@ -193,7 +213,7 @@
 				};
 				createReturnApply(data).then(() => {
 					this.submitting = false;
-					uni.showToast({ title: 'ç”³è¯·æäº¤æˆåŠŸ', icon: 'success' });
+					uni.showToast({ title: '申请提交成功', icon: 'success' });
 					setTimeout(() => {
 						uni.redirectTo({ url: '/pages/order/order?state=5' });
 					}, 1000);
@@ -226,6 +246,12 @@
 					this.description = data.suggestedDescription;
 					this.closeAiSuggest();
 					uni.showToast({ title: "已自动填写建议内容", icon: "success" });
+					
+					// 高亮显示被修改的字段
+					this.highlightDescription = true;
+					setTimeout(() => {
+						this.highlightDescription = false;
+					}, 2000);
 				}).catch(() => {
 					uni.showToast({ title: "获取建议失败", icon: "none" });
 				}).finally(() => {
@@ -357,6 +383,16 @@
 		color: font-color-dark;
 		padding: 20upx 0;
 		line-height: 1.6;
+		transition: background 0.3s;
+		
+		&.highlight-change {
+			animation: highlightPulse 2s ease;
+		}
+	}
+	
+	@keyframes highlightPulse {
+		0%, 100% { background: #fff; }
+		50% { background: #fff9c4; }
 	}
 
 	.word-count {
@@ -461,28 +497,71 @@
 			opacity: 0.8;
 		}
 	}
-	/* AI建议弹窗 */
-	.ai-suggest-btn {
-		background: #171717;
-		color: #fff;
-		font-size: 24upx;
-		padding: 8upx 24upx;
-		border-radius: 8upx;
-		border: none;
-		margin-left: auto;
-		line-height: 2;
+	/* AI 建议提示按钮 */
+	.ai-suggest-tip {
+		display: flex;
+		align-items: center;
+		padding: 20upx 24upx;
+		margin: 0 0 20upx 0;
+		background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+		border: 1px solid #667eea30;
+		border-radius: 12upx;
+		cursor: pointer;
+		transition: all 0.2s;
+		
+		&:active {
+			background: linear-gradient(135deg, #667eea25 0%, #764ba225 100%);
+			transform: scale(0.98);
+		}
+		
+		.ai-tip-icon {
+			font-size: 32upx;
+			margin-right: 12upx;
+		}
+		
+		.ai-tip-text {
+			flex: 1;
+			font-size: 26upx;
+			color: #667eea;
+			font-weight: 500;
+		}
+		
+		.icon-you {
+			font-size: 24upx;
+			color: #667eea;
+		}
 	}
-	.ai-suggest-title {
-		font-size: 32upx;
-		font-weight: 600;
+	
+	/* AI 建议弹窗 */
+	.ai-suggest-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 		padding: 30upx;
-		text-align: center;
-		color: #333;
+		border-bottom: 1px solid #f0f0f0;
+		
+		.ai-suggest-title {
+			font-size: 32upx;
+			font-weight: 600;
+			color: #333;
+		}
+		
+		.close-icon {
+			font-size: 32upx;
+			color: #999;
+			padding: 10upx;
+			min-width: 88upx;
+			min-height: 88upx;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
 	}
+	
 	.ai-issue-input {
 		width: 85%;
 		height: 200upx;
-		margin: 0 auto;
+		margin: 30upx auto 0;
 		padding: 20upx;
 		border: 1px solid #e0e0e0;
 		border-radius: 8upx;
@@ -490,22 +569,41 @@
 		color: #333;
 		display: block;
 	}
+	
+	.ai-actions {
+		display: flex;
+		gap: 20upx;
+		padding: 30upx;
+	}
+	
+	.ai-cancel-btn {
+		flex: 1;
+		height: 80upx;
+		line-height: 80upx;
+		background: #f5f5f5;
+		color: #666;
+		font-size: 30upx;
+		border-radius: 12upx;
+		text-align: center;
+		padding: 0;
+	}
+	
 	.ai-submit-btn {
-		display: block;
-		width: 85%;
+		flex: 1;
 		height: 80upx;
 		line-height: 80upx;
 		background: #171717;
 		color: #fff;
 		font-size: 30upx;
 		border-radius: 12upx;
-		margin: 30upx auto;
 		text-align: center;
 		padding: 0;
 	}
+	
 	.ai-submit-btn[disabled] {
 		opacity: 0.6;
 	}
+	
 	.popup {
 		position: fixed;
 		left: 0;
@@ -539,22 +637,3 @@
 		padding: 20upx 0;
 	}
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

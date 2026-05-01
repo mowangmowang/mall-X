@@ -5,14 +5,26 @@
 		<!-- 聊天面板 -->
 		<view class="ai-chat-panel" :class="visible ? 'show' : ''">
 			<view class="chat-header">
-				<text class="chat-title">{{title}}</text>
-				<text class="chat-close" @click="handleClose">✕</text>
+				<view class="header-left">
+					<text class="chat-title">{{title}}</text>
+					<text class="ai-badge">智能助手</text>
+				</view>
+				<view class="chat-close" @click="handleClose" aria-label="关闭聊天">
+					<text class="close-icon">✕</text>
+				</view>
 			</view>
 			<scroll-view class="chat-messages" scroll-y :scroll-into-view="scrollToId" ref="msgScroll">
+				<!-- AI免责声明 -->
+				<view v-if="messages.length === 1" class="ai-disclaimer">
+					<text class="disclaimer-icon">ℹ️</text>
+					<text class="disclaimer-text">AI 助手可能会提供不准确的信息，请以实际商品信息为准。</text>
+				</view>
+				
+				<!-- AI 消息 -->
 				<view v-for="(msg, index) in messages" :key="index" class="message-row" :class="msg.role">
-					<view class="avatar" v-if="msg.role === 'ai'">AI</view>
-					<view class="bubble">{{msg.content}}</view>
-					<view class="avatar" v-if="msg.role === 'user'">我</view>
+					<view v-if="msg.role === 'ai'" class="avatar">AI</view>
+					<view class="bubble" :class="{'bubble-error': msg.isError}">{{msg.content}}</view>
+					<view v-if="msg.role === 'user'" class="avatar">我</view>
 				</view>
 				<view v-if="loading" class="message-row ai">
 					<view class="avatar">AI</view>
@@ -25,9 +37,26 @@
 				<view id="msg-bottom"></view>
 			</scroll-view>
 			<view class="chat-input-area">
-				<input class="chat-input" v-model="inputText" :placeholder="placeholder"
-				 @confirm="sendMessage" :disabled="loading" />
-				<button class="send-btn" @click="sendMessage" :disabled="loading || !inputText.trim()">发送</button>
+				<input 
+					class="chat-input" 
+					:class="{ 'input-disabled': loading }"
+					v-model="inputText" 
+					:placeholder="loading ? 'AI思考中...' : placeholder"
+					confirm-type="send"
+					@confirm="sendMessage" 
+					:disabled="loading"
+					:adjust-position="true"
+				/>
+				<button 
+					class="send-btn" 
+					:class="{ 'btn-loading': loading }"
+					@click="sendMessage" 
+					:disabled="loading || !inputText.trim()"
+					aria-label="发送消息"
+				>
+					<text v-if="loading" class="loading-icon">⏳</text>
+					<text v-else>发送</text>
+				</button>
 			</view>
 		</view>
 	</view>
@@ -67,11 +96,26 @@
 		},
 		watch: {
 			visible(val) {
-				if (val && this.messages.length === 0) {
-					this.messages.push({
-						role: 'ai',
-						content: '您好！我是AI购物助手，有什么可以帮助您的？'
+				if (val) {
+					// 监听返回键
+					// #ifdef APP-PLUS
+					uni.onBackPress(() => {
+						this.handleClose();
+						return true; // 阻止默认返回行为
 					});
+					// #endif
+					
+					if (this.messages.length === 0) {
+						this.messages.push({
+							role: 'ai',
+							content: '您好！我是AI购物助手，有什么可以帮助您的？'
+						});
+					}
+				} else {
+					// 移除返回键监听
+					// #ifdef APP-PLUS
+					uni.offBackPress();
+					// #endif
 				}
 			}
 		},
@@ -89,12 +133,27 @@
 						const reply = await this.onSend(text);
 						this.messages.push({ role: 'ai', content: reply || '抱歉，暂时无法回答，请稍后再试。' });
 					} catch (e) {
-						this.messages.push({ role: 'ai', content: '抱歉，我遇到了一些问题，请稍后再试。' });
+						// 显示明确的错误提示
+						uni.showToast({
+							title: '网络请求失败，请检查网络连接',
+							icon: 'none',
+							duration: 2000
+						});
+						// 同时保留聊天中的提示
+						this.messages.push({ 
+							role: 'ai', 
+							content: '抱歉，我暂时无法回答您的问题，请稍后再试。',
+							isError: true
+						});
 					}
 				}
 				this.loading = false;
 			},
 			handleClose() {
+				// 移除返回键监听
+				// #ifdef APP-PLUS
+				uni.offBackPress();
+				// #endif
 				this.$emit('close');
 			}
 		}
@@ -125,8 +184,9 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		height: 75vh;
-		max-height: 600px;
+		height: 70vh;
+		min-height: 400px;
+		max-height: 80vh;
 		background: #fff;
 		border-radius: 24upx 24upx 0 0;
 		z-index: 999;
@@ -138,29 +198,59 @@
 		&.show {
 			transform: translateY(0);
 		}
+		
+		@media (max-height: 600px) {
+			height: 60vh;
+		}
 
 		.chat-header {
 			display: flex;
 			align-items: center;
-			justify-content: center;
+			justify-content: space-between;
 			padding: 24upx 30upx;
 			border-bottom: 1px solid #f0f0f0;
 			position: relative;
+
+			.header-left {
+				display: flex;
+				align-items: center;
+				gap: 12upx;
+			}
 
 			.chat-title {
 				font-size: 32upx;
 				font-weight: 600;
 				color: #171717;
 			}
+			
+			.ai-badge {
+				font-size: 20upx;
+				padding: 4upx 12upx;
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				color: #fff;
+				border-radius: 20upx;
+				font-weight: 500;
+			}
 
 			.chat-close {
-				position: absolute;
-				right: 30upx;
-				top: 50%;
-				transform: translateY(-50%);
-				font-size: 32upx;
-				color: #999;
-				padding: 10upx;
+				padding: 20upx;
+				min-width: 88upx;
+				min-height: 88upx;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				cursor: pointer;
+				border-radius: 50%;
+				transition: background 0.2s;
+				
+				.close-icon {
+					font-size: 32upx;
+					color: #999;
+				}
+				
+				&:active {
+					background: #f0f0f0;
+				}
 			}
 		}
 
@@ -169,65 +259,110 @@
 			padding: 20upx 30upx;
 			overflow-y: auto;
 			background: #f8f8f8;
+			
+			.ai-disclaimer {
+				margin: 0 0 20upx 0;
+				padding: 20upx;
+				background: #fff8e1;
+				border-radius: 12upx;
+				display: flex;
+				align-items: flex-start;
+				border-left: 4upx solid #f57c00;
+				
+				.disclaimer-icon {
+					font-size: 28upx;
+					margin-right: 12upx;
+					line-height: 1.5;
+				}
+				
+				.disclaimer-text {
+					flex: 1;
+					font-size: 24upx;
+					color: #f57c00;
+					line-height: 1.5;
+				}
+			}
 
 			.message-row {
 				display: flex;
 				margin-bottom: 24upx;
 				align-items: flex-start;
 
+				// AI 消息：左对齐
 				&.ai {
+					justify-content: flex-start;
+					
 					.avatar {
 						background: #171717;
 						color: #fff;
 						margin-right: 16upx;
+						order: 1;
 					}
+					
 					.bubble {
 						background: #fff;
 						color: #333;
 						border-top-left-radius: 4upx;
+						order: 2;
+						
+						&.bubble-error {
+							background: #ffebee;
+							color: #c62828;
+							border: 1px solid #ef9a9a;
+						}
 					}
 				}
 
+				// 用户消息：右对齐
 				&.user {
-					flex-direction: row-reverse;
-
+					justify-content: flex-end;
+					
 					.avatar {
-						background: #e8e8e8;
-						color: #666;
+						background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+						color: #fff;
 						margin-left: 16upx;
+						order: 2;
 					}
+					
 					.bubble {
-						background: #171717;
+						background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 						color: #fff;
 						border-top-right-radius: 4upx;
+						order: 1;
 					}
 				}
 
 				.avatar {
-					width: 56upx;
-					height: 56upx;
+					width: 64upx;
+					height: 64upx;
 					border-radius: 50%;
 					display: flex;
 					align-items: center;
 					justify-content: center;
-					font-size: 22upx;
+					font-size: 24upx;
 					font-weight: 600;
 					flex-shrink: 0;
 				}
 
 				.bubble {
 					max-width: 70%;
-					padding: 16upx 20upx;
-					border-radius: 12upx;
+					min-width: 80upx;
+					padding: 20upx 24upx;
+					border-radius: 16upx;
 					font-size: 28upx;
 					line-height: 1.6;
-					word-break: break-all;
+					word-break: break-word;
+					box-shadow: 0 2upx 8upx rgba(0, 0, 0, 0.08);
+					
+					@media (min-width: 768px) {
+						max-width: 50%;
+					}
 				}
 
 				.typing {
 					display: flex;
 					align-items: center;
-					padding: 20upx 24upx;
+					padding: 24upx 28upx;
 
 					.dot {
 						font-size: 40upx;
@@ -260,6 +395,13 @@
 				padding: 0 24upx;
 				font-size: 28upx;
 				background: #f5f5f5;
+				transition: all 0.2s;
+				
+				&.input-disabled {
+					opacity: 0.6;
+					background: #e8e8e8;
+					cursor: not-allowed;
+				}
 			}
 
 			.send-btn {
@@ -273,9 +415,29 @@
 				border-radius: 36upx;
 				text-align: center;
 				padding: 0;
+				transition: all 0.2s;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				min-width: 88upx;
+				
+				.loading-icon {
+					font-size: 32upx;
+					animation: rotate 1s linear infinite;
+				}
+				
+				&.btn-loading {
+					opacity: 0.7;
+					background: #666;
+				}
 
 				&[disabled] {
 					opacity: 0.5;
+				}
+				
+				@keyframes rotate {
+					from { transform: rotate(0deg); }
+					to { transform: rotate(360deg); }
 				}
 			}
 		}

@@ -2,6 +2,8 @@ package com.macro.mall.common.exception;
 
 import cn.hutool.core.util.StrUtil;
 import com.macro.mall.common.api.CommonResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -10,7 +12,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.sql.SQLSyntaxErrorException;
+import java.util.stream.Collectors;
 
 /**
  * 全局异常处理类 (Global Exception Handler)
@@ -20,6 +25,8 @@ import java.sql.SQLSyntaxErrorException;
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * 处理自定义业务异常 (ApiException)
@@ -39,7 +46,7 @@ public class GlobalExceptionHandler {
 
     /**
      * 处理请求参数校验异常 (MethodArgumentNotValidException)
-     * 通常用于 @RequestBody 参数校验失败（如 @Valid 注解触发）
+     * 通常用于 @RequestBody 参数校验失败(如 @Valid 注解触发)
      *
      * @param e 方法参数无效异常
      * @return 包含具体字段错误信息的验证失败响应
@@ -49,14 +56,13 @@ public class GlobalExceptionHandler {
     public CommonResult handleValidException(MethodArgumentNotValidException e) {
         BindingResult bindingResult = e.getBindingResult();
         String message = null;
-        // 提取第一个字段的错误信息
+        // 提取所有字段的错误信息,用逗号分隔
         if (bindingResult.hasErrors()) {
-            FieldError fieldError = bindingResult.getFieldError();
-            if (fieldError != null) {
-                // 拼接字段名和默认错误消息，例如："username不能为空"
-                message = fieldError.getField() + fieldError.getDefaultMessage();
-            }
+            message = bindingResult.getFieldErrors().stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.joining(", "));
         }
+        log.warn("参数验证失败: {}", message);
         return CommonResult.validateFailed(message);
     }
 
@@ -69,17 +75,60 @@ public class GlobalExceptionHandler {
      */
     @ResponseBody
     @ExceptionHandler(value = BindException.class)
-    public CommonResult handleValidException(BindException e) {
+    public CommonResult handleBindException(BindException e) {
         BindingResult bindingResult = e.getBindingResult();
         String message = null;
         if (bindingResult.hasErrors()) {
-            FieldError fieldError = bindingResult.getFieldError();
-            if (fieldError != null) {
-                // 拼接字段名和默认错误消息
-                message = fieldError.getField() + fieldError.getDefaultMessage();
-            }
+            message = bindingResult.getFieldErrors().stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.joining(", "));
         }
+        log.warn("参数绑定失败: {}", message);
         return CommonResult.validateFailed(message);
+    }
+
+    /**
+     * 处理约束违反异常 (ConstraintViolationException)
+     * 通常用于方法参数或字段级别的约束校验失败(如 @NotNull, @Size 等)
+     *
+     * @param e 约束违反异常
+     * @return 包含约束错误信息的验证失败响应
+     */
+    @ResponseBody
+    @ExceptionHandler(value = ConstraintViolationException.class)
+    public CommonResult handleConstraintViolationException(ConstraintViolationException e) {
+        String message = e.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.joining(", "));
+        
+        log.warn("约束验证失败: {}", message);
+        return CommonResult.validateFailed(message);
+    }
+
+    /**
+     * 处理非法参数异常 (IllegalArgumentException)
+     *
+     * @param e 非法参数异常
+     * @return 包含参数错误信息的失败响应
+     */
+    @ResponseBody
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    public CommonResult handleIllegalArgumentException(IllegalArgumentException e) {
+        log.warn("非法参数: {}", e.getMessage());
+        return CommonResult.failed("请求参数错误: " + e.getMessage());
+    }
+
+    /**
+     * 处理非法状态异常 (IllegalStateException)
+     *
+     * @param e 非法状态异常
+     * @return 包含状态错误信息的失败响应
+     */
+    @ResponseBody
+    @ExceptionHandler(value = IllegalStateException.class)
+    public CommonResult handleIllegalStateException(IllegalStateException e) {
+        log.error("状态异常: {}", e.getMessage(), e);
+        return CommonResult.failed("服务状态异常: " + e.getMessage());
     }
 
     /**
@@ -98,6 +147,65 @@ public class GlobalExceptionHandler {
             message = "演示环境暂无修改权限，如需修改数据可本地搭建后台服务！";
         }
         return CommonResult.failed(message);
+    }
+
+    /**
+     * 处理 AI API 调用异常 (AiApiException)
+     * 使用反射方式避免模块间循环依赖
+     *
+     * @param e 运行时异常对象
+     * @return 包含 AI 服务错误信息的失败响应
+     */
+    @ResponseBody
+    @ExceptionHandler(value = RuntimeException.class)
+    public CommonResult handleAiApiException(RuntimeException e) {
+        String className = e.getClass().getName();
+        
+        // 检测是否为 AI API 异常
+        if ("com.macro.mall.ai.exception.AiApiException".equals(className)) {
+            try {
+                // 通过反射获取 HTTP 状态码
+                java.lang.reflect.Method getHttpStatusCode = e.getClass().getMethod("getHttpStatusCode");
+                Integer httpStatusCode = (Integer) getHttpStatusCode.invoke(e);
+                
+                log.error("AI API 调用失败 [errorCode={}, httpStatus={}]: {}", 
+                    e.getClass().getSimpleName(), httpStatusCode, e.getMessage());
+                
+                // 根据 HTTP 状态码返回不同的提示
+                if (httpStatusCode != null) {
+                    if (httpStatusCode == 401 || httpStatusCode == 403) {
+                        return CommonResult.failed("AI 服务认证失败，请检查 API Key 配置");
+                    } else if (httpStatusCode == 429) {
+                        return CommonResult.failed("AI 服务请求过于频繁，请稍后重试");
+                    } else if (httpStatusCode >= 500) {
+                        return CommonResult.failed("AI 服务暂时不可用，请稍后重试");
+                    }
+                }
+                
+                return CommonResult.failed("AI 服务调用失败: " + e.getMessage());
+            } catch (Exception ex) {
+                log.error("处理 AI API 异常时出错", ex);
+                return CommonResult.failed("AI 服务调用失败");
+            }
+        }
+        
+        // 检测是否为 AI 服务异常
+        if ("com.macro.mall.ai.exception.AiServiceException".equals(className)) {
+            try {
+                // 通过反射获取错误码
+                java.lang.reflect.Method getErrorCode = e.getClass().getMethod("getErrorCode");
+                String errorCode = (String) getErrorCode.invoke(e);
+                
+                log.warn("AI 业务异常 [errorCode={}]: {}", errorCode, e.getMessage());
+                return CommonResult.failed(e.getMessage());
+            } catch (Exception ex) {
+                log.error("处理 AI 服务异常时出错", ex);
+                return CommonResult.failed("AI 服务业务异常");
+            }
+        }
+        
+        // 非 AI 异常，继续抛出由其他处理器处理
+        throw e;
     }
 
     /**

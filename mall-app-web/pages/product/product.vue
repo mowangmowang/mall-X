@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view class="container">
 		<view class="carousel">
 			<swiper indicator-dots circular=true duration="400">
@@ -260,7 +260,8 @@
 	]
 	export default {
 		components: {
-			share
+			share,
+			aiChat
 		},
 		data() {
 			return {
@@ -280,7 +281,8 @@
 				attrList: [],
 				promotionTipList: [],
 				couponState: 0,
-				couponList: []
+				couponList: [],
+				showAiChat: false
 			};
 		},
 		async onLoad(options) {
@@ -1531,7 +1533,7 @@
 	/* AI 购物助手悬浮按钮 */
 	.ai-float-btn {
 		position: fixed;
-		bottom: 200upx;
+		bottom: 280upx;
 		right: 30upx;
 		width: 96upx;
 		height: 96upx;
@@ -1540,7 +1542,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		z-index: 99;
+		z-index: 999;
 		box-shadow: 0 4upx 16upx rgba(0, 0, 0, 0.25);
 		cursor: pointer;
 		transition: transform 0.2s;
