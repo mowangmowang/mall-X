@@ -72,7 +72,7 @@
         from pms_product p
         left join pms_product_attribute_value pav on p.id = pav.product_id  -- 关联属性值表 (Join Attribute Value Table)
         left join pms_product_attribute pa on pav.product_attribute_id= pa.id  -- 关联属性定义表 (Join Attribute Definition Table)
-        where delete_status = 0 and publish_status = 1  -- 仅查询未删除且已上架的商品 (Filter: Not Deleted & Published)
+        where delete_status = 0 and publish_status = 1  -- 仅查询未删除且已上架的商品 (Filter: Not Deleted &amp; Published)
         <if test="id!=null">
             and p.id=#{id}  -- 若指定 ID，则只查询单个商品
         </if>
