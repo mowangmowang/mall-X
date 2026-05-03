@@ -32,7 +32,7 @@ spring:
     password: mall # 密码
 
 minio:
-  endpoint: http://localhost:9000 #MinIO服务所在地址
+  endpoint: http://localhost:9001 #MinIO服务所在地址（本地运行端口）
   bucketName: mall #存储桶名称
   accessKey: minioadmin #访问的key
   secretKey: minioadmin #访问的秘钥

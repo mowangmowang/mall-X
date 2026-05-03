@@ -505,7 +505,14 @@
 				}
 				let availAbleSpecSet = new Set();
 				for (let i = 0; i < this.skuStockList.length; i++) {
-					let spDataArr = JSON.parse(this.skuStockList[i].spData);
+					const skuItem = this.skuStockList[i];
+					if (!skuItem.spData) {
+						continue; // 跳过没有规格数据的 SKU
+					}
+					let spDataArr = JSON.parse(skuItem.spData);
+					if (!spDataArr || spDataArr.length === 0) {
+						continue; // 跳过解析失败或空数组的情况
+					}
 					for (let j = 0; j < spDataArr.length; j++) {
 						availAbleSpecSet.add(spDataArr[j].value);
 					}
@@ -613,7 +620,14 @@
 			//获取当前选中商品的SKU
 			getSkuStock() {
 				for (let i = 0; i < this.skuStockList.length; i++) {
-					let spDataArr = JSON.parse(this.skuStockList[i].spData);
+					const skuItem = this.skuStockList[i];
+					if (!skuItem.spData) {
+						continue; // 跳过没有规格数据的 SKU
+					}
+					let spDataArr = JSON.parse(skuItem.spData);
+					if (!spDataArr || spDataArr.length === 0) {
+						continue; // 跳过解析失败或空数组的情况
+					}
 					let availAbleSpecSet = new Map();
 					for (let j = 0; j < spDataArr.length; j++) {
 						availAbleSpecSet.set(spDataArr[j].key, spDataArr[j].value);
@@ -626,7 +640,7 @@
 						}
 					}
 					if (correctCount == this.specSelected.length) {
-						return this.skuStockList[i];
+						return skuItem;
 					}
 				}
 				return null;
@@ -637,6 +651,13 @@
 					return;
 				}
 				let productSkuStock = this.getSkuStock();
+				if (!productSkuStock) {
+					uni.showToast({
+						title: '请选择商品规格',
+						icon: 'none'
+					});
+					return;
+				}
 				let cartItem = {
 					price: this.product.price,
 					productAttr: productSkuStock.spData,
