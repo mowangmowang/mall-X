@@ -29,3 +29,6 @@ local.properties
 # Claude Code
 .claude/
 
+# Documentation and Guides
+guidence/
+
