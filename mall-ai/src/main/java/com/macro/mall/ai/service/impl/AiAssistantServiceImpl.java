@@ -57,9 +57,23 @@ public class AiAssistantServiceImpl implements AiAssistantService {
         
         // 对商品信息进行基本清理
         String context = buildProductContext(request);
-        String content = context + "\n\n【顾客问题】" + sanitizedQuestion;
+        
+        // 构建content，如果有对话历史，则添加到上下文中
+        StringBuilder contentBuilder = new StringBuilder();
+        contentBuilder.append(context);
+        
+        // 添加对话历史（如果有）
+        if (request.getConversationHistory() != null && !request.getConversationHistory().isEmpty()) {
+            contentBuilder.append("\n\n【对话历史】\n").append(request.getConversationHistory());
+        }
+        
+        contentBuilder.append("\n\n【顾客问题】").append(sanitizedQuestion);
+        
+        String content = contentBuilder.toString();
 
-        log.info("AI product Q&A - productId={}, question={}", request.getProductId(), sanitizedQuestion);
+        log.info("AI product Q&A - productId={}, question={}, hasHistory={}", 
+                request.getProductId(), sanitizedQuestion, 
+                request.getConversationHistory() != null && !request.getConversationHistory().isEmpty());
         String reply = aiClient.chat(QA_SYSTEM_PROMPT, content);
 
         return new AiResponse(reply);

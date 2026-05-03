@@ -698,11 +698,12 @@
 					url: `/pages/brand/brandDetail?id=${id}`
 				})
 			},
-				handleAiChatSend(msg) {
+				handleAiChatSend(msg, conversationHistory) {
 					const product = this.product;
 					return aiProductQa({
 						productId: product.id,
 						question: msg,
+						conversationHistory: conversationHistory || '', // 传递对话历史
 						productName: product.name,
 						productBrand: product.brandName,
 						productPrice: product.price,

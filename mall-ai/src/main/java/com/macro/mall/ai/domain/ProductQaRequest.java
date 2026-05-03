@@ -28,6 +28,10 @@ public class ProductQaRequest {
     
     @ApiModelProperty(value = "商品副标题/描述", example = "钛金属设计，A17 Pro芯片")
     private String productSubTitle;
+    
+    @Size(max = 2000, message = "对话历史长度不能超过2000字符")
+    @ApiModelProperty(value = "对话历史上下文，用于多轮对话", example = "用户: 这个手机拍照怎么样？\nAI: 该手机配备4800万像素摄像头...")
+    private String conversationHistory;
 
     public Long getProductId() { return productId; }
     public void setProductId(Long productId) { this.productId = productId; }
@@ -41,4 +45,6 @@ public class ProductQaRequest {
     public void setProductPrice(String productPrice) { this.productPrice = productPrice; }
     public String getProductSubTitle() { return productSubTitle; }
     public void setProductSubTitle(String productSubTitle) { this.productSubTitle = productSubTitle; }
+    public String getConversationHistory() { return conversationHistory; }
+    public void setConversationHistory(String conversationHistory) { this.conversationHistory = conversationHistory; }
 }

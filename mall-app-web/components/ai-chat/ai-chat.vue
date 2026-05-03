@@ -130,7 +130,17 @@
 
 				if (this.onSend) {
 					try {
-						const reply = await this.onSend(text);
+						// 构建对话历史上下文（最近5轮）
+						const recentMessages = this.messages.slice(-10); // 取最近10条消息（5轮对话）
+						const conversationHistory = recentMessages
+							.filter((msg, idx) => idx < recentMessages.length - 1) // 排除当前最新消息
+							.map(msg => `${msg.role === 'user' ? '用户' : 'AI'}: ${msg.content}`)
+							.join('\n');
+
+						console.log('对话历史:', conversationHistory);
+
+						// 传递当前问题和对话历史
+						const reply = await this.onSend(text, conversationHistory);
 						this.messages.push({ role: 'ai', content: reply || '抱歉，暂时无法回答，请稍后再试。' });
 					} catch (e) {
 						// 显示明确的错误提示
