@@ -293,8 +293,19 @@
 
 				this.aiSuggesting = true;
 				try {
+					// 如果是第3步，整合所有对话历史作为issue发送
+					let issueToSend = text;
+					if (this.currentStep === 3) {
+						// 提取所有用户的回答，整合成完整描述
+						const userMessages = this.chatMessages
+							.filter(msg => msg.role === 'user')
+							.map(msg => msg.content);
+						issueToSend = userMessages.join('；');
+						console.log('第3步，整合对话历史:', issueToSend);
+					}
+
 					const res = await aiReturnSuggest({
-						issue: text,
+						issue: issueToSend,
 						productName: this.productName,
 						productAttr: this.productAttr,
 						orderSn: this.orderSn,
