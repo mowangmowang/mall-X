@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 会员商品浏览记录管理控制器
+ * 会员商品浏览记录管理控制器 (Member Read History Controller)
  * 提供商品浏览记录的创建、删除、查询功能，数据存储于 MongoDB
  */
 @RestController

@@ -3,7 +3,7 @@ package com.macro.mall.portal.domain;
 import lombok.Getter;
 
 /**
- * 消息队列枚举配置
+ * 消息队列枚举配置类 (Message Queue Enum Configuration)
  * 定义订单取消相关的交换机、队列和路由键
  */
 @Getter

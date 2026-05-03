@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * 会员管理 Service 实现类
+ * 会员管理服务实现类 (Member Management Service Implementation)
  * 实现会员注册、登录、认证、密码修改等核心业务逻辑
  */
 @Service

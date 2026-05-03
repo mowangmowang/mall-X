@@ -5,7 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
- * MyBatis相关配置 */
+ * MyBatis数据访问配置类 (MyBatis Data Access Configuration)
+ */
 @Configuration
 @EnableTransactionManagement
 @MapperScan({"com.macro.mall.mapper","com.macro.mall.portal.dao"})

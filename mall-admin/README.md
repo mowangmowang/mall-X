@@ -6,14 +6,14 @@
 
 ### 核心特性
 
-- 🔐 **安全认证**：基于 Spring Security + JWT 的身份认证与授权
-- 📦 **商品管理**：完整的商品 CRUD、SKU 管理、属性配置、促销价格设置
-- 🛒 **订单管理**：订单查询、发货、关闭、退款等全流程管理
-- 👥 **权限控制**：基于 RBAC（角色访问控制）的动态权限管理
+- 🔐 **安全认证**：基于 Spring Security + JWT 的身份认证与动态权限控制
+- 📦 **商品管理**：完整的商品 CRUD、SKU 管理、属性配置及审核流程
+- 🛒 **订单管理**：订单查询、发货、关闭、退款及操作历史记录
+- 👥 **权限控制**：基于 RBAC（角色访问控制）的菜单与资源权限管理
 - 🔍 **搜索集成**：通过 RabbitMQ 异步同步商品数据到 Elasticsearch
-- 💾 **缓存优化**：使用 Redis 缓存用户信息和权限数据，提升系统性能
+- 💾 **缓存优化**：使用 Redis 缓存管理员信息与权限数据，提升系统性能
 - ☁️ **对象存储**：支持阿里云 OSS 和 MinIO 文件存储服务
-- 📊 **API 文档**：集成 Swagger 自动生成接口文档
+- 📊 **API 文档**：集成 Swagger (OpenAPI 3) 自动生成接口文档
 
 ---
 
@@ -123,6 +123,27 @@ graph LR
 - **Redis**: 5.0+
 - **RabbitMQ**: 3.8+
 - **Elasticsearch**: 7.x
+
+### 代码规范与注释
+
+本项目遵循 **“中文为主，英文为辅”** 的双语注释策略：
+
+1. **专业名词**：首次出现时采用 `中文名称 (English Term)` 格式。
+2. **代码实体**：保留原始英文命名，注释中辅以中文解释。
+3. **异常日志**：关键错误信息包含英文术语，便于全球化工具分析。
+
+```java
+/**
+ * 批量修改商品审核状态
+ * 同时记录审核操作日志到 pms_product_verify_record 表。
+ *
+ * @param ids 商品 ID 集合
+ * @param verifyStatus 目标审核状态 (0:未审核, 1:通过, 2:拒绝)
+ * @param detail 审核意见或原因
+ * @return 成功修改的记录数
+ */
+int updateVerifyStatus(List<Long> ids, Integer verifyStatus, String detail);
+```
 
 ---
 
@@ -678,17 +699,6 @@ docker-compose up -d
 
 ## 📊 监控与管理
 
-### Actuator 端点
-
-Spring Boot Actuator 提供了以下监控端点：
-
-- `/actuator/health` - 健康检查
-- `/actuator/info` - 应用信息
-- `/actuator/metrics` - 指标数据
-- `/actuator/env` - 环境变量
-
-访问示例：http://localhost:8080/actuator/health
-
 ### 日志管理
 
 日志配置文件位于 `src/main/resources/logback-spring.xml`，支持：
@@ -697,52 +707,3 @@ Spring Boot Actuator 提供了以下监控端点：
 - 文件滚动存储
 - Logstash 集成（可选）
 
----
-
-## 🤝 贡献指南
-
-欢迎提交 Issue 和 Pull Request！
-
-### 开发流程
-
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启 Pull Request
-
-### 代码规范
-
-- 遵循阿里巴巴 Java 开发手册
-- 使用统一的代码格式化配置
-- 编写必要的单元测试
-- 添加清晰的注释和文档
-
----
-
-## 📄 许可证
-
-本项目采用 [MIT License](LICENSE) 开源协议。
-
----
-
-## 📞 联系方式
-
-- **项目作者**: macrozheng
-- **Email**: macrozheng@example.com
-- **GitHub**: https://github.com/macrozheng/mall
-
----
-
-## 🙏 致谢
-
-感谢以下开源项目的支持：
-
-- [Spring Boot](https://spring.io/projects/spring-boot)
-- [MyBatis](https://mybatis.org/mybatis-3/)
-- [Vue.js](https://vuejs.org/)
-- [Element Plus](https://element-plus.org/)
-
----
-
-**⭐ 如果这个项目对你有帮助，请给一个 Star！**

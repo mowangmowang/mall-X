@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 会员收货地址管理控制器
+ * 会员收货地址管理控制器 (Member Receive Address Controller)
  * 提供收货地址的增删改查功能，用于订单确认时选择收货地址
  */
 @RestController

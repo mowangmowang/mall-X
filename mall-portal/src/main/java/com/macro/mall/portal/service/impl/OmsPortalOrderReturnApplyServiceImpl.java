@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 /**
- * 订单退货管理Service实现类 */
+ * 订单退货管理服务实现类 (Order Return Apply Service Implementation)
+ */
 @Service
 public class OmsPortalOrderReturnApplyServiceImpl implements OmsPortalOrderReturnApplyService {
     @Autowired

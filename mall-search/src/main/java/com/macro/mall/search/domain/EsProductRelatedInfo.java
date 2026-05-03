@@ -6,8 +6,14 @@ import lombok.EqualsAndHashCode;
 import java.util.List;
 
 /**
- * 搜索商品关联信息实体 (Related Information Entity)
- * 用于存储搜索结果的品牌、分类、属性聚合数据，支持前端筛选条件展示
+ * 搜索商品关联信息实体 (Search Product Related Information Entity)
+ * <p>
+ * 用于存储搜索结果的品牌、分类、属性聚合数据，支持前端筛选条件展示。
+ * 通过 Elasticsearch Aggregation 功能统计得到，帮助用户快速缩小搜索范围。
+ * </p>
+ *
+ * @author macro
+ * @since 1.0
  */
 @Data
 @EqualsAndHashCode
@@ -17,8 +23,11 @@ public class EsProductRelatedInfo {
     private List<ProductAttr> productAttrs;  // 商品属性列表（嵌套聚合结果）
 
     /**
-     * 商品属性内部类 (Inner Class)
-     * 封装单个属性的 ID、名称和可选值列表
+     * 商品属性内部类 (Product Attribute Inner Class)
+     * <p>
+     * 封装单个属性的 ID、名称和可选值列表，用于前端动态生成筛选器。
+     * 例如：颜色属性包含 [红色, 蓝色, 绿色] 等可选值。
+     * </p>
      */
 
     @Data

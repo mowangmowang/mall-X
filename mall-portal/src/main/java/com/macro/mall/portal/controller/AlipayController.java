@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 支付宝支付控制器
+ * 支付宝支付控制器 (Alipay Payment Controller)
  * 提供电脑网站支付、手机网站支付、异步回调和交易查询等功能
  */
 @RestController

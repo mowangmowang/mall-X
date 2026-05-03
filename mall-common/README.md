@@ -6,11 +6,11 @@
 
 ### 核心职责
 
-- **统一 API 响应格式**：标准化前后端数据交互协议
+- **统一 API 响应格式**：标准化前后端数据交互协议，确保返回数据结构一致
 - **全局异常处理**：集中管理系统各类异常，返回友好错误信息
-- **Redis 操作封装**：提供简洁的 Redis 数据结构操作接口
-- **日志记录切面**：自动记录 Controller 层请求详情
-- **Swagger 文档配置**：简化 API 文档集成流程
+- **Redis 操作封装**：提供简洁的 Redis 数据结构操作接口（String/Hash/Set/List）
+- **日志记录切面**：自动记录 Controller 层请求详情，支持 LogStash 集成
+- **Swagger 文档配置**：简化 API 文档集成流程，支持 Spring Boot 2.6+ 兼容
 - **通用工具类**：提供 IP 获取、分页转换等常用功能
 
 ---
@@ -128,15 +128,15 @@ public CommonResult<CommonPage<PmsProduct>> list(
 
 系统预定义的标准错误码枚举：
 
-| 错误码 | 含义 | 说明 |
-|--------|------|------|
-| 200 | SUCCESS | 操作成功 |
-| 500 | FAILED | 操作失败（服务器内部错误） |
-| 404 | VALIDATE_FAILED | 参数检验失败 |
-| 401 | UNAUTHORIZED | 暂未登录或 Token 已过期 |
-| 403 | FORBIDDEN | 没有相关权限 |
+| 错误码 | 含义 | HTTP 状态码 | 说明 |
+|--------|------|------------|------|
+| 200 | SUCCESS | 200 | 操作成功 |
+| 500 | FAILED | 500 | 操作失败（服务器内部错误） |
+| 404 | VALIDATE_FAILED | 400 | 参数检验失败 |
+| 401 | UNAUTHORIZED | 401 | 暂未登录或 Token 已过期 |
+| 403 | FORBIDDEN | 403 | 没有相关权限 |
 
-> ⚠️ **注意**：`VALIDATE_FAILED` 当前使用 404 状态码，建议根据 RESTful 规范调整为 400。
+> ⚠️ **注意**：`VALIDATE_FAILED` 当前使用 404 作为业务错误码，但实际 HTTP 响应状态码为 200，建议在后续版本中根据 RESTful 规范调整为 400。
 
 ---
 
@@ -187,13 +187,15 @@ public void createOrder(OrderParam param) {
 
 **处理的异常类型：**
 
-| 异常类型 | 处理方法 | 返回内容 |
-|---------|---------|---------|
-| `ApiException` | `handle()` | 错误码或自定义消息 |
-| `MethodArgumentNotValidException` | `handleValidException()` | 字段校验错误（@RequestBody） |
-| `BindException` | `handleValidException()` | 字段校验错误（@ModelAttribute） |
-| `SQLSyntaxErrorException` | `handleSQLSyntaxErrorException()` | SQL 错误（演示环境特殊提示） |
-| `Exception` | `handleException()` | 根因异常信息（兜底策略） |
+| 异常类型 | 处理方法 | 返回内容 | HTTP 状态码 |
+|---------|---------|---------|------------|
+| `ApiException` | `handle()` | 错误码或自定义消息 | 200 |
+| `MethodArgumentNotValidException` | `handleValidException()` | 字段校验错误（@RequestBody） | 200 |
+| `BindException` | `handleValidException()` | 字段校验错误（@ModelAttribute） | 200 |
+| `SQLSyntaxErrorException` | `handleSQLSyntaxErrorException()` | SQL 错误（演示环境特殊提示） | 200 |
+| `Exception` | `handleException()` | 根因异常信息（兜底策略） | 200 |
+
+> 💡 **说明**：所有异常均返回 HTTP 200 状态码，通过 `CommonResult.code` 区分业务成功或失败。
 
 **参数校验错误示例：**
 ```json
@@ -215,28 +217,35 @@ public void createOrder(OrderParam param) {
 **核心功能分类：**
 
 ##### String 操作
-- `set(key, value)` / `set(key, value, time)` - 保存属性
+- `set(key, value)` / `set(key, value, time)` - 保存属性（永久/带过期时间）
 - `get(key)` - 获取属性
-- `del(key)` / `del(keys)` - 删除属性
+- `del(key)` / `del(keys)` - 删除单个/批量属性
 - `expire(key, time)` - 设置过期时间
+- `getExpire(key)` - 获取剩余过期时间
+- `hasKey(key)` - 判断键是否存在
 - `incr(key, delta)` / `decr(key, delta)` - 原子递增/递减
 
 ##### Hash 操作
-- `hSet(key, hashKey, value)` - 设置哈希字段
+- `hSet(key, hashKey, value)` / `hSet(key, hashKey, value, time)` - 设置哈希字段（永久/带过期时间）
 - `hGet(key, hashKey)` - 获取哈希字段
 - `hGetAll(key)` - 获取整个哈希表
+- `hSetAll(key, map)` / `hSetAll(key, map, time)` - 批量设置哈希表
 - `hDel(key, hashKeys)` - 删除哈希字段
-- `hIncr(key, hashKey, delta)` - 哈希字段递增
+- `hHasKey(key, hashKey)` - 判断哈希字段是否存在
+- `hIncr(key, hashKey, delta)` / `hDecr(key, hashKey, delta)` - 哈希字段递增/递减
 
 ##### Set 操作
-- `sAdd(key, values)` - 添加集合成员
+- `sAdd(key, values)` / `sAdd(key, time, values)` - 添加集合成员（永久/带过期时间）
 - `sMembers(key)` - 获取所有成员
 - `sIsMember(key, value)` - 判断成员是否存在
+- `sSize(key)` - 获取集合大小
 - `sRemove(key, values)` - 移除成员
 
 ##### List 操作
-- `lPush(key, value)` - 右侧入队
+- `lPush(key, value)` / `lPush(key, value, time)` - 右侧入队（永久/带过期时间）
+- `lPushAll(key, values)` / `lPushAll(key, time, values)` - 批量右侧入队
 - `lRange(key, start, end)` - 范围查询
+- `lSize(key)` - 获取列表长度
 - `lIndex(key, index)` - 按索引获取
 - `lRemove(key, count, value)` - 移除元素
 
@@ -264,14 +273,15 @@ redisService.incr("product:views:" + productId, 1);
 提供 Redis 相关的 Bean 定义，各模块可通过继承快速集成。
 
 **核心配置：**
-- **RedisTemplate**：Key 使用 String 序列化，Value 使用 JSON 序列化
-- **RedisSerializer**：Jackson2Json 序列化器，支持复杂对象存储
-- **RedisCacheManager**：默认缓存过期时间 1 天
+- **RedisTemplate**：Key 使用 String 序列化，Value 使用 JSON 序列化（Jackson2Json）
+- **RedisSerializer**：启用默认类型信息，确保反序列化为具体对象而非 Map
+- **RedisCacheManager**：默认缓存过期时间 1 天，非锁定写入器（提高并发性能）
+- **RedisService**：注册 RedisService 服务实现
 
 **序列化策略说明：**
 ```
 Key/HashKey: String 序列化（便于阅读和管理）
-Value/HashValue: JSON 序列化（支持嵌套对象）
+Value/HashValue: JSON 序列化（支持嵌套对象，保留类型信息）
 ```
 
 **继承使用示例：**
@@ -319,7 +329,13 @@ public class RedisConfig extends BaseRedisConfig {
 ```
 
 **LogStash 集成：**
-日志同时输出到 LogStash（端口 4563），便于集中式日志分析和 Elasticsearch 检索。
+日志同时输出到 LogStash（端口 4560-4563），便于集中式日志分析和 Elasticsearch 检索。
+
+**日志级别分类：**
+- DEBUG (4560): 调试日志
+- ERROR (4561): 错误日志
+- BUSINESS (4562): 业务日志
+- RECORD (4563): 接口访问记录
 
 ---
 
@@ -331,20 +347,22 @@ public class RedisConfig extends BaseRedisConfig {
 
 **核心功能：**
 - 自动生成 RESTful API 文档
-- 支持 JWT Token 认证（可选）
-- 兼容 Spring Boot 2.6+ 路径匹配策略
+- 支持 JWT Token 认证（可选，通过 `enableSecurity` 配置）
+- 兼容 Spring Boot 2.6+ 路径匹配策略（通过 `BeanPostProcessor` 修复）
+- 支持自定义文档标题、描述、版本、联系人等信息
 
 **配置属性（SwaggerProperties）：**
 
-| 属性 | 说明 | 示例 |
-|------|------|------|
-| apiBasePackage | Controller 扫描包路径 | `com.macro.mall.admin.controller` |
-| enableSecurity | 是否启用安全认证 | `true` |
-| title | 文档标题 | `Mall Admin API` |
-| description | 文档描述 | `后台管理系统接口文档` |
-| version | 版本号 | `1.0.0` |
-| contactName | 联系人姓名 | `macro` |
-| contactEmail | 联系人邮箱 | `xxx@xxx.com` |
+| 属性 | 类型 | 说明 | 示例 |
+|------|------|------|------|
+| apiBasePackage | String | Controller 扫描包路径 | `com.macro.mall.admin.controller` |
+| enableSecurity | boolean | 是否启用安全认证 | `true` |
+| title | String | 文档标题 | `Mall Admin API` |
+| description | String | 文档描述 | `后台管理系统接口文档` |
+| version | String | 版本号 | `1.0.0` |
+| contactName | String | 联系人姓名 | `macro` |
+| contactUrl | String | 联系人网址 | `https://github.com/macrozheng` |
+| contactEmail | String | 联系人邮箱 | `macro@macro.com` |
 
 **继承使用示例：**
 ```java
@@ -462,15 +480,15 @@ rabbitTemplate.convertAndSend("mall-es-direct", "es.insertProduct", message);
 
 #### 8.1 日志输出目标
 
-| Appender | 类型 | 说明 | 端口/路径 |
-|----------|------|------|----------|
-| CONSOLE | 控制台 | 开发调试使用 | - |
-| FILE_DEBUG | 文件滚动 | DEBUG 以上级别，按天分割 | `/logs/debug/` |
-| FILE_ERROR | 文件滚动 | 仅 ERROR 级别 | `/logs/error/` |
-| LOG_STASH_DEBUG | LogStash | DEBUG 日志集中收集 | 4560 |
-| LOG_STASH_ERROR | LogStash | ERROR 日志集中收集 | 4561 |
-| LOG_STASH_BUSINESS | LogStash | 业务日志 | 4562 |
-| LOG_STASH_RECORD | LogStash | 接口访问记录 | 4563 |
+| Appender | 类型 | 级别 | 说明 | 端口/路径 |
+|----------|------|------|------|----------|
+| CONSOLE | 控制台 | DEBUG+ | 开发调试使用 | - |
+| FILE_DEBUG | 文件滚动 | DEBUG+ | 按天分割，单文件 10MB | `/logs/debug/` |
+| FILE_ERROR | 文件滚动 | ERROR | 仅错误日志 | `/logs/error/` |
+| LOG_STASH_DEBUG | LogStash | DEBUG | 调试日志集中收集 | 4560 |
+| LOG_STASH_ERROR | LogStash | ERROR | 错误日志集中收集 | 4561 |
+| LOG_STASH_BUSINESS | LogStash | DEBUG | 业务日志 | 4562 |
+| LOG_STASH_RECORD | LogStash | DEBUG | 接口访问记录 | 4563 |
 
 #### 8.2 日志滚动策略
 
@@ -525,6 +543,13 @@ rabbitTemplate.convertAndSend("mall-es-direct", "es.insertProduct", message);
     <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+    
+    <!-- Spring Data Commons -->
+    <dependency>
+        <groupId>org.springframework.data</groupId>
+        <artifactId>spring-data-commons</artifactId>
+        <version>${spring-data-commons.version}</version>
     </dependency>
     
     <!-- LogStash 日志编码器 -->
@@ -987,30 +1012,3 @@ objectMapper.activateDefaultTyping(
     ObjectMapper.DefaultTyping.NON_FINAL
 );
 ```
-
----
-
-## 📚 相关文档
-
-- [Mall 项目整体架构](../document/reference/function.md)
-- [Redis 最佳实践](../document/reference/redis.md)
-- [ELK 日志系统配置](../document/elk/logstash.conf)
-- [Swagger 使用指南](https://swagger.io/docs/)
-
----
-
-## 👥 维护者
-
-- **Author**: macro
-- **Module**: mall-common
-- **Version**: 1.0-SNAPSHOT
-
----
-
-## 📄 许可证
-
-本项目遵循 [LICENSE](../LICENSE) 协议。
-
----
-
-**最后更新时间**: 2026-04-30

@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * 订单管理 Controller
- * 提供订单查询、发货、关闭、删除、修改等功能
+ * 提供订单查询、发货、关闭、删除、修改及备注等核心业务功能。
  */
 @Controller
 @Api(tags = "OmsOrderController")
@@ -24,20 +24,21 @@ import java.util.List;
 @RequestMapping("/order")
 public class OmsOrderController {
     /**
-     * 订单服务
+     * 订单服务接口实例
      */
     @Autowired
     private OmsOrderService orderService;
 
     /**
      * 分页查询订单列表
-     * 支持按多种条件筛选（订单号、状态、时间等）
-     * @param queryParam 查询参数
-     * @param pageSize 每页条数，默认5条
-     * @param pageNum 页码，默认第1页
-     * @return 分页订单列表
+     * 支持按订单号、状态、时间范围等多种条件进行动态筛选。
+     *
+     * @param queryParam 查询参数封装对象
+     * @param pageSize 每页显示条数，默认 5 条
+     * @param pageNum 当前页码，默认第 1 页
+     * @return 分页后的订单列表数据
      */
-    @ApiOperation("查询订单")
+    @ApiOperation("查询订单列表")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<CommonPage<OmsOrder>> list(OmsOrderQueryParam queryParam,
@@ -48,9 +49,10 @@ public class OmsOrderController {
     }
 
     /**
-     * 批量发货
-     * 更新订单的物流信息并修改状态为已发货
-     * @param deliveryParamList 发货参数列表（包含订单ID、物流公司、物流单号）
+     * 批量处理订单发货
+     * 更新订单物流信息（物流公司、单号）并将状态流转为“已发货”。
+     *
+     * @param deliveryParamList 发货参数集合，包含订单 ID 及物流详情
      * @return 操作结果
      */
     @ApiOperation("批量发货")
@@ -65,10 +67,11 @@ public class OmsOrderController {
     }
 
     /**
-     * 批量关闭订单
-     * 通常用于超时未支付的订单
-     * @param ids 订单 ID 列表
-     * @param note 关闭原因/备注
+     * 批量关闭交易订单
+     * 通常用于处理超时未支付或异常状态的订单。
+     *
+     * @param ids 待关闭的订单 ID 集合
+     * @param note 关闭原因或管理员备注
      * @return 操作结果
      */
     @ApiOperation("批量关闭订单")
@@ -83,9 +86,10 @@ public class OmsOrderController {
     }
 
     /**
-     * 批量删除订单
-     * 逻辑删除，仅删除已完成或已关闭的订单
-     * @param ids 订单 ID 列表
+     * 批量逻辑删除订单
+     * 仅允许删除已完成或已关闭状态的订单记录。
+     *
+     * @param ids 待删除的订单 ID 集合
      * @return 操作结果
      */
     @ApiOperation("批量删除订单")
@@ -100,12 +104,13 @@ public class OmsOrderController {
     }
 
     /**
-     * 获取订单详细信息
-     * 包括订单基本信息、商品列表、操作记录等
-     * @param id 订单 ID
-     * @return 订单详情
+     * 获取订单完整详细信息
+     * 包含订单基础信息、购买商品清单、历史操作记录及收货人详情。
+     *
+     * @param id 目标订单 ID
+     * @return 订单详情对象
      */
-    @ApiOperation("获取订单详情：订单信息、商品信息、操作记录")
+    @ApiOperation("获取订单详情")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<OmsOrderDetail> detail(@PathVariable Long id) {
@@ -115,7 +120,9 @@ public class OmsOrderController {
 
     /**
      * 修改订单收货人信息
-     * @param receiverInfoParam 收货人信息参数
+     * 支持在发货前修改地址、联系人等信息。
+     *
+     * @param receiverInfoParam 收货人更新参数
      * @return 操作结果
      */
     @ApiOperation("修改收货人信息")
@@ -130,15 +137,16 @@ public class OmsOrderController {
     }
 
     /**
-     * 修改订单费用信息
-     * 如运费、优惠金额等
-     * @param moneyInfoParam 费用信息参数
+     * 调整订单费用信息
+     * 用于修改运费、优惠金额或应付总额等财务相关字段。
+     *
+     * @param moneyInfoParam 费用调整参数
      * @return 操作结果
      */
     @ApiOperation("修改订单费用信息")
     @RequestMapping(value = "/update/moneyInfo", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult updateReceiverInfo(@RequestBody OmsMoneyInfoParam moneyInfoParam) {
+    public CommonResult updateMoneyInfo(@RequestBody OmsMoneyInfoParam moneyInfoParam) {
         int count = orderService.updateMoneyInfo(moneyInfoParam);
         if (count > 0) {
             return CommonResult.success(count);
@@ -147,7 +155,8 @@ public class OmsOrderController {
     }
 
     /**
-     * 添加订单备注
+     * 为订单添加或更新管理员备注
+     *
      * @param id 订单 ID
      * @param note 备注内容
      * @param status 当前订单状态
@@ -167,10 +176,11 @@ public class OmsOrderController {
     }
 
     /**
-     * 取消订单
-     * 通常由管理员手动取消
+     * 手动取消订单
+     * 由管理员介入取消处于特定状态的订单。
+     *
      * @param id 订单 ID
-     * @param note 取消原因
+     * @param note 取消原因说明
      * @return 操作结果
      */
     @ApiOperation("取消订单")

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 前台商品管理控制器
+ * 前台商品管理控制器 (Portal Product Management Controller)
  * 提供商品搜索、分类查询、商品详情等功能，支持多维度筛选和排序
  */
 @RestController

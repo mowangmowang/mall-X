@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 退货申请管理控制器
+ * 退货申请管理控制器 (Order Return Apply Controller)
  * 提供退货申请创建、查询、取消等功能，处理用户售后请求
  */
 @RestController

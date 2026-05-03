@@ -32,3 +32,6 @@ local.properties
 # Documentation and Guides
 guidence/
 
+# Skills directory with embedded git repo
+skills/lunwen/
+

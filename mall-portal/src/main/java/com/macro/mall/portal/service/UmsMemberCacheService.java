@@ -3,7 +3,8 @@ package com.macro.mall.portal.service;
 import com.macro.mall.model.UmsMember;
 
 /**
- * 会员信息缓存业务类 */
+ * 会员信息缓存服务接口 (Member Cache Service Interface)
+ */
 public interface UmsMemberCacheService {
     /**
      * 删除会员用户缓存

@@ -47,8 +47,24 @@ import java.util.stream.Collectors;
 
 
 /**
- * 搜索商品管理服务实现类 (Service Implementation)
- * 实现基于 Elasticsearch 的商品索引管理、全文搜索、聚合分析等核心功能
+ * 搜索商品管理服务实现类 (Search Product Management Service Implementation)
+ * <p>
+ * 实现基于 Elasticsearch 的商品索引管理、全文搜索、聚合分析等核心功能。
+ * 使用 Spring Data Elasticsearch 和原生 Elasticsearch API 相结合的方式，
+ * 提供灵活高效的搜索能力。
+ * </p>
+ * <p>
+ * 核心技术：
+ * <ul>
+ *   <li>Function Score Query：加权评分搜索</li>
+ *   <li>Bool Query：多条件组合查询</li>
+ *   <li>Aggregation：聚合分析（品牌、分类、属性统计）</li>
+ *   <li>Nested Query：嵌套类型查询（属性筛选）</li>
+ * </ul>
+ * </p>
+ *
+ * @author macro
+ * @since 1.0
  */
 @Service
 public class EsProductServiceImpl implements EsProductService {
@@ -84,9 +100,13 @@ public class EsProductServiceImpl implements EsProductService {
     private ElasticsearchRestTemplate elasticsearchRestTemplate;  // Elasticsearch 模板类，用于执行复杂查询和聚合
 
     /**
-     * 从 MySQL 数据库批量导入商品到 Elasticsearch
-     * 采用分页查询避免内存溢出，每批处理 500 条记录
-     * @return 成功导入的商品总数
+     * 从 MySQL 数据库批量导入商品到 Elasticsearch (Import All Products from MySQL to Elasticsearch)
+     * <p>
+     * 采用分页查询避免内存溢出，每批处理 500 条记录。
+     * 使用 PageHelper 进行物理分页，确保大数据量下的稳定性。
+     * </p>
+     *
+     * @return 成功导入的商品总数 (Total Number of Imported Products)
      */
     @Override
     public int importAll() {
@@ -110,8 +130,9 @@ public class EsProductServiceImpl implements EsProductService {
     }
 
     /**
-     * 根据商品 ID 删除 Elasticsearch 索引文档
-     * @param id 商品唯一标识符
+     * 根据商品 ID 删除 Elasticsearch 索引文档 (Delete Product Index by ID)
+     *
+     * @param id 商品唯一标识符 (Product ID)
      */
     @Override
     public void delete(Long id) {
@@ -119,8 +140,16 @@ public class EsProductServiceImpl implements EsProductService {
     }
 
     /**
-     * 根据商品 ID 从 MySQL 查询并创建/更新 Elasticsearch 索引
-     * @param id 商品唯一标识符
+     * 根据商品 ID 从 MySQL 查询并创建/更新 Elasticsearch 索引 (Create or Update Product Index by ID)
+     * <p>
+     * Spring Data Elasticsearch 的 save 方法会根据 ID 自动判断是新增还是更新：
+     * <ul>
+     *   <li>若 ID 不存在：创建新索引</li>
+     *   <li>若 ID 已存在：更新现有索引</li>
+     * </ul>
+     * </p>
+     *
+     * @param id 商品唯一标识符 (Product ID)
      * @return 保存后的 EsProduct 对象，若商品不存在则返回 null
      */
     @Override
@@ -135,8 +164,9 @@ public class EsProductServiceImpl implements EsProductService {
     }
 
     /**
-     * 批量删除多个商品的 Elasticsearch 索引
-     * @param ids 商品 ID 列表
+     * 批量删除多个商品的 Elasticsearch 索引 (Batch Delete Product Indexes)
+     *
+     * @param ids 商品 ID 列表 (List of Product IDs)
      */
     @Override
     public void delete(List<Long> ids) {
@@ -152,12 +182,16 @@ public class EsProductServiceImpl implements EsProductService {
     }
 
     /**
-     * 简单搜索：根据关键字匹配商品名称、副标题或关键词
-     * 使用 Function Score Query 对不同字段进行加权评分
-     * @param keyword 搜索关键字
-     * @param pageNum 页码（从 0 开始）
-     * @param pageSize 每页大小
-     * @return 按相关度排序的分页搜索结果
+     * 简单搜索：根据关键字匹配商品名称、副标题或关键词 (Simple Search by Keyword)
+     * <p>
+     * 使用 Function Score Query 对不同字段进行加权评分，提升搜索结果的相关度。
+     * 权重设置：名称(10) > 关键词(5) > 副标题(3)。
+     * </p>
+     *
+     * @param keyword 搜索关键字 (Search Keyword)
+     * @param pageNum 页码（从 0 开始） (Page Number, starting from 0)
+     * @param pageSize 每页大小 (Page Size)
+     * @return 按相关度排序的分页搜索结果 (Paginated Search Results Sorted by Relevance)
      */
     @Override
     public Page<EsProduct> search(String keyword, Integer pageNum, Integer pageSize) {
@@ -182,16 +216,32 @@ public class EsProductServiceImpl implements EsProductService {
     }
 
     /**
-     * 综合搜索：支持关键字、品牌、分类筛选、价格区间过滤及多种排序策略
-     * @param keyword 搜索关键字
-     * @param brandId 品牌 ID（可选筛选条件）
-     * @param productCategoryId 商品分类 ID（可选筛选条件）
-     * @param pageNum 页码（从 0 开始）
-     * @param pageSize 每页大小
-     * @param sort 排序方式：0->相关度；1->新品；2->销量；3->价格升序；4->价格降序
-     * @param startPrice 价格区间下限（可选）
-     * @param endPrice 价格区间上限（可选）
-     * @return 分页的商品搜索结果
+     * 综合搜索：支持关键字、品牌、分类筛选、价格区间过滤及多种排序策略 (Advanced Search with Filters and Sorting)
+     * <p>
+     * 查询架构：
+     * <ul>
+     *   <li>Filter 上下文：品牌、分类、价格区间（不影响评分，性能更优）</li>
+     *   <li>Query 上下文：关键字全文搜索（影响评分）</li>
+     * </ul>
+     * 排序策略：
+     * <ul>
+     *   <li>sort=0：按相关度分数降序（默认）</li>
+     *   <li>sort=1：按新品（ID 降序）</li>
+     *   <li>sort=2：按销量降序</li>
+     *   <li>sort=3：按价格升序</li>
+     *   <li>sort=4：按价格降序</li>
+     * </ul>
+     * </p>
+     *
+     * @param keyword 搜索关键字 (Search Keyword)
+     * @param brandId 品牌 ID（可选筛选条件） (Brand ID, optional)
+     * @param productCategoryId 商品分类 ID（可选筛选条件） (Product Category ID, optional)
+     * @param pageNum 页码（从 0 开始） (Page Number, starting from 0)
+     * @param pageSize 每页大小 (Page Size)
+     * @param sort 排序方式 (Sort Type: 0->Relevance; 1->New; 2->Sales; 3->Price ASC; 4->Price DESC)
+     * @param startPrice 价格区间下限（可选） (Minimum Price, optional)
+     * @param endPrice 价格区间上限（可选） (Maximum Price, optional)
+     * @return 分页的商品搜索结果 (Paginated Search Results)
      */
     @Override
     public Page<EsProduct> search(String keyword, Long brandId, Long productCategoryId, Integer pageNum, Integer pageSize, Integer sort,
@@ -244,12 +294,27 @@ public class EsProductServiceImpl implements EsProductService {
     }
 
     /**
-     * 基于商品 ID 推荐相似商品
-     * 根据参考商品的名称、品牌、分类进行加权匹配，排除自身
-     * @param id 参考商品 ID
-     * @param pageNum 页码（从 0 开始）
-     * @param pageSize 每页大小
-     * @return 分页的推荐商品列表
+     * 基于商品 ID 推荐相似商品 (Recommend Similar Products by ID)
+     * <p>
+     * 根据参考商品的名称、品牌、分类进行加权匹配，排除自身。
+     * 使用 Function Score Query 实现多维度相似度计算。
+     * </p>
+     * <p>
+     * 权重设置：
+     * <ul>
+     *   <li>名称匹配：8（最高权重）</li>
+     *   <li>关键词匹配：5</li>
+     *   <li>同品牌：5</li>
+     *   <li>副标题匹配：3</li>
+     *   <li>同分类：3</li>
+     * </ul>
+     * 最低分数阈值：2分，过滤不相关结果
+     * </p>
+     *
+     * @param id 参考商品 ID (Reference Product ID)
+     * @param pageNum 页码（从 0 开始） (Page Number, starting from 0)
+     * @param pageSize 每页大小 (Page Size)
+     * @return 分页的推荐商品列表 (Paginated Recommended Products)
      */
     @Override
     public Page<EsProduct> recommend(Long id, Integer pageNum, Integer pageSize) {
@@ -297,10 +362,22 @@ public class EsProductServiceImpl implements EsProductService {
     }
 
     /**
-     * 获取搜索关键字相关的聚合信息：品牌列表、分类列表、属性筛选条件
-     * 使用 Elasticsearch Aggregation 进行数据统计分析
-     * @param keyword 搜索关键字
-     * @return 包含品牌、分类、属性的关联信息对象
+     * 获取搜索关键字相关的聚合信息：品牌列表、分类列表、属性筛选条件 (Get Search Related Aggregation Info)
+     * <p>
+     * 使用 Elasticsearch Aggregation 功能统计搜索结果中的品牌、分类、属性分布，
+     * 用于前端动态生成筛选器，帮助用户快速缩小搜索范围。
+     * </p>
+     * <p>
+     * 聚合类型：
+     * <ul>
+     *   <li>品牌名称聚合 (Terms Aggregation)</li>
+     *   <li>分类名称聚合 (Terms Aggregation)</li>
+     *   <li>嵌套属性聚合 (Nested Aggregation)：先过滤参数类型 (type=1)，再按属性 ID、值、名称分组</li>
+     * </ul>
+     * </p>
+     *
+     * @param keyword 搜索关键字 (Search Keyword)
+     * @return 包含品牌、分类、属性的关联信息对象 (Related Information with Brands, Categories, Attributes)
      */
     @Override
     public EsProductRelatedInfo searchRelatedInfo(String keyword) {
@@ -331,10 +408,23 @@ public class EsProductServiceImpl implements EsProductService {
     }
 
     /**
-     * 构建 Function Score Query，对商品名称、副标题、关键词进行加权搜索
-     * 不同字段的权重设置：名称(10) > 关键词(5) > 副标题(3)
-     * @param keyword 搜索关键字
-     * @return FunctionScoreQueryBuilder 查询构建器
+     * 构建 Function Score Query，对商品名称、副标题、关键词进行加权搜索 (Build Function Score Query)
+     * <p>
+     * Function Score Query 允许对不同字段设置不同的权重，提升搜索结果的相关度。
+     * 分数计算模式：SUM（累加各字段的加权分数）。
+     * </p>
+     * <p>
+     * 权重设置：
+     * <ul>
+     *   <li>商品名称 (name)：10（最高权重，名称匹配最相关）</li>
+     *   <li>关键词 (keywords)：5（中等权重）</li>
+     *   <li>副标题 (subTitle)：3（较低权重）</li>
+     * </ul>
+     * 最低分数阈值：0.5分，过滤低相关度结果
+     * </p>
+     *
+     * @param keyword 搜索关键字 (Search Keyword)
+     * @return FunctionScoreQueryBuilder 查询构建器 (Query Builder)
      */
     private FunctionScoreQueryBuilder buildFunctionScoreQuery(String keyword) {
         List<FunctionScoreQueryBuilder.FilterFunctionBuilder> filterFunctionBuilders = new ArrayList<>();
@@ -359,10 +449,15 @@ public class EsProductServiceImpl implements EsProductService {
     }
 
     /**
-     * 将 Elasticsearch 聚合结果转换为 EsProductRelatedInfo 对象
-     * 解析品牌、分类、属性的聚合数据
-     * @param response Elasticsearch 搜索结果（包含聚合信息）
-     * @return 转换后的关联信息对象
+     * 将 Elasticsearch 聚合结果转换为 EsProductRelatedInfo 对象 (Convert Aggregation Results)
+     * <p>
+     * 解析 Elasticsearch 返回的聚合数据，提取品牌、分类、属性信息。
+     * 嵌套属性聚合的解析路径：
+     * allAttrValues (Nested) -> productAttrs (Filter) -> attrIds (Terms) -> attrValues + attrNames
+     * </p>
+     *
+     * @param response Elasticsearch 搜索结果（包含聚合信息） (Search Response with Aggregations)
+     * @return 转换后的关联信息对象 (Converted Related Information Object)
      */
     private EsProductRelatedInfo convertProductRelatedInfo(SearchHits<EsProduct> response) {
         EsProductRelatedInfo productRelatedInfo = new EsProductRelatedInfo();

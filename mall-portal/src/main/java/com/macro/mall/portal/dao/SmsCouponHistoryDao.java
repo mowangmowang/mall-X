@@ -7,7 +7,8 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * 会员优惠券领取记录管理自定义Dao */
+ * 会员优惠券领取记录管理自定义数据访问对象 (Coupon History Custom DAO)
+ */
 public interface SmsCouponHistoryDao {
     /**
      * 获取优惠券历史详情

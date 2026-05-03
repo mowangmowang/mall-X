@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 首页内容管理控制器
+ * 首页内容管理控制器 (Home Content Controller)
  * 提供首页展示所需的各种数据，包括轮播广告、推荐商品、商品分类、专题等
  */
 @RestController

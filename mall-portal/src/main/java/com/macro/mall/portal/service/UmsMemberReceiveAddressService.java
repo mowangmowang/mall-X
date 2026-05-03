@@ -6,7 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * 用户地址管理Service */
+ * 用户地址管理服务接口 (Member Receive Address Service Interface)
+ */
 public interface UmsMemberReceiveAddressService {
     /**
      * 添加收货地址

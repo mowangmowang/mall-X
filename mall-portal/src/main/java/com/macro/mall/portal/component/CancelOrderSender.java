@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * 取消订单消息发送者
+ * 取消订单消息发送者 (Cancel Order Message Sender)
  * 负责向 RabbitMQ 延迟队列发送订单取消消息，实现订单超时自动取消功能
  */
 @Component

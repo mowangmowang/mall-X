@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 会员管理控制器
+ * 会员管理控制器 (Member Management Controller)
  * 提供会员注册、登录、认证、密码修改等功能，基于 JWT Token 进行身份验证
  */
 @RestController

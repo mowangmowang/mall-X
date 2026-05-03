@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 import java.util.List;
 
 /**
- * 订单生成参数
+ * 订单生成参数类 (Order Parameter DTO)
  * 封装用户提交订单时所需的信息，包括收货地址、优惠券、积分、支付方式和购物车商品
  */
 @Data

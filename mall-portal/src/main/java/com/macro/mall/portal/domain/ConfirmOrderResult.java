@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * 确认单结果封装
+ * 确认单结果封装类 (Confirm Order Result DTO)
  * 包含生成订单前需要展示给用户的所有信息，如商品列表、收货地址、优惠券、积分规则和金额计算
  */
 @Getter

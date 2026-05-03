@@ -11,7 +11,8 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * 首页内容返回信息封装 */
+ * 首页内容返回信息封装类 (Home Content Result DTO)
+ */
 @Getter
 @Setter
 public class HomeContentResult {

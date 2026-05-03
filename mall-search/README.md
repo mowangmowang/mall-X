@@ -2,16 +2,17 @@
 
 ## 📋 项目概述
 
-**Mall Search** 是 mall 电商系统的搜索微服务模块，基于 **Elasticsearch** 实现高性能的商品全文搜索、聚合分析和智能推荐功能。通过 **RabbitMQ** 消息队列实现与商品管理服务的异步数据同步，确保搜索索引的实时性。
+**Mall Search** 是 mall 电商系统的搜索微服务模块，基于 **Elasticsearch** 实现高性能的商品全文搜索、聚合分析和智能推荐功能。通过 **RabbitMQ** 消息队列实现与商品管理服务的异步数据同步，确保搜索索引的实时性和最终一致性。
 
 ### 核心特性
 
 - 🔍 **全文搜索**：支持中文分词（IK Analyzer），提供商品名称、副标题、关键词的多字段加权搜索
-- 🎯 **综合筛选**：支持品牌、分类、属性等多维度筛选条件
-- 📊 **聚合分析**：动态获取搜索结果的品牌、分类、属性统计信息
-- 💡 **智能推荐**：基于商品相似度算法，推荐相关商品
-- ⚡ **异步同步**：通过 RabbitMQ 实现商品数据的实时索引更新
-- 🔄 **批量导入**：支持从 MySQL 数据库批量导入商品到 Elasticsearch
+- 🎯 **综合筛选**：支持品牌、分类、属性、价格区间等多维度筛选条件
+- 📊 **聚合分析**：动态获取搜索结果的品牌、分类、属性统计信息，支持前端筛选器生成
+- 💡 **智能推荐**：基于 Function Score Query 的相似度算法，推荐相关商品
+- ⚡ **异步同步**：通过 RabbitMQ 实现商品数据的实时增量同步
+- 🔄 **定时校对**：每天凌晨 3:00 执行全量数据校对，确保数据一致性
+- 📦 **批量导入**：支持从 MySQL 数据库分页批量导入商品到 Elasticsearch
 
 ---
 
@@ -66,14 +67,16 @@ graph TB
 
 | 技术 | 版本/说明 | 用途 |
 |------|----------|------|
-| **Spring Boot** | 2.x | 微服务框架 |
-| **Elasticsearch** | 7.x | 搜索引擎，存储商品索引 |
-| **Spring Data Elasticsearch** | - | ES 数据访问抽象层 |
-| **RabbitMQ** | 3.x | 消息队列，异步同步商品数据 |
-| **MyBatis** | - | 从 MySQL 查询商品数据 |
-| **IK Analyzer** | - | 中文分词插件 |
-| **Swagger** | 2.x | API 文档生成 |
-| **Lombok** | - | 简化 Java 代码 |
+| **Spring Boot** | 2.x | 微服务框架，提供依赖注入、自动配置等功能 |
+| **Elasticsearch** | 7.x | 分布式搜索引擎，存储商品索引，支持全文检索和聚合分析 |
+| **Spring Data Elasticsearch** | - | ES 数据访问抽象层，简化 CRUD 操作 |
+| **RabbitMQ** | 3.x | 消息队列，实现商品数据变更的异步同步 |
+| **MyBatis** | - | ORM 框架，从 MySQL 查询商品数据并映射为 ES 文档 |
+| **IK Analyzer** | - | 中文分词插件，支持 ik_max_word（细粒度）和 ik_smart（粗粒度） |
+| **Swagger** | 2.x | API 文档自动生成工具，支持在线调试 |
+| **Lombok** | - | Java 代码简化工具，自动生成 getter/setter/toString 等方法 |
+| **PageHelper** | - | MyBatis 分页插件，支持物理分页 |
+| **Hutool** | - | Java 工具类库，提供字符串处理、集合操作等便捷方法 |
 
 ---
 
@@ -211,7 +214,14 @@ mvn spring-boot:run
 POST /esProduct/importAll
 ```
 
-**功能**：从 MySQL 数据库批量导入所有已上架商品到 Elasticsearch  
+**功能说明**：
+从 MySQL 数据库批量导入所有已上架商品到 Elasticsearch。采用分页查询策略（每批 500 条），避免内存溢出。
+
+**使用场景**：
+- 系统初始化时首次导入数据
+- 数据修复或重建索引
+- 定时全量校对任务（每天凌晨 3:00 自动执行）
+
 **返回**：成功导入的商品数量
 
 **示例**：
@@ -235,9 +245,16 @@ POST /esProduct/create/{id}
 ```
 
 **参数**：
-- `id`: 商品 ID
+- `id`: 商品 ID（路径参数）
 
-**功能**：根据商品 ID 从 MySQL 查询并创建或更新 ES 索引
+**功能说明**：
+根据商品 ID 从 MySQL 查询商品数据，并创建或更新 Elasticsearch 索引。Spring Data Elasticsearch 的 `save` 方法会根据 ID 自动判断是新增还是更新：
+- 若 ID 不存在：创建新索引文档
+- 若 ID 已存在：更新现有索引文档
+
+**使用场景**：
+- 商品管理服务发送消息后，实时同步单个商品
+- 手动触发某个商品的索引更新
 
 **示例**：
 ```bash
@@ -277,14 +294,22 @@ POST /esProduct/delete/batch?ids=26,27,28
 GET /esProduct/search/simple?keyword=手机&pageNum=0&pageSize=10
 ```
 
-**参数**：
+**参数说明**：
 | 参数 | 类型 | 必填 | 默认值 | 说明 |
 |------|------|------|--------|------|
-| keyword | String | 否 | - | 搜索关键字 |
+| keyword | String | 否 | - | 搜索关键字，支持中文分词 |
 | pageNum | Integer | 否 | 0 | 页码（从 0 开始） |
 | pageSize | Integer | 否 | 5 | 每页大小 |
 
-**功能**：根据关键字匹配商品名称、副标题或关键词，按相关度排序
+**功能说明**：
+根据关键字匹配商品名称、副标题或关键词，使用 Function Score Query 进行加权评分，按相关度排序。
+
+**权重设置**：
+- 商品名称 (name)：权重 10（最高）
+- 关键词 (keywords)：权重 5（中等）
+- 副标题 (subTitle)：权重 3（较低）
+
+**最低分数阈值**：0.5 分，过滤低相关度结果
 
 **示例**：
 ```bash
@@ -321,22 +346,30 @@ curl -X GET "http://localhost:8081/esProduct/search/simple?keyword=华为&pageNu
 GET /esProduct/search?keyword=手机&brandId=6&productCategoryId=18&pageNum=0&pageSize=10&sort=0
 ```
 
-**参数**：
+**参数说明**：
 | 参数 | 类型 | 必填 | 默认值 | 说明 |
 |------|------|------|--------|------|
-| keyword | String | 否 | - | 搜索关键字 |
-| brandId | Long | 否 | - | 品牌 ID |
-| productCategoryId | Long | 否 | - | 分类 ID |
-| pageNum | Integer | 否 | 0 | 页码 |
+| keyword | String | 否 | - | 搜索关键字，支持全文检索 |
+| brandId | Long | 否 | - | 品牌 ID，精确匹配 |
+| productCategoryId | Long | 否 | - | 分类 ID，精确匹配 |
+| pageNum | Integer | 否 | 0 | 页码（从 0 开始） |
 | pageSize | Integer | 否 | 5 | 每页大小 |
-| sort | Integer | 否 | 0 | 排序方式：<br/>0->相关度<br/>1->新品<br/>2->销量<br/>3->价格升序<br/>4->价格降序 |
+| sort | Integer | 否 | 0 | 排序方式：<br/>0 -> 相关度（默认）<br/>1 -> 新品（ID 降序）<br/>2 -> 销量（降序）<br/>3 -> 价格升序<br/>4 -> 价格降序 |
+| startPrice | BigDecimal | 否 | - | 价格区间下限 |
+| endPrice | BigDecimal | 否 | - | 价格区间上限 |
 
-**功能**：支持多维度筛选和多种排序策略的综合搜索
+**功能说明**：
+支持多维度筛选和多种排序策略的综合搜索。使用 Bool Query 组合多个查询条件：
+- **Filter 上下文**：品牌、分类、价格区间（不影响评分，性能更优，可缓存）
+- **Query 上下文**：关键字全文搜索（影响评分）
 
 **示例**：
 ```bash
 # 搜索华为品牌手机，按价格从低到高排序
 curl -X GET "http://localhost:8081/esProduct/search?keyword=手机&brandId=6&sort=3"
+
+# 搜索 1000-5000 元区间的手机
+curl -X GET "http://localhost:8081/esProduct/search?keyword=手机&startPrice=1000&endPrice=5000&sort=2"
 ```
 
 ---
@@ -350,23 +383,26 @@ GET /esProduct/recommend/{id}?pageNum=0&pageSize=5
 ```
 
 **参数**：
-- `id`: 参考商品 ID
-- `pageNum`: 页码（可选）
-- `pageSize`: 每页大小（可选）
+- `id`: 参考商品 ID（路径参数）
+- `pageNum`: 页码（可选，默认 0）
+- `pageSize`: 每页大小（可选，默认 5）
 
-**功能**：根据参考商品的名称、品牌、分类进行加权匹配，推荐相似商品（排除自身）
+**功能说明**：
+根据参考商品的名称、品牌、分类进行加权匹配，推荐相似商品（排除自身）。使用 Function Score Query 实现多维度相似度计算。
+
+**推荐算法权重**：
+- 名称匹配：权重 8（最高，名称最相关）
+- 关键词匹配：权重 5
+- 同品牌：权重 5
+- 副标题匹配：权重 3
+- 同分类：权重 3
+
+**最低分数阈值**：2 分，过滤不相关结果
 
 **示例**：
 ```bash
 curl -X GET "http://localhost:8081/esProduct/recommend/26?pageNum=0&pageSize=5"
 ```
-
-**推荐算法权重**：
-- 名称匹配：权重 8
-- 同品牌：权重 5
-- 关键词匹配：权重 5
-- 同分类：权重 3
-- 副标题匹配：权重 3
 
 ---
 
@@ -379,16 +415,24 @@ GET /esProduct/search/relate?keyword=手机
 ```
 
 **参数**：
-- `keyword`: 搜索关键字（可选）
+- `keyword`: 搜索关键字（可选，为空时返回所有商品的聚合信息）
 
-**功能**：返回搜索结果中涉及的品牌列表、分类列表、属性筛选条件
+**功能说明**：
+使用 Elasticsearch Aggregation 功能统计搜索结果中的品牌、分类、属性分布，用于前端动态生成筛选器，帮助用户快速缩小搜索范围。
+
+**聚合类型**：
+- **品牌名称聚合** (Terms Aggregation)：统计各品牌的商品数量
+- **分类名称聚合** (Terms Aggregation)：统计各分类的商品数量
+- **嵌套属性聚合** (Nested Aggregation)：
+  - 先过滤出参数类型 (type=1) 的属性
+  - 再按属性 ID、值、名称分组统计
 
 **示例**：
 ```bash
 curl -X GET "http://localhost:8081/esProduct/search/relate?keyword=手机"
 ```
 
-**响应**：
+**响应示例**：
 ```json
 {
   "code": 200,
@@ -410,6 +454,11 @@ curl -X GET "http://localhost:8081/esProduct/search/relate?keyword=手机"
   }
 }
 ```
+
+**应用场景**：
+- 电商网站左侧筛选栏的动态生成
+- 搜索结果页面的属性过滤选项
+- 用户行为分析（哪些属性更受欢迎）
 
 ---
 
@@ -464,6 +513,10 @@ private FunctionScoreQueryBuilder buildFunctionScoreQuery(String keyword) {
 
 ### 2. 商品数据同步流程
 
+Mall Search 支持两种数据同步方式：**实时增量同步**和**定时全量同步**。
+
+#### 2.1 实时增量同步（基于 RabbitMQ）
+
 ```mermaid
 sequenceDiagram
     participant Admin as mall-admin<br/>商品管理服务
@@ -502,6 +555,35 @@ sequenceDiagram
 ```
 
 **配置位置**：[EsProductMqConfig.java](file:///D:/course/Java/graduateProject/finish/mall/mall-search/src/main/java/com/macro/mall/search/config/EsProductMqConfig.java)
+
+#### 2.2 定时全量同步（基于 Scheduled Task）
+
+**执行时间**：每天凌晨 3:00 自动执行
+
+**Cron 表达式**：`0 0 3 * * ?`
+
+**功能说明**：
+从 MySQL 导入所有上架商品到 Elasticsearch，确保数据的最终一致性 (Eventual Consistency)，修复因消息丢失或处理失败导致的数据差异。
+
+**代码位置**：[EsProductReceiver.java#syncAllProducts](file:///D:/course/Java/graduateProject/finish/mall/mall-search/src/main/java/com/macro/mall/search/component/EsProductReceiver.java#L50-L59)
+
+```java
+@Scheduled(cron = "0 0 3 * * ?")
+public void syncAllProducts() {
+    LOGGER.info("开始执行 Elasticsearch 全量校对任务...");
+    try {
+        int count = esProductService.importAll();
+        LOGGER.info("Elasticsearch 全量校对任务完成，共同步 {} 个商品", count);
+    } catch (Exception e) {
+        LOGGER.error("Elasticsearch 全量校对任务执行失败: {}", e.getMessage(), e);
+    }
+}
+```
+
+**优势**：
+- 自动修复数据不一致问题
+- 无需人工干预
+- 日志记录便于问题追踪
 
 ---
 
@@ -681,6 +763,7 @@ mvn test -Dtest=MallSearchApplicationTests
 2. 确认索引是否存在：`curl http://localhost:9200/_cat/indices?v`
 3. 验证是否有数据：`curl http://localhost:9200/pms/_count`
 4. 如无数据，执行批量导入：`POST /esProduct/importAll`
+5. 检查 MySQL 中是否有上架商品：`SELECT COUNT(*) FROM pms_product WHERE publish_status = 1`
 
 ### Q2: 中文分词不生效？
 
@@ -688,6 +771,14 @@ mvn test -Dtest=MallSearchApplicationTests
 1. 确认已安装 IK 分词插件：`./bin/elasticsearch-plugin list`
 2. 检查字段映射是否指定了 `analyzer: ik_max_word`
 3. 重启 Elasticsearch 使插件生效
+4. 测试分词效果：
+   ```bash
+   curl -X POST "http://localhost:9200/_analyze" -H 'Content-Type: application/json' -d'
+   {
+     "analyzer": "ik_max_word",
+     "text": "华为手机"
+   }'
+   ```
 
 ### Q3: 消息队列消费失败？
 
@@ -696,6 +787,7 @@ mvn test -Dtest=MallSearchApplicationTests
 2. 检查应用日志，定位具体错误信息
 3. 验证 MySQL 和 Elasticsearch 连接是否正常
 4. 确认消息格式是否正确（JSON 序列化）
+5. 检查 EsProductMqConfig 中的队列配置是否与发送方一致
 
 ### Q4: 聚合结果不准确？
 
@@ -703,6 +795,15 @@ mvn test -Dtest=MallSearchApplicationTests
 1. Nested 类型字段未正确使用 `nested` 路径
 2. 聚合查询未添加正确的过滤条件
 3. 数据同步延迟，ES 索引未及时更新
+4. 属性类型 (type) 设置错误（应为 1 表示参数）
+
+### Q5: 定时任务未执行？
+
+**排查步骤**：
+1. 确认启动类上有 `@EnableScheduling` 注解
+2. 检查 Cron 表达式是否正确：`0 0 3 * * ?`
+3. 查看日志中是否有定时任务的执行记录
+4. 确认服务器时区设置是否正确
 
 ---
 
@@ -713,33 +814,58 @@ mvn test -Dtest=MallSearchApplicationTests
 1. **修改 EsProduct.java**：
    ```java
    @Field(analyzer = "ik_max_word", type = FieldType.Text)
-   private String newField;  // 新字段
+   private String newField;  // 新字段，使用 IK 分词器
    ```
 
 2. **修改 EsProductDao.xml**：在 SQL 查询中添加新字段映射
+   ```xml
+   <result column="new_field" property="newField" jdbcType="VARCHAR"/>
+   ```
 
 3. **重新导入数据**：调用 `/esProduct/importAll` 重建索引
 
+4. **验证索引映射**：
+   ```bash
+   curl http://localhost:9200/pms/_mapping
+   ```
+
 ### 调整搜索权重
 
-修改 [EsProductServiceImpl.java](file:///D:/course/Java/graduateProject/finish/mall/mall-search/src/main/java/com/macro/mall/search/service/impl/EsProductServiceImpl.java#L320-L345) 中的 `buildFunctionScoreQuery` 方法：
+修改 [EsProductServiceImpl.java](file:///D:/course/Java/graduateProject/finish/mall/mall-search/src/main/java/com/macro/mall/search/service/impl/EsProductServiceImpl.java#L375-L395) 中的 `buildFunctionScoreQuery` 方法：
 
 ```java
-// 调整权重值
+// 调整权重值（数值越大，该字段的匹配结果越靠前）
 ScoreFunctionBuilders.weightFactorFunction(10)  // 修改此数值
 ```
 
+**建议权重范围**：
+- 核心字段（如名称）：8-10
+- 重要字段（如关键词）：5-7
+- 辅助字段（如副标题）：2-4
+
 ### 自定义排序规则
 
-在 [EsProductServiceImpl.java#search](file:///D:/course/Java/graduateProject/finish/mall/mall-search/src/main/java/com/macro/mall/search/service/impl/EsProductServiceImpl.java#L150-L188) 方法中添加新的 `sort` 分支：
+在 [EsProductServiceImpl.java#search](file:///D:/course/Java/graduateProject/finish/mall/mall-search/src/main/java/com/macro/mall/search/service/impl/EsProductServiceImpl.java#L216-L244) 方法中添加新的 `sort` 分支：
 
 ```java
 else if (sort == 5) {
+    // 按新品推荐度排序（示例）
     nativeSearchQueryBuilder.withSorts(
-        SortBuilders.fieldSort("newField").order(SortOrder.DESC)
+        SortBuilders.fieldSort("recommandStatus").order(SortOrder.DESC),
+        SortBuilders.fieldSort("id").order(SortOrder.DESC)
     );
 }
 ```
+
+### 调试 Elasticsearch DSL 查询
+
+所有搜索操作都会打印 DSL 查询语句到日志：
+
+```java
+LOGGER.info("DSL:{}", searchQuery.getQuery().toString());
+```
+
+查看日志可以了解实际执行的 Elasticsearch 查询，便于优化和调试。
 
 ---
 
@@ -762,32 +888,3 @@ docker run -d --name mall-search \
 
 参考 `document/docker/docker-compose-app.yml` 中的配置，编写 K8s Deployment 和 Service YAML 文件。
 
----
-
-## 📄 许可证
-
-本项目遵循 MIT 许可证。详见 [LICENSE](../../LICENSE) 文件。
-
----
-
-## 👥 贡献指南
-
-欢迎提交 Issue 和 Pull Request！
-
-1. Fork 本仓库
-2. 创建特性分支：`git checkout -b feature/AmazingFeature`
-3. 提交更改：`git commit -m 'Add some AmazingFeature'`
-4. 推送到分支：`git push origin feature/AmazingFeature`
-5. 开启 Pull Request
-
----
-
-## 📞 联系方式
-
-- **项目主页**：[https://github.com/macrozheng/mall](https://github.com/macrozheng/mall)
-- **作者**：macro
-- **邮箱**：macrozheng@163.com
-
----
-
-**最后更新时间**：2026-04-30

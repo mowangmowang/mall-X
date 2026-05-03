@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * 取消订单消息接收者
+ * 取消订单消息接收者 (Cancel Order Message Receiver)
  * 监听 RabbitMQ 订单取消队列，接收超时订单消息并执行取消逻辑
  */
 @Component

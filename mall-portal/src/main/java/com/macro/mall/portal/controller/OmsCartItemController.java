@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 购物车管理控制器
+ * 购物车管理控制器 (Shopping Cart Management Controller)
  * 提供购物车的增删改查、数量调整、规格修改等功能
  */
 @RestController

@@ -5,7 +5,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 会员管理Service */
+ * 会员管理服务接口 (Member Management Service Interface)
+ */
 public interface UmsMemberService {
     /**
      * 根据用户名获取会员

@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 会员商品收藏管理控制器
+ * 会员商品收藏管理控制器 (Member Product Collection Controller)
  * 提供商品收藏的增删查功能，数据存储于 MongoDB
  */
 @RestController

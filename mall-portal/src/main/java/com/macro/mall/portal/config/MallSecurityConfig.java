@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
- * Spring Security 安全配置类
+ * Spring Security 安全配置类 (Spring Security Configuration)
  * 配置用户详情服务，用于会员登录认证和权限控制
  */
 @Configuration

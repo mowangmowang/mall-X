@@ -8,15 +8,29 @@ import org.springframework.context.annotation.Configuration;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- * Swagger API 文档配置类 (Swagger Configuration)
- * 用于生成和展示搜索服务的 RESTful API 接口文档
+ * Swagger API 文档配置类 (Swagger API Documentation Configuration)
+ * <p>
+ * 配置并启用 Swagger2，自动生成搜索服务的 RESTful API 接口文档，
+ * 便于开发人员测试和调试 API 接口。
+ * </p>
+ * <p>
+ * 访问地址：http://localhost:8085/swagger-ui.html
+ * </p>
+ *
+ * @author macro
+ * @since 1.0
  */
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig extends BaseSwaggerConfig {
 
     /**
-     * 配置 Swagger 文档属性
+     * 配置 Swagger 文档属性 (Configure Swagger Properties)
+     * <p>
+     * 设置 API 文档的标题、描述、版本等元数据信息，
+     * 并指定扫描的 Controller 包路径。
+     * </p>
+     *
      * @return SwaggerProperties 配置对象
      */
     @Override

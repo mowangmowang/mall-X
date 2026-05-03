@@ -4,7 +4,8 @@ import com.macro.mall.portal.domain.MemberBrandAttention;
 import org.springframework.data.domain.Page;
 
 /**
- * 会员品牌关注管理Service */
+ * 会员品牌关注管理服务接口 (Member Brand Attention Service Interface)
+ */
 public interface MemberAttentionService {
     /**
      * 添加关注

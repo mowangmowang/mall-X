@@ -6,7 +6,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 // 创建axios实例
 const http = axios.create({
   baseURL: import.meta.env.VITE_BASE_SERVER_URL,
-  timeout: 5000,
+  timeout: 15000,  // 增加到15秒超时，适配卡顿电脑环境
 })
 
 // axios请求拦截器

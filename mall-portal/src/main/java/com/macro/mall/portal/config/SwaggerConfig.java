@@ -8,7 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- * Swagger相关配置 */
+ * Swagger API文档配置类 (Swagger API Documentation Configuration)
+ */
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig extends BaseSwaggerConfig {

@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * RabbitMQ 消息队列配置类
+ * RabbitMQ 消息队列配置类 (RabbitMQ Message Queue Configuration)
  * 用于配置订单取消的延迟消息机制，通过死信队列实现订单超时自动取消功能
  */
 @Configuration

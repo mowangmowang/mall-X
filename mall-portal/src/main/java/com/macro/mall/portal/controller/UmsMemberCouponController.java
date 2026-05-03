@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 会员优惠券管理控制器
+ * 会员优惠券管理控制器 (Member Coupon Management Controller)
  * 提供优惠券领取、查询、使用等功能，支持按状态筛选和购物车关联查询
  */
 @RestController

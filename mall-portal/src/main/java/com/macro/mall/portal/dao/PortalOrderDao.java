@@ -7,7 +7,8 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * 前台订单管理自定义Dao */
+ * 前台订单管理自定义数据访问对象 (Portal Order Custom DAO)
+ */
 public interface PortalOrderDao {
     /**
      * 获取订单及下单商品详情

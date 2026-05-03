@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 会员品牌关注管理控制器
+ * 会员品牌关注管理控制器 (Member Brand Attention Controller)
  * 提供品牌关注的增删查功能，数据存储于 MongoDB
  */
 @RestController

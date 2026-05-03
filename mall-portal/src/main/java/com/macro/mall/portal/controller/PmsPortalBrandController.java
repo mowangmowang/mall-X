@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 前台品牌管理控制器
+ * 前台品牌管理控制器 (Portal Brand Management Controller)
  * 提供品牌推荐、品牌详情查询及品牌关联商品查询功能
  */
 @RestController

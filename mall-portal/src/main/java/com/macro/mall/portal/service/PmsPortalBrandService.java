@@ -7,7 +7,8 @@ import com.macro.mall.model.PmsProduct;
 import java.util.List;
 
 /**
- * 前台品牌管理Service */
+ * 前台品牌管理服务接口 (Portal Brand Management Service Interface)
+ */
 public interface PmsPortalBrandService {
     /**
      * 分页获取推荐品牌

@@ -11,7 +11,8 @@ import com.macro.mall.portal.domain.SubjectDetail;
 import java.util.List;
 
 /**
- * 首页内容管理Service */
+ * 首页内容管理服务接口 (Home Content Service Interface)
+ */
 public interface HomeService {
 
     /**

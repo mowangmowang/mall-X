@@ -6,7 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**
- * 会员商品浏览历史Repository */
+ * 会员商品浏览历史数据访问接口 (Member Read History Repository)
+ */
 public interface MemberReadHistoryRepository extends MongoRepository<MemberReadHistory, String> {
     /**
      * 根据会员ID分页查找记录

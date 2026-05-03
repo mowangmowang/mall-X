@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
- * 订单超时取消定时任务
+ * 订单超时取消定时任务 (Order Timeout Cancel Scheduled Task)
  * 定期扫描数据库中超过指定时间未支付的订单，执行取消操作并释放库存
  */
 @Component

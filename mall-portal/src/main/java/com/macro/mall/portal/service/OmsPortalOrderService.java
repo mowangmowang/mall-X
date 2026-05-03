@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 前台订单管理Service */
+ * 前台订单管理服务接口 (Portal Order Management Service Interface)
+ */
 public interface OmsPortalOrderService {
     /**
      * 根据用户购物车信息生成确认单信息

@@ -20,7 +20,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 首页内容管理Service实现类 */
+ * 首页内容管理服务实现类 (Home Content Service Implementation)
+ */
 @Service
 public class HomeServiceImpl implements HomeService {
     @Autowired

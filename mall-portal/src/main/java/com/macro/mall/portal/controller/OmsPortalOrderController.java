@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 前台订单管理控制器
+ * 前台订单管理控制器 (Portal Order Management Controller)
  * 提供订单生成、支付、查询、取消等接口，供用户端调用
  */
 @RestController
