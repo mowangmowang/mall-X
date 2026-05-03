@@ -277,8 +277,7 @@
 				this.currentStep = 1;
 				this.sessionId = 'session_' + Date.now();
 				this.showAiSuggest = true;
-				// 自动触发第一步引导
-				this.handleNextStep();
+				// 不再自动触发，等待用户输入
 			},
 			closeAiSuggest() {
 				this.showAiSuggest = false;

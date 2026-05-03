@@ -106,23 +106,35 @@ public class AiAssistantServiceImpl implements AiAssistantService {
         return "你是专业电商售后客服助手，严格遵循商城售后政策。请根据用户描述的问题进行专业分析。\n\n" +
                "【退货原因选项】（必须从以下选项中选择）：\n" +
                reasonsStr + "\n\n" +
-               "【3轮引导流程】\n" +
+               "【3轮引导流程 - 严格按步骤执行】\n" +
                "你的任务是通过3轮对话引导用户清晰描述问题，最后给出建议。\n" +
-               "1. 第一轮 (step=1)：询问故障现象。例如：'请问商品具体出现了什么问题？是无法开机还是有其他表现？'\n" +
-               "2. 第二轮 (step=2)：追问细节或已尝试的解决方式。例如：'在出现这个问题之前，您是否有摔落或进水？是否尝试过重启？'\n" +
-               "3. 第三轮 (step=3)：确认影响并给出最终建议。例如：'明白了，这确实影响了您的正常使用。我将为您推荐最合适的退货原因。'\n\n" +
+               "⚠️ 重要：你会收到'当前引导步骤：X/3'的信息，你必须严格按照这个数字执行对应步骤！\n\n" +
+               "📌 第1轮 (step=1) - 询问故障现象：\n" +
+               "  - 目标：了解商品出现了什么具体问题\n" +
+               "  - 示例问题：'请问商品具体出现了什么问题？是无法开机、屏幕显示异常还是有其他表现？'\n" +
+               "  - 此轮不输出 reason 和 description\n\n" +
+               "📌 第2轮 (step=2) - 追问细节：\n" +
+               "  - 目标：了解故障的细节或用户已尝试的解决方式\n" +
+               "  - 示例问题：'请问这个问题是突然出现的还是一直存在？您是否尝试过重启或其他解决方式？'\n" +
+               "  - 此轮不输出 reason 和 description\n\n" +
+               "📌 第3轮 (step=3) - 确认并给出建议：\n" +
+               "  - 目标：确认问题影响，给出最终退货建议\n" +
+               "  - 此时必须设置 finished=true，并输出 reason、description、category\n" +
+               "  - 示例：'明白了，这确实影响了您的正常使用。我将为您推荐最合适的退货原因。'\n\n" +
                "【输出格式】\n" +
                "返回 JSON 格式，必须包含以下字段：\n" +
                "{\n" +
-               "  \"reason\": \"退货原因（仅在 finished=true 时提供，否则为空字符串）\",\n" +
-               "  \"description\": \"标准化的问题描述（仅在 finished=true 时提供，否则为空字符串）\",\n" +
-               "  \"category\": \"问题分类（仅在 finished=true 时提供，否则为空字符串）\",\n" +
-               "  \"confidence\": \"置信度（high/medium/low）\",\n" +
-               "  \"guideQuestion\": \"当前步骤需要问用户的问题\",\n" +
-               "  \"finished\": false // 仅在第三步且信息充足时为 true\n" +
+               "  \"reason\": \"退货原因（仅在 step=3 且 finished=true 时提供，否则必须为空字符串\"\n" +
+               "  \"description\": \"标准化的问题描述（仅在 step=3 且 finished=true 时提供，否则必须为空字符串\"\n" +
+               "  \"category\": \"问题分类（仅在 step=3 且 finished=true 时提供，否则必须为空字符串\"\n" +
+               "  \"confidence\": \"置信度（high/medium/low）\"\n" +
+               "  \"guideQuestion\": \"当前步骤需要问用户的问题（step=3 时为确认性语句）\"\n" +
+               "  \"finished\": false // 仅在 step=3 时为 true，step=1或2时必须为 false\n" +
                "}\n\n" +
                "【重要原则】\n" +
-               "- 即使在前两轮，也要根据用户已有的描述初步判断分类，但不要输出 reason 和 description\n" +
+               "- 必须严格按照收到的 step 数字执行对应步骤，不能跳步或重复\n" +
+               "- step=1 和 step=2 时，finished 必须为 false，reason/description/category 必须为空字符串\n" +
+               "- step=3 时，finished 必须为 true，必须提供 reason/description/category\n" +
                "- guideQuestion 必须简洁、有针对性，一次只问一个核心问题\n" +
                "- 只返回 JSON，不要包含其他文字";
     }
@@ -156,8 +168,23 @@ public class AiAssistantServiceImpl implements AiAssistantService {
             result.setGuideQuestion(obj.getStr("guideQuestion", ""));
             result.setFinished(obj.getBool("finished", false));
             
-            // 如果是最后一步或者已经完成，生成最终的分析说明
-            if (result.getFinished() || currentStep >= 3) {
+            // 强制逻辑：如果是第3步，必须结束对话并给出建议
+            if (currentStep >= 3) {
+                result.setFinished(true);
+                // 如果AI没有提供原因和描述，使用默认值
+                if (result.getSuggestedReason() == null || result.getSuggestedReason().isEmpty()) {
+                    result.setSuggestedReason("质量问题");
+                }
+                if (result.getSuggestedDescription() == null || result.getSuggestedDescription().isEmpty()) {
+                    result.setSuggestedDescription(fallbackIssue);
+                }
+                if (result.getCategory() == null || result.getCategory().isEmpty()) {
+                    result.setCategory("硬件故障");
+                }
+            }
+            
+            // 生成分析说明
+            if (result.getFinished()) {
                 String analysisNote = String.format("根据描述'%s'，判断为%s，匹配'%s'原因",
                         fallbackIssue.length() > 20 ? fallbackIssue.substring(0, 20) + "..." : fallbackIssue,
                         result.getCategory(),
@@ -171,13 +198,13 @@ public class AiAssistantServiceImpl implements AiAssistantService {
                     currentStep, result.getFinished(), result.getSuggestedReason());
         } catch (Exception e) {
             log.warn("Failed to parse AI return suggestion JSON, using fallback. Raw: {}", json, e);
-            result.setSuggestedReason("");
-            result.setSuggestedDescription("");
-            result.setCategory("");
+            result.setSuggestedReason(currentStep >= 3 ? "质量问题" : "");
+            result.setSuggestedDescription(currentStep >= 3 ? fallbackIssue : "");
+            result.setCategory(currentStep >= 3 ? "硬件故障" : "");
             result.setConfidence("low");
-            result.setFinished(false);
-            result.setGuideQuestion("抱歉，我没听清。请问具体是哪里出现了问题？");
-            result.setAnalysisNote("解析失败，请重试");
+            result.setFinished(currentStep >= 3);
+            result.setGuideQuestion(currentStep >= 3 ? "已为您生成建议，请确认。" : "抱歉，我没听清。请问具体是哪里出现了问题？");
+            result.setAnalysisNote(currentStep >= 3 ? "解析失败，但已为您生成默认建议" : "解析失败，请重试");
         }
         return result;
     }
