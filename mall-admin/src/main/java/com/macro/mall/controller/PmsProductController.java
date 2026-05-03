@@ -162,6 +162,10 @@ public class PmsProductController {
                                             @RequestParam("publishStatus") Integer publishStatus) {
         int count = productService.updatePublishStatus(ids, publishStatus);
         if (count > 0) {
+            // 发送MQ消息，同步到ES
+            for (Long id : ids) {
+                esProductSender.send(id, "UPDATE");
+            }
             return CommonResult.success(count);
         } else {
             return CommonResult.failed();
@@ -181,6 +185,10 @@ public class PmsProductController {
                                               @RequestParam("recommendStatus") Integer recommendStatus) {
         int count = productService.updateRecommendStatus(ids, recommendStatus);
         if (count > 0) {
+            // 发送MQ消息，同步到ES
+            for (Long id : ids) {
+                esProductSender.send(id, "UPDATE");
+            }
             return CommonResult.success(count);
         } else {
             return CommonResult.failed();
@@ -200,6 +208,10 @@ public class PmsProductController {
                                         @RequestParam("newStatus") Integer newStatus) {
         int count = productService.updateNewStatus(ids, newStatus);
         if (count > 0) {
+            // 发送MQ消息，同步到ES
+            for (Long id : ids) {
+                esProductSender.send(id, "UPDATE");
+            }
             return CommonResult.success(count);
         } else {
             return CommonResult.failed();
