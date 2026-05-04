@@ -8,7 +8,8 @@
 
 - 🔐 **安全认证**：基于 Spring Security + JWT 的身份认证与动态权限控制
 - 📦 **商品管理**：完整的商品 CRUD、SKU 管理、属性配置及审核流程
-- 🛒 **订单管理**：订单查询、发货、关闭、退款及操作历史记录
+- 📋 **订单管理**：订单查询、发货、关闭、退款、操作历史记录及订单设置管理
+- ⏱️ **订单设置**：支持配置超时取消、自动确认收货、自动完成、自动好评等时间规则
 - 👥 **权限控制**：基于 RBAC（角色访问控制）的菜单与资源权限管理
 - 🔍 **搜索集成**：通过 RabbitMQ 异步同步商品数据到 Elasticsearch
 - 💾 **缓存优化**：使用 Redis 缓存管理员信息与权限数据，提升系统性能
@@ -108,11 +109,11 @@ graph LR
 
 | 技术 | 版本 | 说明 |
 |------|------|------|
-| Vue.js | 3.x | 前端框架 |
-| TypeScript | - | 类型系统 |
-| Element Plus | - | UI 组件库 |
-| Vite | - | 构建工具 |
-| Pinia | - | 状态管理 |
+| Vue.js | 3.3.x | 前端框架 |
+| TypeScript | 5.x | 类型系统 |
+| Element Plus | 2.4.x | UI 组件库 |
+| Vite | 5.x | 构建工具 |
+| Pinia | 2.x | 状态管理 |
 
 ### 开发工具
 
@@ -243,6 +244,13 @@ spring:
     port: 5672
     username: guest
     password: guest
+
+# MinIO 对象存储配置（本地部署）
+minio:
+  endpoint: http://localhost:9000  # MinIO API 端口（注意：不是 Console 端口 9001）
+  bucketName: mall  # 存储桶名称
+  accessKey: minioadmin  # 访问密钥
+  secretKey: minioadmin  # 访问秘钥
 
 # 阿里云 OSS 配置（如不使用可忽略）
 aliyun:
@@ -487,7 +495,209 @@ public int delivery(List<OmsOrderDeliveryParam> deliveryParamList) {
 }
 ```
 
-### 4. 缓存策略
+### 4. 订单设置管理
+
+订单设置功能用于配置订单的自动处理规则，包括超时取消、自动确认收货、自动完成和自动好评等时间设置。
+
+#### 配置项说明
+
+| 配置项 | 字段名 | 单位 | 默认值 | 说明 |
+|--------|--------|------|--------|------|
+| 秒杀订单超时关闭时间 | `flash_order_overtime` | 分钟 | 60 | 秒杀订单未支付，超过此时间自动取消 |
+| 正常订单超时时间 | `normal_order_overtime` | 分钟 | 120 | 普通订单未支付，超过此时间自动取消 |
+| 发货后自动确认收货时间 | `confirm_overtime` | 天 | 15 | 发货后超过此时间自动确认收货 |
+| 自动完成交易时间 | `finish_overtime` | 天 | 7 | 确认收货后超过此时间自动完成，不能申请售后 |
+| 订单完成后自动好评时间 | `comment_overtime` | 天 | 7 | 订单完成后超过此时间自动好评 |
+
+#### 数据库表结构
+
+```sql
+CREATE TABLE `oms_order_setting` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `flash_order_overtime` int(11) DEFAULT NULL COMMENT '秒杀订单超时关闭时间(分)',
+  `normal_order_overtime` int(11) DEFAULT NULL COMMENT '正常订单超时时间(分)',
+  `confirm_overtime` int(11) DEFAULT NULL COMMENT '发货后自动确认收货时间（天）',
+  `finish_overtime` int(11) DEFAULT NULL COMMENT '自动完成交易时间，不能申请售后（天）',
+  `comment_overtime` int(11) DEFAULT NULL COMMENT '订单完成后自动好评时间（天）',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='订单设置表';
+
+-- 默认配置
+INSERT INTO `oms_order_setting` VALUES (1, 60, 120, 15, 7, 7);
+```
+
+#### API 接口
+
+| 接口路径 | 方法 | 说明 | 权限 |
+|---------|------|------|------|
+| `/orderSetting/{id}` | GET | 获取指定订单设置 | 需要权限 |
+| `/orderSetting/update/{id}` | POST | 修改指定订单设置 | 需要权限 |
+
+#### 实现代码
+
+**Controller 层** ([OmsOrderSettingController.java](src/main/java/com/macro/mall/controller/OmsOrderSettingController.java))
+
+```java
+@Controller  // 使用 @Controller + @ResponseBody 或 @RestController 均可
+@RequestMapping("/orderSetting")
+public class OmsOrderSettingController {
+    @Autowired
+    private OmsOrderSettingService orderSettingService;
+
+    @ApiOperation("获取指定订单设置")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @ResponseBody  // 配合 @Controller 使用，将返回值写入响应体
+    public CommonResult<OmsOrderSetting> getItem(@PathVariable Long id) {
+        OmsOrderSetting orderSetting = orderSettingService.getItem(id);
+        return CommonResult.success(orderSetting);
+    }
+
+    @ApiOperation("修改指定订单设置")
+    @RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult update(@PathVariable Long id, @RequestBody OmsOrderSetting orderSetting) {
+        int count = orderSettingService.update(id, orderSetting);
+        if(count > 0){
+            return CommonResult.success(count);
+        }
+        return CommonResult.failed();
+    }
+}
+```
+
+**Service 层** ([OmsOrderSettingServiceImpl.java](src/main/java/com/macro/mall/service/impl/OmsOrderSettingServiceImpl.java))
+
+```java
+@Service
+public class OmsOrderSettingServiceImpl implements OmsOrderSettingService {
+    @Autowired
+    private OmsOrderSettingMapper orderSettingMapper;
+
+    @Override
+    public OmsOrderSetting getItem(Long id) {
+        return orderSettingMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public int update(Long id, OmsOrderSetting orderSetting) {
+        orderSetting.setId(id);
+        return orderSettingMapper.updateByPrimaryKey(orderSetting);
+    }
+}
+```
+
+#### 使用场景
+
+这些配置通常配合定时任务（如 Quartz、XXL-JOB）使用，定期扫描超时订单并自动处理：
+
+```mermaid
+sequenceDiagram
+    participant Timer as 定时任务
+    participant Config as 订单设置配置
+    participant Order as 订单系统
+    
+    Timer->>Config: 读取订单设置
+    Config-->>Timer: 返回超时时间配置
+    
+    Timer->>Order: 扫描待付款订单
+    Order-->>Timer: 返回超时订单列表
+    
+    loop 处理每个超时订单
+        Timer->>Order: 自动取消订单
+        Note over Order: status = 4 (已关闭)<br/>恢复库存
+    end
+    
+    Timer->>Order: 扫描已发货订单
+    Order-->>Timer: 返回超期未确认订单
+    
+    loop 处理每个超期订单
+        Timer->>Order: 自动确认收货
+        Note over Order: status = 3 (已完成)<br/>开始计算售后期限
+    end
+```
+
+#### 业务流程
+
+```mermaid
+flowchart LR
+    A[创建订单] -->|待付款| B{是否在超时时间内支付?}
+    B -->|是| C[待发货]
+    B -->|否| D[已关闭]
+    
+    C -->|管理员发货| E[已发货]
+    E -->|用户确认收货| F[已完成]
+    E -->|超过确认时间| F
+    
+    F -->|超过售后期限| G[不能申请售后]
+    F -->|超过好评时间| H[自动好评]
+    
+    style D fill:#ff6b6b
+    style F fill:#4ecdc4
+    style H fill:#ffe66d
+```
+
+#### 订单设置与RabbitMQ的联动机制
+
+订单设置是整个订单超时取消机制的**控制中枢**，与 RabbitMQ 延迟队列紧密配合工作：
+
+```mermaid
+flowchart TD
+    A[管理员配置订单设置] --> B[保存到 oms_order_setting 表]
+    B --> C1[订单创建时读取超时时间]
+    B --> C2[定时任务读取超时时间]
+    
+    C1 --> D1[计算RabbitMQ延迟时间<br/>delayTimes = normalOrderOvertime * 60 * 1000]
+    D1 --> E1[发送延迟消息到TTL队列]
+    E1 --> F1[消息过期后自动取消订单]
+    
+    C2 --> D2[每10分钟扫描超时订单]
+    D2 --> E2[批量取消超时订单<br/>释放库存、返还优惠券和积分]
+    
+    style A fill:#90EE90
+    style B fill:#FFD700
+    style F1 fill:#FF6B6B
+    style E2 fill:#FF6B6B
+```
+
+**联动流程说明**：
+
+1. **配置驱动**：管理员在后台修改订单设置（如正常订单超时120分钟）
+2. **订单创建时**：
+   ```java
+   // OmsPortalOrderServiceImpl.java
+   OmsOrderSetting orderSetting = orderSettingMapper.selectByPrimaryKey(1L);
+   long delayTimes = orderSetting.getNormalOrderOvertime() * 60 * 1000; // 转换为毫秒
+   cancelOrderSender.sendMessage(orderId, delayTimes); // 发送延迟消息
+   ```
+3. **RabbitMQ处理**：
+   - 消息进入延迟队列，设置过期时间为 `delayTimes`
+   - 消息过期后自动转发到实际消费队列
+   - 消费者 `CancelOrderReceiver` 接收消息并执行取消逻辑
+4. **定时任务兜底**：
+   - 每10分钟执行一次 `OrderTimeOutCancelTask`
+   - 同样读取订单设置中的超时时间进行扫描
+   - 处理可能遗漏的超时订单
+
+**双重保障机制**：
+
+| 机制 | 触发方式 | 优势 | 适用场景 |
+|------|---------|------|---------|
+| **RabbitMQ延迟队列** | 订单创建时立即发送 | 精确定时，实时取消，性能高 | 主要的超时取消机制 |
+| **定时任务扫描** | 每10分钟执行一次 | 兜底保障，处理异常情况 | 备用机制，确保订单不遗漏 |
+
+**配置项联动关系**：
+
+| 订单设置字段 | 影响范围 | RabbitMQ中的应用 |
+|------------|---------|----------------|
+| `normalOrderOvertime` | 正常订单超时时间 | 设置正常订单的延迟消息TTL |
+| `flashOrderOvertime` | 秒杀订单超时时间 | 设置秒杀订单的延迟消息TTL |
+| `confirmOvertime` | 自动确认收货时间 | 设置订单的 `auto_confirm_day` 字段 |
+| `finishOvertime` | 自动完成交易时间 | 定时任务扫描已完成订单的期限 |
+| `commentOvertime` | 自动好评时间 | 定时任务扫描自动好评的期限 |
+
+通过这种设计，订单设置实现了**一处配置，全局生效**的效果，确保订单超时处理机制的灵活性和一致性。
+
+### 5. 缓存策略
 
 #### Redis 缓存设计
 
@@ -572,6 +782,8 @@ public void delResourceListByRole(Long roleId) {
 | `/order/update/delivery` | POST | 批量发货 | 需要权限 |
 | `/order/update/close` | POST | 批量关闭 | 需要权限 |
 | `/order/update/cancel` | POST | 取消订单 | 需要权限 |
+| `/orderSetting/{id}` | GET | 获取订单设置 | 需要权限 |
+| `/orderSetting/update/{id}` | POST | 修改订单设置 | 需要权限 |
 
 > 💡 **提示**：完整的 API 文档请访问 Swagger UI：http://localhost:8080/swagger-ui/
 
@@ -627,6 +839,81 @@ spring:
 # 方式2：启动时指定
 java -jar mall-admin.jar --spring.profiles.active=prod
 ```
+
+### MinIO 对象存储配置详解
+
+MinIO 是一个高性能的对象存储服务，兼容 Amazon S3 API。本项目支持 MinIO 和阿里云 OSS 两种文件存储方案。
+
+#### 本地部署 MinIO
+
+**使用 Docker 快速启动**：
+
+```bash
+# 拉取 MinIO 镜像
+docker pull minio/minio
+
+# 启动 MinIO 容器
+docker run -p 9000:9000 -p 9001:9001 \
+  --name minio \
+  -v /mnt/data:/data \
+  -e "MINIO_ROOT_USER=minioadmin" \
+  -e "MINIO_ROOT_PASSWORD=minioadmin" \
+  minio/minio server /data --console-address ":9001"
+```
+
+**访问地址**：
+- **API 端口**: http://localhost:9000（用于程序调用）
+- **Console 端口**: http://localhost:9001（用于浏览器管理界面）
+
+**配置说明**：
+
+```yaml
+minio:
+  endpoint: http://localhost:9000  # ⚠️ 注意：这里是 API 端口，不是 9001
+  bucketName: mall  # 存储桶名称，程序会自动创建
+  accessKey: minioadmin  # 登录用户名
+  secretKey: minioadmin  # 登录密码
+```
+
+**常见错误**：
+- ❌ 错误配置：`endpoint: http://localhost:9001`（这是 Console 端口）
+- ✅ 正确配置：`endpoint: http://localhost:9000`（这是 API 端口）
+
+#### MinIO 功能接口
+
+| 接口路径 | 方法 | 说明 | 参数 |
+|---------|------|------|------|
+| `/minio/upload` | POST | 上传文件 | `file` (MultipartFile) |
+| `/minio/delete` | POST | 删除文件 | `objectName` (文件路径) |
+
+**上传示例**：
+
+```bash
+curl -X POST http://localhost:8080/minio/upload \
+  -F "file=@/path/to/your/image.jpg"
+```
+
+**返回结果**：
+
+```json
+{
+  "code": 200,
+  "message": "操作成功",
+  "data": {
+    "name": "image.jpg",
+    "url": "http://localhost:9000/mall/20260503/image.jpg"
+  }
+}
+```
+
+#### 与阿里云 OSS 对比
+
+| 特性 | MinIO | 阿里云 OSS |
+|------|-------|----------|
+| 部署方式 | 自建（Docker/本地） | 云服务 |
+| 成本 | 免费 | 按量付费 |
+| 适用场景 | 内网、测试环境 | 生产环境、公网访问 |
+| 性能 | 高（本地部署） | 依赖网络 |
 
 ---
 
