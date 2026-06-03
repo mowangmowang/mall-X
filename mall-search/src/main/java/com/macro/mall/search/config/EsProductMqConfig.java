@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
  * </ul>
  * </p>
  *
- * @author macro
+ * @author alan
  * @since 1.0
  */
 @Configuration

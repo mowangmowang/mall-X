@@ -16,7 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * </ul>
  * </p>
  *
- * @author macro
+ * @author alan
  * @since 1.0
  */
 @SpringBootApplication(scanBasePackages = "com.macro.mall")

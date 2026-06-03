@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
  * 使用 Mockito 模拟 EsProductService，验证方法调用是否正确。
  * </p>
  *
- * @author macro
+ * @author alan
  * @since 1.0
  */
 @SpringBootTest(classes = com.macro.mall.search.MallSearchApplication.class, properties = {

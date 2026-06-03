@@ -12,7 +12,7 @@ import java.util.List;
  * 该接口通过 XML 映射文件实现复杂的 SQL 查询，包括多表关联、子查询等。
  * </p>
  *
- * @author macro
+ * @author alan
  * @since 1.0
  */
 public interface EsProductDao {

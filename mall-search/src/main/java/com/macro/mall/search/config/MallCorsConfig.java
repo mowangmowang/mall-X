@@ -16,7 +16,7 @@ import org.springframework.web.filter.CorsFilter;
  * 安全提示：生产环境应限制 allowedOriginPattern 为具体的域名，避免使用 "*" 通配符。
  * </p>
  *
- * @author macro
+ * @author alan
  * @since 1.0
  */
 @Configuration

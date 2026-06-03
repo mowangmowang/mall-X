@@ -12,7 +12,7 @@ import java.util.List;
  * 通过 Elasticsearch Aggregation 功能统计得到，帮助用户快速缩小搜索范围。
  * </p>
  *
- * @author macro
+ * @author alan
  * @since 1.0
  */
 @Data
