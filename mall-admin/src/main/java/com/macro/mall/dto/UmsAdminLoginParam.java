@@ -1,10 +1,10 @@
 package com.macro.mall.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 /**
  * 管理员登录参数 DTO
@@ -17,13 +17,13 @@ public class UmsAdminLoginParam {
      * 用户名（必填）
      */
     @NotEmpty
-    @ApiModelProperty(value = "用户名", required = true)
+    @Schema(description = "用户名", required = true)
     private String username;
     
     /**
      * 密码（必填）
      */
     @NotEmpty
-    @ApiModelProperty(value = "密码", required = true)
+    @Schema(description = "密码", required = true)
     private String password;
 }
