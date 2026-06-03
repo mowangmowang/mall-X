@@ -6,7 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**
- * 会员品牌关注Repository */
+ * 会员品牌关注数据访问接口 (Member Brand Attention Repository)
+ */
 public interface MemberBrandAttentionRepository extends MongoRepository<MemberBrandAttention, String> {
     /**
      * 根据会员ID和品牌ID查找记录

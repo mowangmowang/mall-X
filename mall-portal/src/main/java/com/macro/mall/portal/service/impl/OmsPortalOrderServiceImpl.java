@@ -219,7 +219,7 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
         if(CollUtil.isNotEmpty(orderSettings)){
             order.setAutoConfirmDay(orderSettings.get(0).getConfirmOvertime());
         }
-        // TODO: 2018/9/3 bill_*,delivery_*
+
         //插入order表和order_item表
         orderMapper.insert(order);
         for (OmsOrderItem orderItem : orderItemList) {
@@ -358,6 +358,9 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
     public void confirmReceiveOrder(Long orderId) {
         UmsMember member = memberService.getCurrentMember();
         OmsOrder order = orderMapper.selectByPrimaryKey(orderId);
+        if(order == null){
+            Asserts.fail("订单不存在！");
+        }
         if(!member.getId().equals(order.getMemberId())){
             Asserts.fail("不能确认他人订单！");
         }

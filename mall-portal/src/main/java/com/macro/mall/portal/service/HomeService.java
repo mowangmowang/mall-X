@@ -1,6 +1,7 @@
 package com.macro.mall.portal.service;
 
 import com.macro.mall.model.CmsSubject;
+import com.macro.mall.model.CmsTopic;
 import com.macro.mall.model.PmsProduct;
 import com.macro.mall.model.PmsProductCategory;
 import com.macro.mall.portal.domain.HomeContentResult;
@@ -10,7 +11,8 @@ import com.macro.mall.portal.domain.SubjectDetail;
 import java.util.List;
 
 /**
- * 首页内容管理Service */
+ * 首页内容管理服务接口 (Home Content Service Interface)
+ */
 public interface HomeService {
 
     /**
@@ -54,4 +56,14 @@ public interface HomeService {
      * 获取优选专区列表（含商品）
      */
     List<PrefrenceAreaResult> getPrefrenceAreaList();
+
+    /**
+     * 获取话题列表（进行中的热门话题）
+     */
+    List<CmsTopic> getTopicList(Integer pageSize, Integer pageNum);
+
+    /**
+     * 获取话题详情
+     */
+    CmsTopic getTopicDetail(Long topicId);
 }

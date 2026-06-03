@@ -20,29 +20,55 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 首页内容管理Service实现类 */
+ * 首页内容管理服务实现类 (Home Content Service Implementation)
+ * <p>
+ * 负责前台首页的数据展示，包括广告、推荐品牌、新品、人气商品、专题和秒杀信息等。
+ */
 @Service
 public class HomeServiceImpl implements HomeService {
+    /** 首页广告Mapper */
     @Autowired
     private SmsHomeAdvertiseMapper advertiseMapper;
+    
+    /** 首页DAO，用于查询首页各种推荐数据 */
     @Autowired
     private HomeDao homeDao;
+    
+    /** 秒杀活动Mapper */
     @Autowired
     private SmsFlashPromotionMapper flashPromotionMapper;
+    
+    /** 秒杀场次Mapper */
     @Autowired
     private SmsFlashPromotionSessionMapper promotionSessionMapper;
+    
+    /** 商品Mapper */
     @Autowired
     private PmsProductMapper productMapper;
+    
+    /** 商品分类Mapper */
     @Autowired
     private PmsProductCategoryMapper productCategoryMapper;
+    
+    /** 专题Mapper */
     @Autowired
     private CmsSubjectMapper subjectMapper;
+    
+    /** 专题商品关联Mapper */
     @Autowired
     private CmsSubjectProductRelationMapper subjectProductRelationMapper;
+    
+    /** 优选专区Mapper */
     @Autowired
     private CmsPrefrenceAreaMapper prefrenceAreaMapper;
+    
+    /** 优选专区商品关联Mapper */
     @Autowired
     private CmsPrefrenceAreaProductRelationMapper prefrenceAreaProductRelationMapper;
+    
+    /** 话题Mapper */
+    @Autowired
+    private CmsTopicMapper topicMapper;
 
     @Override
     public HomeContentResult content() {
@@ -57,6 +83,8 @@ public class HomeServiceImpl implements HomeService {
         result.setHotProductList(homeDao.getHotProductList(0,4));
         //获取推荐专题
         result.setSubjectList(homeDao.getRecommendSubjectList(0,4));
+        //获取秒杀信息
+        result.setHomeFlashPromotion(getHomeFlashPromotion());
         return result;
     }
 
@@ -218,6 +246,22 @@ public class HomeServiceImpl implements HomeService {
             resultList.add(result);
         }
         return resultList;
+    }
+
+    @Override
+    public CmsTopic getTopicDetail(Long topicId) {
+        return topicMapper.selectByPrimaryKey(topicId);
+    }
+
+    @Override
+    public List<CmsTopic> getTopicList(Integer pageSize, Integer pageNum) {
+        PageHelper.startPage(pageNum, pageSize);
+        CmsTopicExample example = new CmsTopicExample();
+        // 只查询未结束的话题（endTime 为空或大于当前时间），按参与人数降序
+        Date now = new Date();
+        example.createCriteria().andEndTimeGreaterThanOrEqualTo(now);
+        example.setOrderByClause("attend_count desc");
+        return topicMapper.selectByExampleWithBLOBs(example);
     }
 
     private HomeFlashPromotion getHomeFlashPromotion() {

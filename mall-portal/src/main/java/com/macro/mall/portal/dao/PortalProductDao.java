@@ -8,7 +8,8 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * 前台购物车商品管理自定义Dao */
+ * 前台购物车商品管理自定义数据访问对象 (Portal Product Custom DAO)
+ */
 public interface PortalProductDao {
     /**
      * 获取购物车商品信息

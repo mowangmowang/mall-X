@@ -20,3 +20,18 @@ target/
 local.properties
 .DS_Store
 
+# Sensitive Configuration Files
+**/application-local.yml
+**/application-secret.yml
+*.env
+.env.local
+
+# Claude Code
+.claude/
+
+# Documentation and Guides
+guidence/
+
+# Skills directory with embedded git repo
+skills/lunwen/
+

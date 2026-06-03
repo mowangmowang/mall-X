@@ -7,7 +7,8 @@ import com.macro.mall.portal.domain.PmsProductCategoryNode;
 import java.util.List;
 
 /**
- * 前台商品管理Service */
+ * 前台商品管理服务接口 (Portal Product Management Service Interface)
+ */
 public interface PmsPortalProductService {
     /**
      * 综合搜索商品

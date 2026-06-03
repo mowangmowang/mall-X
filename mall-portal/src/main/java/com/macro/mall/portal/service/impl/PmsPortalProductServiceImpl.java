@@ -17,28 +17,61 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 前台订单管理Service实现类 */
+ * 前台商品管理Service实现类 (Portal Product Service Implementation)
+ * <p>
+ * 负责前台用户端的商品相关查询操作，包括商品搜索、分类树、商品详情等。
+ */
 @Service
 public class PmsPortalProductServiceImpl implements PmsPortalProductService {
+    /** 商品Mapper，用于商品数据的持久化操作 */
     @Autowired
     private PmsProductMapper productMapper;
+    
+    /** 商品分类Mapper，用于分类数据的持久化操作 */
     @Autowired
     private PmsProductCategoryMapper productCategoryMapper;
+    
+    /** 品牌Mapper，用于品牌数据的持久化操作 */
     @Autowired
     private PmsBrandMapper brandMapper;
+    
+    /** 商品属性Mapper，用于属性数据的持久化操作 */
     @Autowired
     private PmsProductAttributeMapper productAttributeMapper;
+    
+    /** 商品属性值Mapper，用于属性值数据的持久化操作 */
     @Autowired
     private PmsProductAttributeValueMapper productAttributeValueMapper;
+    
+    /** SKU库存Mapper，用于SKU库存数据的持久化操作 */
     @Autowired
     private PmsSkuStockMapper skuStockMapper;
+    
+    /** 商品阶梯价格Mapper，用于阶梯价格数据的持久化操作 */
     @Autowired
     private PmsProductLadderMapper productLadderMapper;
+    
+    /** 商品满减Mapper，用于满减数据的持久化操作 */
     @Autowired
     private PmsProductFullReductionMapper productFullReductionMapper;
+    
+    /** 商品DAO，用于复杂商品查询操作 */
     @Autowired
     private PortalProductDao portalProductDao;
 
+    /**
+     * 搜索商品列表
+     * <p>
+     * 支持关键字、品牌、分类筛选，以及多种排序方式
+     *
+     * @param keyword 搜索关键字（模糊匹配商品名称）
+     * @param brandId 品牌ID（可选）
+     * @param productCategoryId 商品分类ID（可选）
+     * @param pageNum 页码（从1开始）
+     * @param pageSize 每页大小
+     * @param sort 排序方式：1->按新品；2->按销量；3->价格从低到高；4->价格从高到低
+     * @return 商品列表
+     */
     @Override
     public List<PmsProduct> search(String keyword, Long brandId, Long productCategoryId, Integer pageNum, Integer pageSize, Integer sort) {
         PageHelper.startPage(pageNum, pageSize);
@@ -68,6 +101,13 @@ public class PmsPortalProductServiceImpl implements PmsPortalProductService {
         return productMapper.selectByExample(example);
     }
 
+    /**
+     * 查询商品分类树形结构
+     * <p>
+     * 递归构建商品分类的树形结构，用于前端展示分类导航
+     *
+     * @return 分类树形列表
+     */
     @Override
     public List<PmsProductCategoryNode> categoryTreeList() {
         PmsProductCategoryExample example = new PmsProductCategoryExample();
@@ -79,6 +119,14 @@ public class PmsPortalProductServiceImpl implements PmsPortalProductService {
         return result;
     }
 
+    /**
+     * 查询商品详情
+     * <p>
+     * 获取商品的完整信息，包括基本信息、品牌、属性、SKU、促销信息等
+     *
+     * @param id 商品唯一标识符 (Product ID)
+     * @return 商品详情对象
+     */
     @Override
     public PmsPortalProductDetail detail(Long id) {
         PmsPortalProductDetail result = new PmsPortalProductDetail();

@@ -9,7 +9,8 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * 首页内容管理自定义Dao */
+ * 首页内容管理自定义数据访问对象 (Home Content Custom DAO)
+ */
 public interface HomeDao {
 
     /**

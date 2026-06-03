@@ -27,85 +27,179 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 商品管理Service实现类 */
+ * 商品管理 Service 实现类
+ * 实现商品的增删改查、上下架、审核、推荐等核心业务逻辑
+ * 处理商品与 SKU、属性、促销价格等关联数据的一致性
+ */
 @Service
 public class PmsProductServiceImpl implements PmsProductService {
+    /**
+     * 日志记录器
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(PmsProductServiceImpl.class);
+    
+    /**
+     * 商品 Mapper
+     */
     @Autowired
     private PmsProductMapper productMapper;
+    
+    /**
+     * 会员价格 DAO
+     */
     @Autowired
     private PmsMemberPriceDao memberPriceDao;
+    
+    /**
+     * 会员价格 Mapper
+     */
     @Autowired
     private PmsMemberPriceMapper memberPriceMapper;
+    
+    /**
+     * 阶梯价格 DAO
+     */
     @Autowired
     private PmsProductLadderDao productLadderDao;
+    
+    /**
+     * 阶梯价格 Mapper
+     */
     @Autowired
     private PmsProductLadderMapper productLadderMapper;
+    
+    /**
+     * 满减价格 DAO
+     */
     @Autowired
     private PmsProductFullReductionDao productFullReductionDao;
+    
+    /**
+     * 满减价格 Mapper
+     */
     @Autowired
     private PmsProductFullReductionMapper productFullReductionMapper;
+    
+    /**
+     * SKU 库存 DAO
+     */
     @Autowired
     private PmsSkuStockDao skuStockDao;
+    
+    /**
+     * SKU 库存 Mapper
+     */
     @Autowired
     private PmsSkuStockMapper skuStockMapper;
+    
+    /**
+     * 商品属性值 DAO
+     */
     @Autowired
     private PmsProductAttributeValueDao productAttributeValueDao;
+    
+    /**
+     * 商品属性值 Mapper
+     */
     @Autowired
     private PmsProductAttributeValueMapper productAttributeValueMapper;
+    
+    /**
+     * 专题-商品关系 DAO
+     */
     @Autowired
     private CmsSubjectProductRelationDao subjectProductRelationDao;
+    
+    /**
+     * 专题-商品关系 Mapper
+     */
     @Autowired
     private CmsSubjectProductRelationMapper subjectProductRelationMapper;
+    
+    /**
+     * 优选专区-商品关系 DAO
+     */
     @Autowired
     private CmsPrefrenceAreaProductRelationDao prefrenceAreaProductRelationDao;
+    
+    /**
+     * 优选专区-商品关系 Mapper
+     */
     @Autowired
     private CmsPrefrenceAreaProductRelationMapper prefrenceAreaProductRelationMapper;
+    
+    /**
+     * 商品自定义 DAO（复杂查询）
+     */
     @Autowired
     private PmsProductDao productDao;
+    
+    /**
+     * 商品审核记录 DAO
+     */
     @Autowired
     private PmsProductVerifyRecordDao productVerifyRecordDao;
 
+    /**
+     * 创建商品
+     * 包括商品基本信息、SKU、属性值、促销价格等完整信息
+     *
+     * @param productParam 商品参数对象
+     * @return 新创建的商品 ID
+     */
     @Override
     public Long create(PmsProductParam productParam) {
-        //创建商品
+        // 创建商品基本信息
         PmsProduct product = productParam;
         product.setId(null);
         productMapper.insertSelective(product);
         Long productId = product.getId();
-        //根据促销类型设置价格：会员价格、阶梯价格、满减价格
-        //会员价格
+        
+        // 根据促销类型设置价格：会员价格、阶梯价格、满减价格
+        // 会员价格
         relateAndInsertList(memberPriceDao, productParam.getMemberPriceList(), productId);
-        //阶梯价格
+        // 阶梯价格
         relateAndInsertList(productLadderDao, productParam.getProductLadderList(), productId);
-        //满减价格
+        // 满减价格
         relateAndInsertList(productFullReductionDao, productParam.getProductFullReductionList(), productId);
-        //处理sku的编码
-        handleSkuStockCode(productParam.getSkuStockList(),productId);
-        //添加sku库存信息
+        
+        // 处理 SKU 的编码（如果为空则自动生成）
+        handleSkuStockCode(productParam.getSkuStockList(), productId);
+        // 添加 SKU 库存信息
         relateAndInsertList(skuStockDao, productParam.getSkuStockList(), productId);
-        //添加商品参数,添加自定义商品规格
+        
+        // 添加商品参数、自定义商品规格
         relateAndInsertList(productAttributeValueDao, productParam.getProductAttributeValueList(), productId);
-        //关联专题
+        
+        // 关联专题
         relateAndInsertList(subjectProductRelationDao, productParam.getSubjectProductRelationList(), productId);
-        //关联优选
+        
+        // 关联优选专区
         relateAndInsertList(prefrenceAreaProductRelationDao, productParam.getPrefrenceAreaProductRelationList(), productId);
+        
         return productId;
     }
 
+    /**
+     * 处理 SKU 编码
+     * 如果 SKU 编码为空，则自动生成：日期(8位) + 商品ID(4位) + 索引(3位)
+     *
+     * @param skuStockList SKU 列表
+     * @param productId 商品 ID
+     */
     private void handleSkuStockCode(List<PmsSkuStock> skuStockList, Long productId) {
-        if(CollectionUtils.isEmpty(skuStockList))return;
-        for(int i=0;i<skuStockList.size();i++){
+        if (CollectionUtils.isEmpty(skuStockList)) return;
+        for (int i = 0; i < skuStockList.size(); i++) {
             PmsSkuStock skuStock = skuStockList.get(i);
-            if(StrUtil.isEmpty(skuStock.getSkuCode())){
+            if (StrUtil.isEmpty(skuStock.getSkuCode())) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
                 StringBuilder sb = new StringBuilder();
-                //日期
+                // 日期（8位）
                 sb.append(sdf.format(new Date()));
-                //四位商品id
+                // 四位商品 ID
                 sb.append(String.format("%04d", productId));
-                //三位索引id
-                sb.append(String.format("%03d", i+1));
+                // 三位索引 ID
+                sb.append(String.format("%03d", i + 1));
                 skuStock.setSkuCode(sb.toString());
             }
         }

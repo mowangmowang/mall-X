@@ -9,7 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * 用户优惠券管理Service */
+ * 用户优惠券管理服务接口 (Member Coupon Management Service Interface)
+ */
 public interface UmsMemberCouponService {
     /**
      * 会员添加优惠券

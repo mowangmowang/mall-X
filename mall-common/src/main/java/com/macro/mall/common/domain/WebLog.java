@@ -4,7 +4,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * Controller层的日志封装类 */
+ * Controller 层日志封装类 (Web Log)
+ * 用于 AOP 切面记录请求详细信息，包括请求参数、响应结果、耗时等
+ */
 @Data
 @EqualsAndHashCode
 public class WebLog {

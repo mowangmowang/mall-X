@@ -4,7 +4,8 @@ import com.macro.mall.portal.domain.MemberProductCollection;
 import org.springframework.data.domain.Page;
 
 /**
- * 会员商品收藏管理Service */
+ * 会员商品收藏管理服务接口 (Member Product Collection Service Interface)
+ */
 public interface MemberCollectionService {
     /**
      * 添加收藏

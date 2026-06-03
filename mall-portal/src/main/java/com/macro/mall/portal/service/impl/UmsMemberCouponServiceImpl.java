@@ -20,21 +20,37 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
- * 会员优惠券管理Service实现类 */
+ * 会员优惠券管理Service实现类 (Member Coupon Service Implementation)
+ * <p>
+ * 负责处理用户优惠券的领取、查询、使用等操作，支持多种类型的优惠券（全场通用、指定分类、指定商品）。
+ */
 @Service
 public class UmsMemberCouponServiceImpl implements UmsMemberCouponService {
+    /** 会员服务，用于获取当前登录用户信息 */
     @Autowired
     private UmsMemberService memberService;
+    
+    /** 优惠券Mapper，用于优惠券数据操作 */
     @Autowired
     private SmsCouponMapper couponMapper;
+    
+    /** 优惠券历史Mapper，用于记录用户优惠券领取历史 */
     @Autowired
     private SmsCouponHistoryMapper couponHistoryMapper;
+    
+    /** 优惠券历史DAO，用于查询优惠券详细信息 */
     @Autowired
     private SmsCouponHistoryDao couponHistoryDao;
+    
+    /** 优惠券商品关联Mapper */
     @Autowired
     private SmsCouponProductRelationMapper couponProductRelationMapper;
+    
+    /** 优惠券商品分类关联Mapper */
     @Autowired
     private SmsCouponProductCategoryRelationMapper couponProductCategoryRelationMapper;
+    
+    /** 商品Mapper，用于查询商品信息 */
     @Autowired
     private PmsProductMapper productMapper;
     @Override

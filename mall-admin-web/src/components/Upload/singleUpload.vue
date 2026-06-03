@@ -85,24 +85,41 @@ const beforeUpload: UploadProps['beforeUpload'] = async () => {
 
 // 处理图片上传成功
 const handleUploadSuccess: UploadProps['onSuccess'] = (res, file) => {
-  if (!useOss && res.code === 500) {
-    // MinIO文件上传失败处理
-    ElMessage({
-      message: '文件上传失败！',
-      type: 'error',
-      duration: 3 * 1000,
-    })
-    return
+  // MinIO上传失败处理
+  if (!useOss) {
+    if (res.code === 500 || !res.data?.url) {
+      ElMessage({
+        message: '文件上传失败！',
+        type: 'error',
+        duration: 3 * 1000,
+      })
+      // 移除上传失败的文件
+      const index = fileList.value.findIndex(item => item.uid === file.uid)
+      if (index > -1) {
+        fileList.value.splice(index, 1)
+      }
+      return
+    }
   }
+  
   let url = ''
   if (useOss) {
     // OSS上传需要拼接路径
     url = dataObj.value.host + '/' + dataObj.value.dir + '/' + file.name
   } else {
-    url = res.data?.url
+    // MinIO上传直接获取返回的URL
+    url = res.data.url
   }
-  fileList.value.pop()
-  fileList.value.push({ name: file.name, url: url })
+  
+  // 替换文件列表中的URL（使用真实的MinIO/OSS URL替换blob URL）
+  const index = fileList.value.findIndex(item => item.uid === file.uid)
+  if (index > -1) {
+    fileList.value[index].url = url
+  } else {
+    fileList.value.push({ name: file.name, url: url })
+  }
+  
+  // 发送真实URL给父组件
   emitInput(url)
 }
 </script>

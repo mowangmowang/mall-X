@@ -107,20 +107,3 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 }
-
-
-//完整的调用链路
-//JwtAuthenticationTokenFilter.doFilterInternal() (第 87 行)
-//        ↓
-//        userDetailsService.loadUserByUsername(username)
-//    ↓
-//            MallSecurityConfig.userDetailsService() (你选中的代码，第 45 行)
-//        ↓
-//        adminService.loadUserByUsername(username) (UmsAdminServiceImpl 第 435 行)
-//        ↓
-//        ┌─────────────────────────────────────────┐
-//        │ 第 437 行: getAdminByUsername(username) │ ← 查询用户基本信息（缓存+DB）
-//        │ 第 439 行: getResourceList(admin.getId)│ ← 查询用户权限列表（缓存+DB）
-//        └─────────────────────────────────────────┘
-//        ↓
-//返回 AdminUserDetails (包含完整用户信息和权限)

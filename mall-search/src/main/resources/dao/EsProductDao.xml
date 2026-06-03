@@ -1,8 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+    MyBatis Mapper 映射文件 (MyBatis Mapper XML)
+    定义商品数据查询 SQL，用于从 MySQL 导入数据到 Elasticsearch。
+    
+    核心功能：
+    1. 多表关联查询：pms_product（商品表）、pms_product_attribute_value（属性值表）、pms_product_attribute（属性定义表）
+    2. 结果集映射：将关系型数据转换为嵌套的 EsProduct 对象
+    3. 条件过滤：仅查询未删除且已上架的商品
+    
+    @author macro
+    @since 1.0
+-->
 <mapper namespace="com.macro.mall.search.dao.EsProductDao">
+    <!--
+        结果集映射 (Result Map): 将 MySQL 查询结果映射为 EsProduct 对象
+        包含嵌套属性列表 (attrValueList)，使用 collection 标签处理一对多关系
+    -->
     <resultMap id="esProductListMap" type="com.macro.mall.search.domain.EsProduct" autoMapping="true">
         <id column="id" jdbcType="BIGINT" property="id" />
+        <!--
+            集合映射 (Collection Mapping): 一对多关系
+            一个商品对应多个属性值，columnPrefix 用于区分主表和关联表的同名字段
+        -->
         <collection property="attrValueList" columnPrefix="attr_" ofType="com.macro.mall.search.domain.EsProductAttributeValue">
             <id column="id" property="id" jdbcType="BIGINT"/>
             <result column="product_attribute_id" property="productAttributeId" jdbcType="BIGINT"/>
@@ -11,6 +31,20 @@
             <result column="name" property="name"/>
         </collection>
     </resultMap>
+    <!--
+        查询商品列表 (Query Product List for Elasticsearch Import)
+        用于从 MySQL 批量导入商品数据到 Elasticsearch。
+        
+        查询逻辑：
+        1. 主表：pms_product（商品基本信息）
+        2. 左连接：pms_product_attribute_value（商品属性值）
+        3. 左连接：pms_product_attribute（属性定义，获取属性类型和名称）
+        4. 过滤条件：delete_status=0（未删除）AND publish_status=1（已上架）
+        5. 可选条件：若传入 id 参数，则只查询单个商品
+        
+        @param id 商品 ID（可选，为 null 时查询所有商品）
+        @return EsProduct 列表，包含商品完整信息及属性值列表
+    -->
     <select id="getAllEsProductList" resultMap="esProductListMap">
         select
             p.id id,
@@ -36,11 +70,11 @@
             pa.type attr_type,
             pa.name attr_name
         from pms_product p
-        left join pms_product_attribute_value pav on p.id = pav.product_id
-        left join pms_product_attribute pa on pav.product_attribute_id= pa.id
-        where delete_status = 0 and publish_status = 1
+        left join pms_product_attribute_value pav on p.id = pav.product_id  -- 关联属性值表 (Join Attribute Value Table)
+        left join pms_product_attribute pa on pav.product_attribute_id= pa.id  -- 关联属性定义表 (Join Attribute Definition Table)
+        where delete_status = 0 and publish_status = 1  -- 仅查询未删除且已上架的商品 (Filter: Not Deleted &amp; Published)
         <if test="id!=null">
-            and p.id=#{id}
+            and p.id=#{id}  -- 若指定 ID，则只查询单个商品
         </if>
     </select>
 </mapper>

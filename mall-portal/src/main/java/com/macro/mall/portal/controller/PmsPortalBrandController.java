@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 首页品牌推荐管理Controller */
+ * 前台品牌管理控制器 (Portal Brand Management Controller)
+ * 提供品牌推荐、品牌详情查询及品牌关联商品查询功能
+ */
 @RestController
 @Api(tags = "PmsPortalBrandController")
 @Tag(name = "PmsPortalBrandController", description = "前台品牌管理")
@@ -28,6 +30,7 @@ public class PmsPortalBrandController {
     @RequestMapping(value = "/recommendList", method = RequestMethod.GET)
     public CommonResult<List<PmsBrand>> recommendList(@RequestParam(value = "pageSize", defaultValue = "6") Integer pageSize,
                                                       @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
+        // 查询标记为“推荐”的品牌列表，用于首页品牌展示
         List<PmsBrand> brandList = portalBrandService.recommendList(pageNum, pageSize);
         return CommonResult.success(brandList);
     }
@@ -35,6 +38,7 @@ public class PmsPortalBrandController {
     @ApiOperation("获取品牌详情")
     @RequestMapping(value = "/detail/{brandId}", method = RequestMethod.GET)
     public CommonResult<PmsBrand> detail(@PathVariable Long brandId) {
+        // 查询指定品牌的详细信息
         PmsBrand brand = portalBrandService.detail(brandId);
         return CommonResult.success(brand);
     }
@@ -44,6 +48,7 @@ public class PmsPortalBrandController {
     public CommonResult<CommonPage<PmsProduct>> productList(@RequestParam Long brandId,
                                                             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                                             @RequestParam(value = "pageSize", defaultValue = "6") Integer pageSize) {
+        // 查询指定品牌下的商品列表，支持分页
         CommonPage<PmsProduct> result = portalBrandService.productList(brandId,pageNum, pageSize);
         return CommonResult.success(result);
     }

@@ -10,9 +10,14 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Redis操作Service实现类 */
+ * Redis 操作 Service 实现类 (Redis Service Implementation)
+ * 基于 Spring Data RedisTemplate 实现 RedisService 接口
+ */
 public class RedisServiceImpl implements RedisService {
     @Autowired
+    // why this annotation @Autowired error here?
+    // because the RedisTemplate is not the annotated with @Service
+    //but why our sys run success? it is because we will make as a bean in  BaseRedisConfig.java
     private RedisTemplate<String, Object> redisTemplate;
 
     @Override

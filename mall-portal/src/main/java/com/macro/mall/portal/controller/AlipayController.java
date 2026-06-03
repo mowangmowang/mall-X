@@ -19,10 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @auther macrozheng
- * @description 支付宝支付Controller
- * @date 2023/9/8
- * @github https://github.com/macrozheng
+ * 支付宝支付控制器 (Alipay Payment Controller)
+ * 提供电脑网站支付、手机网站支付、异步回调和交易查询等功能
  */
 @RestController
 @Api(tags = "AlipayController")
@@ -38,6 +36,7 @@ public class AlipayController {
     @ApiOperation("支付宝电脑网站支付")
     @RequestMapping(value = "/pay", method = RequestMethod.GET)
     public void pay(AliPayParam aliPayParam, HttpServletResponse response) throws IOException {
+        // 生成 PC 端支付页面 HTML，直接输出到响应流
         response.setContentType("text/html;charset=" + alipayConfig.getCharset());
         response.getWriter().write(alipayService.pay(aliPayParam));
         response.getWriter().flush();
@@ -47,6 +46,7 @@ public class AlipayController {
     @ApiOperation("支付宝手机网站支付")
     @RequestMapping(value = "/webPay", method = RequestMethod.GET)
     public void webPay(AliPayParam aliPayParam, HttpServletResponse response) throws IOException {
+        // 生成移动端支付页面 HTML，直接输出到响应流
         response.setContentType("text/html;charset=" + alipayConfig.getCharset());
         response.getWriter().write(alipayService.webPay(aliPayParam));
         response.getWriter().flush();
@@ -56,6 +56,7 @@ public class AlipayController {
     @ApiOperation(value = "支付宝异步回调",notes = "必须为POST请求，执行成功返回success，执行失败返回failure")
     @RequestMapping(value = "/notify", method = RequestMethod.POST)
     public String notify(HttpServletRequest request){
+        // 接收支付宝服务器发送的支付结果通知，验证签名并更新订单状态
         Map<String, String> params = new HashMap<>();
         Map<String, String[]> requestParams = request.getParameterMap();
         for (String name : requestParams.keySet()) {
@@ -67,6 +68,7 @@ public class AlipayController {
     @ApiOperation(value = "支付宝统一收单线下交易查询",notes = "订单支付成功返回交易状态：TRADE_SUCCESS")
     @RequestMapping(value = "/query", method = RequestMethod.GET)
     public CommonResult<String> query(String outTradeNo, String tradeNo){
+        // 查询支付宝交易状态，用于确认订单是否支付成功
         return CommonResult.success(alipayService.query(outTradeNo,tradeNo));
     }
 }

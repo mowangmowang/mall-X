@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 会员优惠券管理Controller */
+ * 会员优惠券管理控制器 (Member Coupon Management Controller)
+ * 提供优惠券领取、查询、使用等功能，支持按状态筛选和购物车关联查询
+ */
 @RestController
 @Api(tags = "UmsMemberCouponController")
 @Tag(name = "UmsMemberCouponController", description = "用户优惠券管理")
@@ -34,6 +36,7 @@ public class UmsMemberCouponController {
     @ApiOperation("领取指定优惠券")
     @RequestMapping(value = "/add/{couponId}", method = RequestMethod.POST)
     public CommonResult add(@PathVariable Long couponId) {
+        // 校验优惠券是否可领取，创建优惠券领取记录
         memberCouponService.add(couponId);
         return CommonResult.success(null,"领取成功");
     }
@@ -43,6 +46,7 @@ public class UmsMemberCouponController {
             allowableValues = "0,1,2", paramType = "query", dataType = "integer")
     @RequestMapping(value = "/listHistory", method = RequestMethod.GET)
     public CommonResult<List<SmsCouponHistory>> listHistory(@RequestParam(value = "useStatus", required = false) Integer useStatus) {
+        // 查询当前用户的优惠券领取历史记录，可按使用状态筛选
         List<SmsCouponHistory> couponHistoryList = memberCouponService.listHistory(useStatus);
         return CommonResult.success(couponHistoryList);
     }
@@ -52,6 +56,7 @@ public class UmsMemberCouponController {
             allowableValues = "0,1,2", paramType = "query", dataType = "integer")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public CommonResult<List<SmsCoupon>> list(@RequestParam(value = "useStatus", required = false) Integer useStatus) {
+        // 查询当前用户的优惠券详细信息，可按使用状态筛选
         List<SmsCoupon> couponList = memberCouponService.list(useStatus);
         return CommonResult.success(couponList);
     }
@@ -61,6 +66,7 @@ public class UmsMemberCouponController {
             defaultValue = "1", allowableValues = "0,1", paramType = "path", dataType = "integer")
     @RequestMapping(value = "/list/cart/{type}", method = RequestMethod.GET)
     public CommonResult<List<SmsCouponHistoryDetail>> listCart(@PathVariable Integer type) {
+        // 根据购物车商品查询可用或不可用的优惠券，用于订单确认页展示
         List<CartPromotionItem> cartPromotionItemList = cartItemService.listPromotion(memberService.getCurrentMember().getId(), null);
         List<SmsCouponHistoryDetail> couponHistoryList = memberCouponService.listCart(cartPromotionItemList, type);
         return CommonResult.success(couponHistoryList);
@@ -69,6 +75,7 @@ public class UmsMemberCouponController {
     @ApiOperation("获取当前商品相关优惠券")
     @RequestMapping(value = "/listByProduct/{productId}", method = RequestMethod.GET)
     public CommonResult<List<SmsCoupon>> listByProduct(@PathVariable Long productId) {
+        // 查询指定商品可用的优惠券列表
         List<SmsCoupon> couponHistoryList = memberCouponService.listByProduct(productId);
         return CommonResult.success(couponHistoryList);
     }
@@ -76,6 +83,7 @@ public class UmsMemberCouponController {
     @ApiOperation("获取所有可领取优惠券")
     @RequestMapping(value = "/availableList", method = RequestMethod.GET)
     public CommonResult<List<SmsCoupon>> listAvailable() {
+        // 查询所有当前用户可领取的优惠券
         List<SmsCoupon> couponList = memberCouponService.listAvailable();
         return CommonResult.success(couponList);
     }

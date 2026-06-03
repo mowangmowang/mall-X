@@ -10,8 +10,9 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 
 /**
- * Jackson相关配置
- * 配置json不返回null的字段 */
+ * Jackson JSON序列化配置类 (Jackson JSON Serialization Configuration)
+ * 配置JSON响应中不返回null字段
+ */
 @Configuration
 public class JacksonConfig {
     @Bean

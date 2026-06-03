@@ -11,7 +11,7 @@ import java.lang.annotation.*;
  * 通常用于状态码、类型标识等枚举型或有限集合值的校验。
  * </p>
  *
- * @author alize
+ * @author alan
  * @see FlagValidatorClass
  */
 @Documented

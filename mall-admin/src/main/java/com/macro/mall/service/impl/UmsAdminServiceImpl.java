@@ -39,33 +39,62 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 后台用户管理Service实现类 */
+ * 后台用户管理 Service 实现类
+ * 实现管理员的注册、登录、权限管理等核心业务逻辑
+ * 集成 Spring Security 和 JWT 进行身份认证
+ */
 @Service
 public class UmsAdminServiceImpl implements UmsAdminService {
+    /**
+     * 日志记录器
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(UmsAdminServiceImpl.class);
+    
+    /**
+     * JWT Token 工具类
+     */
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+    /**
+     * 密码加密器（BCrypt）
+     */
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * 管理员 Mapper
+     */
     @Autowired
     private UmsAdminMapper adminMapper;
 
+    /**
+     * 管理员-角色关系 Mapper
+     */
     @Autowired
     private UmsAdminRoleRelationMapper adminRoleRelationMapper;
 
+    /**
+     * 管理员-角色关系 DAO（自定义查询）
+     */
     @Autowired
     private UmsAdminRoleRelationDao adminRoleRelationDao;
 
+    /**
+     * 管理员登录日志 Mapper
+     */
     @Autowired
     private UmsAdminLoginLogMapper loginLogMapper;
 
+    /**
+     * 角色 Mapper
+     */
     @Autowired
     private UmsRoleMapper roleMapper;
 
     /**
      * 根据用户名获取后台管理员
+     * 采用缓存优先策略：先查 Redis，再查数据库
      *
      * @param username 用户名
      * @return 后台管理员对象 (UmsAdmin)，若不存在则返回 null
@@ -92,6 +121,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
 
     /**
      * 注册后台用户
+     * 对密码进行 BCrypt 加密后存储
      *
      * @param umsAdminParam 注册参数
      * @return 注册成功的后台管理员对象 (UmsAdmin)，若用户名已存在则返回 null
@@ -120,6 +150,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
 
     /**
      * 登录功能
+     * 验证用户名和密码，成功后生成 JWT Token
      *
      * @param username 用户名
      * @param password 密码
@@ -129,21 +160,28 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     public String login(String username, String password) {
         String token = null;
         try {
-            // 加载用户详情
+            // 第1步：加载用户详情（包含权限）
+            // 加载用户详情（包含权限信息）
+            // ↓ 调用链路：loadUserByUsername → getAdminByUsername + getResourceList → new AdminUserDetails()
+            // ↓ AdminUserDetails 实现了 UserDetails 接口，包含用户名、密码、权限列表
             UserDetails userDetails = loadUserByUsername(username);
             
-            // 验证密码
+            // // 第2步：验证密码是否正确
             if (!passwordEncoder.matches(password, userDetails.getPassword())) {
                 Asserts.fail("密码不正确");
             }
             
-            // 验证账号状态
+            // 验证账号状态是否启用
             if (!userDetails.isEnabled()) {
                 Asserts.fail("帐号已被禁用");
             }
             
-            // 创建认证令牌并设置到安全上下文
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            // 创建认证令牌并设置到 Spring Security 上下文
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userDetails,  // Principal: 用户主体信息
+                            null,     // Credentials: 凭证（密码），设为null表示已验证
+                            userDetails.getAuthorities());  // Authorities: 权限列表
+            // 第4步：将认证信息存入 Spring Security 上下文
             SecurityContextHolder.getContext().setAuthentication(authentication);
             
             // 生成 JWT Token
@@ -159,6 +197,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
 
     /**
      * 添加登录记录
+     * 记录管理员登录时间、IP 地址等信息
      *
      * @param username 用户名
      */

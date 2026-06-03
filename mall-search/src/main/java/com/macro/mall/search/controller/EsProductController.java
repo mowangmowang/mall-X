@@ -14,10 +14,25 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * 搜索商品管理Controller */
+ * 搜索商品管理控制器 (Search Product Controller)
+ * <p>
+ * 提供基于 Elasticsearch 的商品搜索、索引管理等 RESTful API 接口，
+ * 支持以下核心功能：
+ * <ul>
+ *   <li>商品索引管理：导入、创建、更新、删除</li>
+ *   <li>全文搜索：简单搜索、综合搜索（支持多维度筛选与排序）</li>
+ *   <li>商品推荐：基于相似度的相关商品推荐</li>
+ *   <li>聚合分析：获取品牌、分类、属性等筛选条件</li>
+ * </ul>
+ * </p>
+ *
+ * @author alan
+ * @since 1.0
+ */
 @Controller
 @Api(tags = "EsProductController")
 @Tag(name = "EsProductController",description = "搜索商品管理")
@@ -26,7 +41,7 @@ public class EsProductController {
     @Autowired
     private EsProductService esProductService;
 
-    @ApiOperation(value = "导入所有数据库中商品到ES")
+    @ApiOperation(value = "从数据库导入所有商品到 Elasticsearch (Import All Products)")
     @RequestMapping(value = "/importAll", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult<Integer> importAllList() {
@@ -34,7 +49,7 @@ public class EsProductController {
         return CommonResult.success(count);
     }
 
-    @ApiOperation(value = "根据id删除商品")
+    @ApiOperation(value = "根据商品 ID 删除 Elasticsearch 索引 (Delete Product Index)")
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<Object> delete(@PathVariable Long id) {
@@ -42,7 +57,7 @@ public class EsProductController {
         return CommonResult.success(null);
     }
 
-    @ApiOperation(value = "根据id批量删除商品")
+    @ApiOperation(value = "批量删除商品 Elasticsearch 索引 (Batch Delete Product Indexes)")
     @RequestMapping(value = "/delete/batch", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult<Object> delete(@RequestParam("ids") List<Long> ids) {
@@ -50,7 +65,7 @@ public class EsProductController {
         return CommonResult.success(null);
     }
 
-    @ApiOperation(value = "根据id创建商品")
+    @ApiOperation(value = "根据商品 ID 创建或更新 Elasticsearch 索引 (Create or Update Product Index)")
     @RequestMapping(value = "/create/{id}", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult<EsProduct> create(@PathVariable Long id) {
@@ -62,7 +77,7 @@ public class EsProductController {
         }
     }
 
-    @ApiOperation(value = "简单搜索")
+    @ApiOperation(value = "简单搜索：根据关键字搜索商品名称或副标题 (Simple Search)")
     @RequestMapping(value = "/search/simple", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<CommonPage<EsProduct>> search(@RequestParam(required = false) String keyword,
@@ -72,7 +87,7 @@ public class EsProductController {
         return CommonResult.success(CommonPage.restPage(esProductPage));
     }
 
-    @ApiOperation(value = "综合搜索、筛选、排序")
+    @ApiOperation(value = "综合搜索：支持关键字、品牌、分类筛选、价格区间过滤及多种排序方式 (Advanced Search)")
     @ApiImplicitParam(name = "sort", value = "排序字段:0->按相关度；1->按新品；2->按销量；3->价格从低到高；4->价格从高到低",
             defaultValue = "0", allowableValues = "0,1,2,3,4", paramType = "query", dataType = "integer")
     @RequestMapping(value = "/search", method = RequestMethod.GET)
@@ -82,12 +97,14 @@ public class EsProductController {
                                                       @RequestParam(required = false) Long productCategoryId,
                                                       @RequestParam(required = false, defaultValue = "0") Integer pageNum,
                                                       @RequestParam(required = false, defaultValue = "5") Integer pageSize,
-                                                      @RequestParam(required = false, defaultValue = "0") Integer sort) {
-        Page<EsProduct> esProductPage = esProductService.search(keyword, brandId, productCategoryId, pageNum, pageSize, sort);
+                                                      @RequestParam(required = false, defaultValue = "0") Integer sort,
+                                                      @RequestParam(required = false) BigDecimal startPrice,
+                                                      @RequestParam(required = false) BigDecimal endPrice) {
+        Page<EsProduct> esProductPage = esProductService.search(keyword, brandId, productCategoryId, pageNum, pageSize, sort, startPrice, endPrice);
         return CommonResult.success(CommonPage.restPage(esProductPage));
     }
 
-    @ApiOperation(value = "根据商品id推荐商品")
+    @ApiOperation(value = "基于商品 ID 推荐相似商品（根据名称、品牌、分类匹配） (Recommend Similar Products)")
     @RequestMapping(value = "/recommend/{id}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<CommonPage<EsProduct>> recommend(@PathVariable Long id,
@@ -97,7 +114,7 @@ public class EsProductController {
         return CommonResult.success(CommonPage.restPage(esProductPage));
     }
 
-    @ApiOperation(value = "获取搜索的相关品牌、分类及筛选属性")
+    @ApiOperation(value = "获取搜索相关的聚合信息：品牌列表、分类列表、属性筛选条件 (Get Search Related Info)")
     @RequestMapping(value = "/search/relate", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<EsProductRelatedInfo> searchRelatedInfo(@RequestParam(required = false) String keyword) {

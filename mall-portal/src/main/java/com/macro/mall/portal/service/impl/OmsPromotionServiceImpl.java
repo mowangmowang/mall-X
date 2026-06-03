@@ -16,13 +16,25 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
-/** * 促销管理Service实现类
+/**
+ * 促销管理Service实现类 (Promotion Management Service Implementation)
+ * <p>
+ * 负责计算购物车中商品的促销优惠，支持单品促销、打折优惠、满减优惠等多种促销类型。
  */
 @Service
 public class OmsPromotionServiceImpl implements OmsPromotionService {
+    /** 商品DAO，用于查询商品的促销相关信息 */
     @Autowired
     private PortalProductDao portalProductDao;
 
+    /**
+     * 计算购物车商品的促销信息
+     * <p>
+     * 根据商品的促销类型计算每个商品的促销优惠金额和促销信息
+     *
+     * @param cartItemList 购物车商品列表
+     * @return 包含促销信息的购物车商品列表
+     */
     @Override
     public List<CartPromotionItem> calcCartPromotion(List<OmsCartItem> cartItemList) {
         //1.先根据productId对CartItem进行分组，以spu为单位进行计算优惠

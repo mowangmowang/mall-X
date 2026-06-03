@@ -15,9 +15,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 
 /**
- * SpringSecurity相关配置，仅用于配置SecurityFilterChain
- * 主要实现filterChain，即Spring Security的安全过滤链的配置
- * Created by macro .
+ * Spring Security 核心配置类 (Security Configuration)
+ * <p>
+ * 负责构建和配置 Spring Security 的安全过滤链 (SecurityFilterChain)，定义以下安全策略：
+ * 1. 白名单路径放行（无需认证）
+ * 2. JWT 令牌验证
+ * 3. 动态权限校验（可选）
+ * 4. 异常处理（认证失败、权限不足）
+ * 5. 无状态会话管理
+ * </p>
  */
 @Configuration
 @EnableWebSecurity
@@ -61,68 +67,74 @@ public class SecurityConfig {
     private DynamicSecurityFilter dynamicSecurityFilter;
 
     /**
-     * 配置Spring Security的安全过滤链
+     * 构建并配置 Spring Security 安全过滤链
+     * <p>
+     * 该方法定义了完整的请求处理流程：
+     * 白名单检查 → OPTIONS 预检放行 → JWT 认证 → 动态权限校验 → 目标资源
+     * </p>
      *
-     * @param httpSecurity HttpSecurity对象，用于配置安全策略
-     * @return SecurityFilterChain 构建好的安全过滤链
+     * @param httpSecurity HttpSecurity 对象，用于配置安全策略
+     * @return SecurityFilterChain 构建完成的安全过滤链
      * @throws Exception 配置过程中可能抛出的异常
      */
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        // 获取URL授权配置注册表，用于配置哪些URL需要什么样的权限
+        // 获取 URL 授权配置注册表，用于声明式地配置 URL 访问规则
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = httpSecurity
                 .authorizeRequests();
 
-        // 1. 配置不需要保护的资源路径（白名单），允许所有用户直接访问
-        // 例如：登录接口、注册接口、静态资源文件等
+        // ========== 步骤1：配置白名单路径 ==========
+        // 允许所有用户（包括未登录用户）直接访问这些路径
+        // 典型场景：登录接口、注册接口、静态资源、API 文档等
         for (String url : ignoreUrlsConfig.getUrls()) {
             registry.antMatchers(url).permitAll();
         }
 
-        // 2. 允许跨域请求的OPTIONS预检请求直接通过
-        // 前端发送跨域请求时，浏览器会先发送一个OPTIONS请求询问服务器是否允许，这里放行该请求
+        // ========== 步骤2：放行 CORS 预检请求 ==========
+        // 浏览器在发送跨域请求前会先发送 OPTIONS 请求进行预检，此处直接放行
         registry.antMatchers(HttpMethod.OPTIONS)
                 .permitAll();
 
-        // 3. 配置其他安全策略
+        // ========== 步骤3-7：配置其他安全策略 ==========
         registry.and()
-                // 除了上面配置的白名单路径外，任何其他请求都需要进行身份认证
+                // 步骤3：除白名单外，所有请求都需要身份认证
                 .authorizeRequests()
                 .anyRequest()
                 .authenticated()
                 
-                // 4. 关闭CSRF（跨站请求伪造）防护
-                // 因为本项目使用JWT无状态认证，不依赖Session，所以可以关闭CSRF防护
+                // 步骤4：关闭 CSRF 防护
+                // 原因：本项目使用 JWT 无状态认证，不依赖 Session，CSRF 攻击无法利用 Cookie
                 .and()
                 .csrf()
                 .disable()
                 
-                // 5. 配置会话管理策略为无状态（STATELESS）
-                // 表示Spring Security不会创建或使用HttpSession来保存用户状态，每次请求都需要携带Token
+                // 步骤5：配置无状态会话管理
+                // STATELESS 表示 Spring Security 不会创建或使用 HttpSession，每次请求都需携带 Token
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 
-                // 6. 配置异常处理机制
+                // 步骤6：配置异常处理器
                 .and()
                 .exceptionHandling()
-                // 当用户访问没有权限的资源时，调用自定义的拒绝处理器
+                // 当已登录用户访问无权资源时，调用自定义的 403 处理器
                 .accessDeniedHandler(restfulAccessDeniedHandler)
-                // 当用户未认证或认证失败时，调用自定义的认证入口点
+                // 当用户未登录或 Token 失效时，调用自定义的 401 入口点
                 .authenticationEntryPoint(restAuthenticationEntryPoint)
                 
-                // 7. 添加JWT认证过滤器
-                // 将jwtAuthenticationTokenFilter添加到UsernamePasswordAuthenticationFilter之前执行
-                // 这样可以在进入Spring Security默认的用户名密码认证流程之前，先完成JWT Token的校验
+                // 步骤7：添加 JWT 认证过滤器
+                // 将过滤器插入到 UsernamePasswordAuthenticationFilter 之前执行
+                // 确保在进入 Spring Security 默认认证流程前完成 Token 验证
                 .and()
                 .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
-        // 8. 如果配置了动态权限服务，则添加动态权限校验过滤器
-        // 动态权限过滤器会在FilterSecurityInterceptor之前执行，实现基于数据库的动态权限控制
+        // ========== 步骤8：条件加载动态权限过滤器 ==========
+        // 若业务模块提供了 DynamicSecurityService，则启用基于数据库的动态权限控制
+        // 该过滤器会在 FilterSecurityInterceptor 之前执行，实现细粒度的 URL 级别权限校验
         if(dynamicSecurityService!=null){
             registry.and().addFilterBefore(dynamicSecurityFilter, FilterSecurityInterceptor.class);
         }
 
-        // 构建并返回安全过滤链
+        // 构建并返回最终的安全过滤链
         return httpSecurity.build();
     }
 

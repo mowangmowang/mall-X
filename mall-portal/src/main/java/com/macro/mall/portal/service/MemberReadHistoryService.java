@@ -6,7 +6,8 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 /**
- * 会员浏览记录管理Service */
+ * 会员浏览记录管理服务接口 (Member Read History Service Interface)
+ */
 public interface MemberReadHistoryService {
     /**
      * 生成浏览记录

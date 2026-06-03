@@ -6,7 +6,8 @@ import com.macro.mall.portal.domain.CartPromotionItem;
 import java.util.List;
 
 /**
- * 促销管理Service */
+ * 促销管理服务接口 (Promotion Management Service Interface)
+ */
 public interface OmsPromotionService {
     /**
      * 计算购物车中的促销活动信息

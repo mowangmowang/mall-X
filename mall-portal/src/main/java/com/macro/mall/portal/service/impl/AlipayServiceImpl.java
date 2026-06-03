@@ -21,31 +21,45 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 /**
- * @auther macrozheng
- * @description 支付宝支付Service实现类
- * @date 2023/9/8
- * @github https://github.com/macrozheng
+ * 支付宝支付Service实现类 (Alipay Payment Service Implementation)
+ * <p>
+ * 负责处理支付宝相关的支付操作，包括电脑网站支付、手机网站支付、支付回调和订单查询。
  */
 @Slf4j
 @Service
 public class AlipayServiceImpl implements AlipayService {
+    /** 支付宝配置信息 */
     @Autowired
     private AlipayConfig alipayConfig;
+    
+    /** 支付宝客户端，用于调用支付宝API */
     @Autowired
     private AlipayClient alipayClient;
+    
+    /** 订单Mapper，用于订单数据操作 */
     @Autowired
     private OmsOrderMapper orderMapper;
+    
+    /** 前台订单服务，用于处理支付成功后的业务逻辑 */
     @Autowired
     private OmsPortalOrderService portalOrderService;
+    /**
+     * 电脑网站支付
+     * <p>
+     * 生成PC端支付宝支付表单HTML
+     *
+     * @param aliPayParam 支付参数，包含订单号、金额、标题等
+     * @return 支付宝支付表单HTML字符串
+     */
     @Override
     public String pay(AliPayParam aliPayParam) {
         AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
+        // 异步接收地址，公网可访问
         if(StrUtil.isNotEmpty(alipayConfig.getNotifyUrl())){
-            //异步接收地址，公网可访问
             request.setNotifyUrl(alipayConfig.getNotifyUrl());
         }
+        // 同步跳转地址
         if(StrUtil.isNotEmpty(alipayConfig.getReturnUrl())){
-            //同步跳转地址
             request.setReturnUrl(alipayConfig.getReturnUrl());
         }
         //******必传参数******
@@ -68,12 +82,20 @@ public class AlipayServiceImpl implements AlipayService {
         return formHtml;
     }
 
+    /**
+     * 支付回调处理
+     * <p>
+     * 接收支付宝异步通知，验证签名并更新订单状态
+     *
+     * @param params 支付宝回调参数
+     * @return "success"表示处理成功，"failure"表示处理失败
+     */
     @Override
     public String notify(Map<String, String> params) {
         String result = "failure";
         boolean signVerified = false;
         try {
-            //调用SDK验证签名
+            // 调用SDK验证签名
             signVerified = AlipaySignature.rsaCheckV1(params, alipayConfig.getAlipayPublicKey(), alipayConfig.getCharset(), alipayConfig.getSignType());
         } catch (AlipayApiException e) {
             log.error("支付回调签名校验异常！",e);
@@ -95,12 +117,21 @@ public class AlipayServiceImpl implements AlipayService {
         return result;
     }
 
+    /**
+     * 查询支付宝订单状态
+     * <p>
+     * 主动查询支付宝侧的订单支付状态
+     *
+     * @param outTradeNo 商户订单号
+     * @param tradeNo 支付宝交易号（与outTradeNo至少传一个）
+     * @return 交易状态：WAIT_BUYER_PAY、TRADE_CLOSED、TRADE_SUCCESS、TRADE_FINISHED
+     */
     @Override
     public String query(String outTradeNo, String tradeNo) {
         AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
         //******必传参数******
         JSONObject bizContent = new JSONObject();
-        //设置查询参数，out_trade_no和trade_no至少传一个
+        // 设置查询参数，out_trade_no和trade_no至少传一个
         if(StrUtil.isNotEmpty(outTradeNo)){
             bizContent.put("out_trade_no",outTradeNo);
         }
@@ -129,15 +160,23 @@ public class AlipayServiceImpl implements AlipayService {
         return response.getTradeStatus();
     }
 
+    /**
+     * 手机网站支付
+     * <p>
+     * 生成移动端支付宝支付表单HTML
+     *
+     * @param aliPayParam 支付参数，包含订单号、金额、标题等
+     * @return 支付宝支付表单HTML字符串
+     */
     @Override
     public String webPay(AliPayParam aliPayParam) {
         AlipayTradeWapPayRequest request = new AlipayTradeWapPayRequest ();
+        // 异步接收地址，公网可访问
         if(StrUtil.isNotEmpty(alipayConfig.getNotifyUrl())){
-            //异步接收地址，公网可访问
             request.setNotifyUrl(alipayConfig.getNotifyUrl());
         }
+        // 同步跳转地址
         if(StrUtil.isNotEmpty(alipayConfig.getReturnUrl())){
-            //同步跳转地址
             request.setReturnUrl(alipayConfig.getReturnUrl());
         }
         //******必传参数******
