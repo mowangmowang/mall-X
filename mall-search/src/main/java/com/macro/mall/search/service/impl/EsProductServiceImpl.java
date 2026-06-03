@@ -11,6 +11,7 @@ import com.macro.mall.search.service.EsProductService;
 import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregate;
+import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
 import co.elastic.clients.elasticsearch._types.aggregations.LongTermsBucket;
 import co.elastic.clients.elasticsearch._types.aggregations.StringTermsBucket;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
@@ -24,7 +25,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.client.elc.Aggregation;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.client.elc.NativeQueryBuilder;
 import org.springframework.data.elasticsearch.core.AggregationsContainer;
@@ -346,12 +346,13 @@ public class EsProductServiceImpl implements EsProductService {
             return productRelatedInfo;
         }
         // 获取聚合 Map: 顶层聚合名 -> 聚合对象（Spring Data 包装）
-        Map<String, Aggregation> aggregationMap = ((org.springframework.data.elasticsearch.client.elc.ElasticsearchAggregations) aggregationsContainer).aggregationsAsMap();
+        Map<String, org.springframework.data.elasticsearch.client.elc.ElasticsearchAggregation> aggregationMap =
+                ((org.springframework.data.elasticsearch.client.elc.ElasticsearchAggregations) aggregationsContainer).aggregationsAsMap();
         // 提取品牌名称列表
         List<String> brandNameList = new ArrayList<>();
-        Aggregation brandNamesAgg = aggregationMap.get(AGG_BRAND_NAMES);
+        org.springframework.data.elasticsearch.client.elc.ElasticsearchAggregation brandNamesAgg = aggregationMap.get(AGG_BRAND_NAMES);
         if (brandNamesAgg != null) {
-            Aggregate aggregate = brandNamesAgg.getAggregate();
+            Aggregate aggregate = brandNamesAgg.aggregation().getAggregate();
             if (aggregate.isSterms()) {
                 List<StringTermsBucket> buckets = aggregate.sterms().buckets().array();
                 for (StringTermsBucket bucket : buckets) {
@@ -362,9 +363,9 @@ public class EsProductServiceImpl implements EsProductService {
         productRelatedInfo.setBrandNames(brandNameList);
         // 提取分类名称列表
         List<String> productCategoryNameList = new ArrayList<>();
-        Aggregation productCategoryNamesAgg = aggregationMap.get(AGG_PRODUCT_CATEGORY_NAMES);
+        org.springframework.data.elasticsearch.client.elc.ElasticsearchAggregation productCategoryNamesAgg = aggregationMap.get(AGG_PRODUCT_CATEGORY_NAMES);
         if (productCategoryNamesAgg != null) {
-            Aggregate aggregate = productCategoryNamesAgg.getAggregate();
+            Aggregate aggregate = productCategoryNamesAgg.aggregation().getAggregate();
             if (aggregate.isSterms()) {
                 List<StringTermsBucket> buckets = aggregate.sterms().buckets().array();
                 for (StringTermsBucket bucket : buckets) {
@@ -376,10 +377,10 @@ public class EsProductServiceImpl implements EsProductService {
         // 提取嵌套属性聚合结果
         // allAttrValues (nested) -> productAttrs (filter) -> attrIds (terms) -> attrValues + attrNames
         List<EsProductRelatedInfo.ProductAttr> attrList = new ArrayList<>();
-        Aggregation allAttrValuesAgg = aggregationMap.get(AGG_ALL_ATTR_VALUES);
-        if (allAttrValuesAgg != null && allAttrValuesAgg.getAggregate().isNested()) {
+        org.springframework.data.elasticsearch.client.elc.ElasticsearchAggregation allAttrValuesAgg = aggregationMap.get(AGG_ALL_ATTR_VALUES);
+        if (allAttrValuesAgg != null && allAttrValuesAgg.aggregation().getAggregate().isNested()) {
             // 从 nested 聚合的子聚合中获取 productAttrs (filter)
-            Map<String, Aggregate> nestedSubAggs = allAttrValuesAgg.getAggregate().nested().aggregations();
+            Map<String, Aggregate> nestedSubAggs = allAttrValuesAgg.aggregation().getAggregate().nested().aggregations();
             Aggregate productAttrsAgg = nestedSubAggs.get(AGG_PRODUCT_ATTRS);
             if (productAttrsAgg != null && productAttrsAgg.isFilter()) {
                 // 从 filter 聚合的子聚合中获取 attrIds (terms)
