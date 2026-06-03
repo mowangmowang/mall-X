@@ -495,6 +495,35 @@ sequenceDiagram
 
 ### 核心代码实现
 
+```mermaid
+graph TB
+    subgraph "mall-portal 模块"
+        A[OrderService<br/>订单服务] -->|1. 创建订单后调用| B[CancelOrderSender<br/>消息发送者]
+        
+        B -->|2. sendMessage<br/>orderId + delayTimes| C{Exchange 1<br/>mall.order.direct.ttl<br/>延迟队列交换机}
+        
+        C -->|3. 路由键:<br/>mall.order.cancel.ttl| D[Queue 1<br/>mall.order.cancel.ttl<br/>TTL延迟队列<br/>设置过期时间30分钟]
+        
+        D -->|4. 消息过期30分钟后<br/>成为死信| E{Exchange 2<br/>mall.order.direct<br/>死信交换机}
+        
+        E -->|5. 死信路由键:<br/>mall.order.cancel| F[Queue 2<br/>mall.order.cancel<br/>实际消费队列]
+        
+        F -->|6. 监听队列<br/>接收消息| G[CancelOrderReceiver<br/>消息接收者]
+        
+        G -->|7. handle<br/>orderId| H[OmsPortalOrderService<br/>订单服务接口]
+        
+        H -->|8. cancelOrder| I[执行取消逻辑<br/>• 更新订单状态<br/>• 释放库存<br/>• 返还优惠券<br/>• 返还积分]
+    end
+    
+    style C fill:#FFE4B5,stroke:#333,stroke-width:2px
+    style D fill:#FFE4B5,stroke:#333,stroke-width:2px
+    style E fill:#FFD700,stroke:#333,stroke-width:2px
+    style F fill:#87CEEB,stroke:#333,stroke-width:2px
+    style B fill:#98FB98,stroke:#333,stroke-width
+```
+
+
+
 #### 1. 队列枚举定义 (QueueEnum)
 
 ```java

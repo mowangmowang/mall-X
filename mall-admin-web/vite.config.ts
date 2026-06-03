@@ -100,4 +100,8 @@ export default defineConfig({
       },
     },
   },
+  server: {
+    port: 3000,
+    host: '127.0.0.1', // 强制使用 IPv4 地址，避免 ::1 权限问题
+  },
 })

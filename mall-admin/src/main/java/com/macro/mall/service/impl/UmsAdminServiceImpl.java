@@ -160,10 +160,13 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     public String login(String username, String password) {
         String token = null;
         try {
+            // 第1步：加载用户详情（包含权限）
             // 加载用户详情（包含权限信息）
+            // ↓ 调用链路：loadUserByUsername → getAdminByUsername + getResourceList → new AdminUserDetails()
+            // ↓ AdminUserDetails 实现了 UserDetails 接口，包含用户名、密码、权限列表
             UserDetails userDetails = loadUserByUsername(username);
             
-            // 验证密码是否正确
+            // // 第2步：验证密码是否正确
             if (!passwordEncoder.matches(password, userDetails.getPassword())) {
                 Asserts.fail("密码不正确");
             }
@@ -174,7 +177,11 @@ public class UmsAdminServiceImpl implements UmsAdminService {
             }
             
             // 创建认证令牌并设置到 Spring Security 上下文
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userDetails,  // Principal: 用户主体信息
+                            null,     // Credentials: 凭证（密码），设为null表示已验证
+                            userDetails.getAuthorities());  // Authorities: 权限列表
+            // 第4步：将认证信息存入 Spring Security 上下文
             SecurityContextHolder.getContext().setAuthentication(authentication);
             
             // 生成 JWT Token

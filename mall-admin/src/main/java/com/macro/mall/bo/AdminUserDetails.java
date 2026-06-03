@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
+//Business Object
 /**
  * Spring Security 用户信息封装类
  * 用于将后台管理员信息转换为 Spring Security 所需的 UserDetails 格式

@@ -19,7 +19,7 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
  * </ul>
  * </p>
  *
- * @author macro
+ * @author alan
  * @since 1.0
  */
 public interface EsProductRepository extends ElasticsearchRepository<EsProduct, Long> {

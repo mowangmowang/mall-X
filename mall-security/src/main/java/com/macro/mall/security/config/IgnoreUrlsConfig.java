@@ -25,6 +25,7 @@ import java.util.List;
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "secure.ignored")
+//将配置文件（如 application.yml 或 application.properties）中的配置项自动映射到 Java 对象的属性上
 public class IgnoreUrlsConfig {
 
     /**

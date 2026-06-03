@@ -15,6 +15,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class RedisServiceImpl implements RedisService {
     @Autowired
+    // why this annotation @Autowired error here?
+    // because the RedisTemplate is not the annotated with @Service
+    //but why our sys run success? it is because we will make as a bean in  BaseRedisConfig.java
     private RedisTemplate<String, Object> redisTemplate;
 
     @Override

@@ -21,29 +21,52 @@ import java.util.List;
 
 /**
  * 首页内容管理服务实现类 (Home Content Service Implementation)
+ * <p>
+ * 负责前台首页的数据展示，包括广告、推荐品牌、新品、人气商品、专题和秒杀信息等。
  */
 @Service
 public class HomeServiceImpl implements HomeService {
+    /** 首页广告Mapper */
     @Autowired
     private SmsHomeAdvertiseMapper advertiseMapper;
+    
+    /** 首页DAO，用于查询首页各种推荐数据 */
     @Autowired
     private HomeDao homeDao;
+    
+    /** 秒杀活动Mapper */
     @Autowired
     private SmsFlashPromotionMapper flashPromotionMapper;
+    
+    /** 秒杀场次Mapper */
     @Autowired
     private SmsFlashPromotionSessionMapper promotionSessionMapper;
+    
+    /** 商品Mapper */
     @Autowired
     private PmsProductMapper productMapper;
+    
+    /** 商品分类Mapper */
     @Autowired
     private PmsProductCategoryMapper productCategoryMapper;
+    
+    /** 专题Mapper */
     @Autowired
     private CmsSubjectMapper subjectMapper;
+    
+    /** 专题商品关联Mapper */
     @Autowired
     private CmsSubjectProductRelationMapper subjectProductRelationMapper;
+    
+    /** 优选专区Mapper */
     @Autowired
     private CmsPrefrenceAreaMapper prefrenceAreaMapper;
+    
+    /** 优选专区商品关联Mapper */
     @Autowired
     private CmsPrefrenceAreaProductRelationMapper prefrenceAreaProductRelationMapper;
+    
+    /** 话题Mapper */
     @Autowired
     private CmsTopicMapper topicMapper;
 

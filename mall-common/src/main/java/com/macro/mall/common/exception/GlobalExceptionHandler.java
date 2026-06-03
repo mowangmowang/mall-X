@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
  * 全局异常处理类 (Global Exception Handler)
  * 使用 @ControllerAdvice 统一拦截并处理系统中抛出的各类异常
  * 返回标准化的 CommonResult 响应结果
- * Created by macro
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -34,8 +33,8 @@ public class GlobalExceptionHandler {
      * @param e 自定义异常对象
      * @return 包含错误码或错误信息的通用响应结果
      */
-    @ResponseBody
-    @ExceptionHandler(value = ApiException.class)
+    @ResponseBody // ResponseBody is for json response
+    @ExceptionHandler(value = ApiException.class) // ExceptionHandler is for specify exception
     public CommonResult handle(ApiException e) {
         // 优先使用错误码，若无则使用纯文本消息
         if (e.getErrorCode() != null) {
