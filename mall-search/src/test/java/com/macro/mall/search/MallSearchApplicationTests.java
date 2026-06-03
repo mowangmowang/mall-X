@@ -2,7 +2,6 @@ package com.macro.mall.search;
 
 import com.macro.mall.search.dao.EsProductDao;
 import com.macro.mall.search.domain.EsProduct;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,14 +14,19 @@ import java.util.Map;
 /**
  * 搜索服务应用测试类 (Search Application Tests)
  * <p>
- * 集成测试：需要 MySQL 和 Elasticsearch 等真实服务才能运行。
- * 默认禁用，使用 {@code -Dtest=MallSearchApplicationTests -DskipTests=false} 启用。
+ * 测试 Elasticsearch 相关功能，包括：
+ * <ul>
+ *   <li>商品数据查询测试 (Product Data Query Test)</li>
+ *   <li>Elasticsearch 索引映射测试 (Index Mapping Test)</li>
+ * </ul>
+ * </p>
+ * <p>
+ * 需要 MySQL 和 Elasticsearch 真实服务。
  * </p>
  *
  * @author alan
  * @since 1.0
  */
-@Disabled("集成测试：需要 MySQL/Elasticsearch 等真实服务。")
 @SpringBootTest
 public class MallSearchApplicationTests {
     @Autowired

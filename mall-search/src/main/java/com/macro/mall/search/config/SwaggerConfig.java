@@ -4,6 +4,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 /**
  * Swagger API 文档配置类 (Swagger API Documentation Configuration)
@@ -22,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
 
     @Bean("searchOpenAPI")
+    @Primary
     public OpenAPI searchOpenAPI() {
         return new OpenAPI()
             .info(new Info()
