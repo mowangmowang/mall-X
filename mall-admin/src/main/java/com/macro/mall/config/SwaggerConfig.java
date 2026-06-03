@@ -7,12 +7,23 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
-@Configuration
+/**
+ * Swagger API 文档配置类 (Swagger API Documentation Configuration)
+ * <p>
+ * mall-admin 后台管理 API 文档 (基于 springdoc-openapi 3.x).
+ * </p>
+ * <p>
+ * 访问地址：http://localhost:8080/swagger-ui/index.html
+ * </p>
+ */
+@Configuration("adminSwaggerConfig")
 public class SwaggerConfig {
 
-    @Bean
-    public OpenAPI customOpenAPI() {
+    @Bean("adminOpenAPI")
+    @Primary
+    public OpenAPI adminOpenAPI() {
         return new OpenAPI()
             .info(new Info()
                 .title("mall-admin API")
