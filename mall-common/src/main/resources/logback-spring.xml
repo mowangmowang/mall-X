@@ -64,7 +64,8 @@
         </rollingPolicy>
     </appender>
 
-    <!-- DEBUG 日志输出到 LogStash（端口 4560） -->
+    <!-- DEBUG 日志输出到 LogStash（端口 4560）- 开发环境已禁用 -->
+    <!--
     <appender name="LOG_STASH_DEBUG" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>DEBUG</level>
@@ -94,8 +95,10 @@
             </providers>
         </encoder>
     </appender>
+    -->
 
-    <!-- ERROR 日志输出到 LogStash（端口 4561） -->
+    <!-- ERROR 日志输出到 LogStash（端口 4561）- 开发环境已禁用 -->
+    <!--
     <appender name="LOG_STASH_ERROR" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
@@ -127,8 +130,10 @@
             </providers>
         </encoder>
     </appender>
+    -->
 
-    <!-- 业务日志输出到 LogStash（端口 4562） -->
+    <!-- 业务日志输出到 LogStash（端口 4562）- 开发环境已禁用 -->
+    <!--
     <appender name="LOG_STASH_BUSINESS" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>${LOG_STASH_HOST}:4562</destination>
         <addDefaultStatusListener>${ENABLE_INNER_LOG}</addDefaultStatusListener>
@@ -155,8 +160,10 @@
             </providers>
         </encoder>
     </appender>
+    -->
 
-    <!-- 接口访问记录日志输出到 LogStash（端口 4563，由 WebLogAspect 触发） -->
+    <!-- 接口访问记录日志输出到 LogStash（端口 4563，由 WebLogAspect 触发）- 开发环境已禁用 -->
+    <!--
     <appender name="LOG_STASH_RECORD" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>${LOG_STASH_HOST}:4563</destination>
         <addDefaultStatusListener>${ENABLE_INNER_LOG}</addDefaultStatusListener>
@@ -180,6 +187,7 @@
             </providers>
         </encoder>
     </appender>
+    -->
 
     <!-- 控制第三方框架输出日志级别（避免过多调试信息） -->
     <logger name="org.slf4j" level="INFO"/>
@@ -188,22 +196,22 @@
     <logger name="org.springframework" level="INFO"/>
     <logger name="org.hibernate.validator" level="INFO"/>
 
-    <!-- 根日志配置：输出到控制台、文件及 LogStash -->
+    <!-- 根日志配置：输出到控制台和文件（LogStash 已禁用） -->
     <root level="DEBUG">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE_DEBUG"/>
         <appender-ref ref="FILE_ERROR"/>
-        <appender-ref ref="LOG_STASH_DEBUG"/>
-        <appender-ref ref="LOG_STASH_ERROR"/>
+        <!--<appender-ref ref="LOG_STASH_DEBUG"/>-->
+        <!--<appender-ref ref="LOG_STASH_ERROR"/>-->
     </root>
 
-    <!-- 接口访问记录日志（WebLogAspect 专用） -->
+    <!-- 接口访问记录日志（WebLogAspect 专用）- LogStash 已禁用 -->
     <logger name="com.macro.mall.common.log.WebLogAspect" level="DEBUG">
-        <appender-ref ref="LOG_STASH_RECORD"/>
+        <!--<appender-ref ref="LOG_STASH_RECORD"/>-->
     </logger>
 
-    <!-- 业务日志（项目主包） -->
+    <!-- 业务日志（项目主包）- LogStash 已禁用 -->
     <logger name="com.macro.mall" level="DEBUG">
-        <appender-ref ref="LOG_STASH_BUSINESS"/>
+        <!--<appender-ref ref="LOG_STASH_BUSINESS"/>-->
     </logger>
 </configuration>
