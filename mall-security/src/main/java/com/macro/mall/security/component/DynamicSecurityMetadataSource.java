@@ -8,7 +8,7 @@ import org.springframework.security.web.access.intercept.FilterInvocationSecurit
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.*;
 
 /**
@@ -101,3 +101,4 @@ public class DynamicSecurityMetadataSource implements FilterInvocationSecurityMe
     }
 
 }
+

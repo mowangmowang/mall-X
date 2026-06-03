@@ -34,3 +34,4 @@ public class IgnoreUrlsConfig {
     private List<String> urls = new ArrayList<>();
 
 }
+

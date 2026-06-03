@@ -21,3 +21,4 @@ public interface DynamicSecurityService {
      */
     Map<String, ConfigAttribute> loadDataSource();
 }
+

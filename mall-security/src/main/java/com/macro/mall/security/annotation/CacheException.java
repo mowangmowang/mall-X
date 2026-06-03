@@ -28,3 +28,4 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME) // 运行时可见，可通过反射获取
 public @interface CacheException {
 }
+

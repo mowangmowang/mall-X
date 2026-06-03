@@ -86,13 +86,12 @@ public class SecurityConfig {
         // ========== 步骤1：配置白名单路径 ==========
         // 允许所有用户（包括未登录用户）直接访问这些路径
         // 典型场景：登录接口、注册接口、静态资源、API 文档等
-        for (String url : ignoreUrlsConfig.getUrls()) {
-            registry.antMatchers(url).permitAll();
+for (String url : ignoreUrlsConfig.getUrls()) {
+            registry.requestMatchers(org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher(url)).permitAll();
         }
 
         // ========== 步骤2：放行 CORS 预检请求 ==========
-        // 浏览器在发送跨域请求前会先发送 OPTIONS 请求进行预检，此处直接放行
-        registry.antMatchers(HttpMethod.OPTIONS)
+        registry.requestMatchers(org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher(HttpMethod.OPTIONS.toString()))
                 .permitAll();
 
         // ========== 步骤3-7：配置其他安全策略 ==========
@@ -139,3 +138,4 @@ public class SecurityConfig {
     }
 
 }
+
