@@ -1,6 +1,6 @@
 package com.macro.mall.ai.domain;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * AI 响应数据结构 (AI Response)
@@ -29,7 +29,7 @@ public class AiResponse {
      * AI 回复内容 (AI Reply Content)
      * <p>AI 模型生成的文本回复，经过安全过滤和格式校验</p>
      */
-    @ApiModelProperty(value = "AI 回复内容", example = "根据商品信息，这款手机采用钛金属设计...")
+    @Schema(description = "AI 回复内容", example = "根据商品信息，这款手机采用钛金属设计...")
     private String reply;
 
     /**

@@ -3,15 +3,14 @@ package com.macro.mall.ai.controller;
 import com.macro.mall.ai.domain.*;
 import com.macro.mall.ai.service.AiAssistantService;
 import com.macro.mall.common.api.CommonResult;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 /**
  * AI 购物助手控制器 (AI Shopping Assistant Controller)
  * 
@@ -29,7 +28,6 @@ import javax.validation.Valid;
  * @since 1.0
  */
 @RestController
-@Api(tags = "AiAssistantController")
 @Tag(name = "AiAssistantController", description = "AI购物助手")
 @RequestMapping("/ai")
 public class AiAssistantController {
@@ -84,10 +82,10 @@ public class AiAssistantController {
      * @see ProductQaRequest 请求参数定义
      * @see AiResponse 响应数据结构
      */
-    @ApiOperation(value = "AI商品问答", notes = "根据商品信息回答用户的问题，提供准确的商品信息和建议")
+    @Operation(summary = "AI商品问答", description = "根据商品信息回答用户的问题，提供准确的商品信息和建议")
     @RequestMapping(value = "/product/qa", method = RequestMethod.POST)
     public CommonResult<AiResponse> productQa(
-            @Valid @RequestBody @ApiParam(value = "商品问答请求参数", required = true) ProductQaRequest request) {
+            @Valid @RequestBody @Parameter(description = "商品问答请求参数", required = true) ProductQaRequest request) {
         // 调用业务层处理商品问答逻辑
         AiResponse response = aiAssistantService.chatAboutProduct(request);
         // 返回统一成功响应
@@ -138,10 +136,10 @@ public class AiAssistantController {
      * @see ReturnSuggestionRequest 请求参数定义
      * @see ReturnSuggestionResult 响应数据结构
      */
-    @ApiOperation(value = "AI退货建议", notes = "根据用户描述的问题，智能推荐最合适的退货原因和问题描述")
+    @Operation(summary = "AI退货建议", description = "根据用户描述的问题，智能推荐最合适的退货原因和问题描述")
     @RequestMapping(value = "/return/suggest", method = RequestMethod.POST)
     public CommonResult<ReturnSuggestionResult> returnSuggest(
-            @Valid @RequestBody @ApiParam(value = "退货建议请求参数", required = true) ReturnSuggestionRequest request) {
+            @Valid @RequestBody @Parameter(description = "退货建议请求参数", required = true) ReturnSuggestionRequest request) {
         // 调用业务层处理退货建议逻辑
         ReturnSuggestionResult result = aiAssistantService.suggestReturn(request);
         // 返回统一成功响应
