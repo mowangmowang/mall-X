@@ -2,7 +2,7 @@ spring:
   application:
     name: mall-ai
   profiles:
-    active: dev
+    active: dev,local
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
