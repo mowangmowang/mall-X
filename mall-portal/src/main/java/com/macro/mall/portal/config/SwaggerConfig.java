@@ -1,33 +1,22 @@
 package com.macro.mall.portal.config;
 
-import com.macro.mall.common.config.BaseSwaggerConfig;
-import com.macro.mall.common.domain.SwaggerProperties;
-import org.springframework.beans.factory.config.BeanPostProcessor;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.Contact;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-/**
- * Swagger API文档配置类 (Swagger API Documentation Configuration)
- */
 @Configuration
-@EnableSwagger2
-public class SwaggerConfig extends BaseSwaggerConfig {
-
-    @Override
-    public SwaggerProperties swaggerProperties() {
-        return SwaggerProperties.builder()
-                .apiBasePackage("com.macro.mall.portal.controller")
-                .title("mall前台系统")
-                .description("mall前台相关接口文档")
-                .contactName("macro")
-                .version("1.0")
-                .enableSecurity(true)
-                .build();
-    }
+public class SwaggerConfig {
 
     @Bean
-    public BeanPostProcessor springfoxHandlerProviderBeanPostProcessor() {
-        return generateBeanPostProcessor();
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+            .info(new Info()
+                .title("mall-portal API")
+                .description("用户端API文档")
+                .version("1.0")
+                .contact(new Contact()
+                    .name("macro")));
     }
 }
