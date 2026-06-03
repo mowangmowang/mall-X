@@ -34,3 +34,4 @@ public interface PmsProductMapper {
 
     int updateByPrimaryKey(PmsProduct record);
 }
+

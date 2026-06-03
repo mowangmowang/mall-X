@@ -28,3 +28,4 @@ public interface UmsMemberLoginLogMapper {
 
     int updateByPrimaryKey(UmsMemberLoginLog record);
 }
+

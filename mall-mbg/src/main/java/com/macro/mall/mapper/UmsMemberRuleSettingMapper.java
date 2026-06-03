@@ -28,3 +28,4 @@ public interface UmsMemberRuleSettingMapper {
 
     int updateByPrimaryKey(UmsMemberRuleSetting record);
 }
+

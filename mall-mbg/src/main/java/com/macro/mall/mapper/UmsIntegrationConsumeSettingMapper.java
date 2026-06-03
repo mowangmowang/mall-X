@@ -28,3 +28,4 @@ public interface UmsIntegrationConsumeSettingMapper {
 
     int updateByPrimaryKey(UmsIntegrationConsumeSetting record);
 }
+

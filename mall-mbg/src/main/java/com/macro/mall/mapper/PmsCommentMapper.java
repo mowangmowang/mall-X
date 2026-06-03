@@ -34,3 +34,4 @@ public interface PmsCommentMapper {
 
     int updateByPrimaryKey(PmsComment record);
 }
+

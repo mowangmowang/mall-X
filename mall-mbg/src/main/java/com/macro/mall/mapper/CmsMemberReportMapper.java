@@ -20,3 +20,4 @@ public interface CmsMemberReportMapper {
 
     int updateByExample(@Param("record") CmsMemberReport record, @Param("example") CmsMemberReportExample example);
 }
+

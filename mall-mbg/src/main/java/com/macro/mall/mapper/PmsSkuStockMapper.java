@@ -28,3 +28,4 @@ public interface PmsSkuStockMapper {
 
     int updateByPrimaryKey(PmsSkuStock record);
 }
+

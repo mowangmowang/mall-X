@@ -577,3 +577,4 @@ public class CmsSubjectCategoryExample {
         }
     }
 }
+

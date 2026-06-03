@@ -28,3 +28,4 @@ public interface SmsHomeRecommendSubjectMapper {
 
     int updateByPrimaryKey(SmsHomeRecommendSubject record);
 }
+

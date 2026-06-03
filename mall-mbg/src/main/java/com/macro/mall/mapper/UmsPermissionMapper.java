@@ -28,3 +28,4 @@ public interface UmsPermissionMapper {
 
     int updateByPrimaryKey(UmsPermission record);
 }
+

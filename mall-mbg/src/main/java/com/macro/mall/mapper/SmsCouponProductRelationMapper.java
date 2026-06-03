@@ -28,3 +28,4 @@ public interface SmsCouponProductRelationMapper {
 
     int updateByPrimaryKey(SmsCouponProductRelation record);
 }
+

@@ -28,3 +28,4 @@ public interface PmsProductAttributeCategoryMapper {
 
     int updateByPrimaryKey(PmsProductAttributeCategory record);
 }
+

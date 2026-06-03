@@ -28,3 +28,4 @@ public interface UmsMemberMapper {
 
     int updateByPrimaryKey(UmsMember record);
 }
+

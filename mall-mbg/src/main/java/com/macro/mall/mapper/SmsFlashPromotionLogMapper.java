@@ -28,3 +28,4 @@ public interface SmsFlashPromotionLogMapper {
 
     int updateByPrimaryKey(SmsFlashPromotionLog record);
 }
+

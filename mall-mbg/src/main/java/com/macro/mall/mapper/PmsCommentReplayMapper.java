@@ -28,3 +28,4 @@ public interface PmsCommentReplayMapper {
 
     int updateByPrimaryKey(PmsCommentReplay record);
 }
+

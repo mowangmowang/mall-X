@@ -28,3 +28,4 @@ public interface OmsCompanyAddressMapper {
 
     int updateByPrimaryKey(OmsCompanyAddress record);
 }
+

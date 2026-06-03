@@ -578,3 +578,4 @@ public class OmsOrderOperateHistoryExample {
         }
     }
 }
+

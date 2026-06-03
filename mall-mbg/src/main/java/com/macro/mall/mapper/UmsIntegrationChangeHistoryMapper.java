@@ -28,3 +28,4 @@ public interface UmsIntegrationChangeHistoryMapper {
 
     int updateByPrimaryKey(UmsIntegrationChangeHistory record);
 }
+

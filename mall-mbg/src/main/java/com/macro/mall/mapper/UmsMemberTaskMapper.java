@@ -28,3 +28,4 @@ public interface UmsMemberTaskMapper {
 
     int updateByPrimaryKey(UmsMemberTask record);
 }
+

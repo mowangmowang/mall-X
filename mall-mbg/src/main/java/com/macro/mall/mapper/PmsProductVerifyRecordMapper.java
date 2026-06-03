@@ -28,3 +28,4 @@ public interface PmsProductVerifyRecordMapper {
 
     int updateByPrimaryKey(PmsProductVerifyRecord record);
 }
+

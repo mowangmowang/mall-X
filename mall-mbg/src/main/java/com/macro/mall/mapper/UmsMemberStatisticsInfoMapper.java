@@ -28,3 +28,4 @@ public interface UmsMemberStatisticsInfoMapper {
 
     int updateByPrimaryKey(UmsMemberStatisticsInfo record);
 }
+

@@ -28,3 +28,4 @@ public interface PmsProductLadderMapper {
 
     int updateByPrimaryKey(PmsProductLadder record);
 }
+

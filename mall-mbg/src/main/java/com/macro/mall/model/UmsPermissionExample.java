@@ -838,3 +838,4 @@ public class UmsPermissionExample {
         }
     }
 }
+

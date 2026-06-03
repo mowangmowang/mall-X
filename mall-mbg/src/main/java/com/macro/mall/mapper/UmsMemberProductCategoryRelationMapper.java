@@ -28,3 +28,4 @@ public interface UmsMemberProductCategoryRelationMapper {
 
     int updateByPrimaryKey(UmsMemberProductCategoryRelation record);
 }
+

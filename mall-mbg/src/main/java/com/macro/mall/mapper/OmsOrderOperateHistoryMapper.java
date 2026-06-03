@@ -28,3 +28,4 @@ public interface OmsOrderOperateHistoryMapper {
 
     int updateByPrimaryKey(OmsOrderOperateHistory record);
 }
+

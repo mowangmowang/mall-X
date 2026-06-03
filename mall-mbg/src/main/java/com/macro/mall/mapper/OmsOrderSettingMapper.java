@@ -28,3 +28,4 @@ public interface OmsOrderSettingMapper {
 
     int updateByPrimaryKey(OmsOrderSetting record);
 }
+

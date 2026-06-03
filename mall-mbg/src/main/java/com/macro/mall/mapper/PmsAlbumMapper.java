@@ -28,3 +28,4 @@ public interface PmsAlbumMapper {
 
     int updateByPrimaryKey(PmsAlbum record);
 }
+

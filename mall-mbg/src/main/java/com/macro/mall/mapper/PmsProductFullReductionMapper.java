@@ -28,3 +28,4 @@ public interface PmsProductFullReductionMapper {
 
     int updateByPrimaryKey(PmsProductFullReduction record);
 }
+

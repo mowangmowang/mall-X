@@ -1,6 +1,6 @@
 package com.macro.mall.model;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 
 public class UmsMemberMemberTagRelation implements Serializable {
@@ -50,3 +50,4 @@ public class UmsMemberMemberTagRelation implements Serializable {
         return sb.toString();
     }
 }
+

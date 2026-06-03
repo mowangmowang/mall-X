@@ -678,3 +678,4 @@ public class SmsFlashPromotionProductRelationExample {
         }
     }
 }
+

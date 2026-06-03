@@ -1,6 +1,6 @@
 package com.macro.mall.model;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 
 public class SmsHomeRecommendProduct implements Serializable {
@@ -72,3 +72,4 @@ public class SmsHomeRecommendProduct implements Serializable {
         return sb.toString();
     }
 }
+

@@ -28,3 +28,4 @@ public interface PmsFeightTemplateMapper {
 
     int updateByPrimaryKey(PmsFeightTemplate record);
 }
+

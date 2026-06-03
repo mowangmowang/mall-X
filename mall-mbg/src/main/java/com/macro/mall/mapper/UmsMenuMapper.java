@@ -28,3 +28,4 @@ public interface UmsMenuMapper {
 
     int updateByPrimaryKey(UmsMenu record);
 }
+

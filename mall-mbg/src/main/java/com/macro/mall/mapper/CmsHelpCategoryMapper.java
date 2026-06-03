@@ -28,3 +28,4 @@ public interface CmsHelpCategoryMapper {
 
     int updateByPrimaryKey(CmsHelpCategory record);
 }
+

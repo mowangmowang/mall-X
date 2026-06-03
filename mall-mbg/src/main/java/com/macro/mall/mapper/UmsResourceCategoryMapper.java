@@ -28,3 +28,4 @@ public interface UmsResourceCategoryMapper {
 
     int updateByPrimaryKey(UmsResourceCategory record);
 }
+

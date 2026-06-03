@@ -28,3 +28,4 @@ public interface UmsAdminRoleRelationMapper {
 
     int updateByPrimaryKey(UmsAdminRoleRelation record);
 }
+

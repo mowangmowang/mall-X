@@ -28,3 +28,4 @@ public interface OmsOrderReturnReasonMapper {
 
     int updateByPrimaryKey(OmsOrderReturnReason record);
 }
+

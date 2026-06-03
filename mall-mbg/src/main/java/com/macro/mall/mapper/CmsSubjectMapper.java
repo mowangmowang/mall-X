@@ -34,3 +34,4 @@ public interface CmsSubjectMapper {
 
     int updateByPrimaryKey(CmsSubject record);
 }
+

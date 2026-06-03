@@ -28,3 +28,4 @@ public interface CmsSubjectCommentMapper {
 
     int updateByPrimaryKey(CmsSubjectComment record);
 }
+

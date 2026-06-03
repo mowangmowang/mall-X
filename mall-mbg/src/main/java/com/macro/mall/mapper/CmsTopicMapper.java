@@ -34,3 +34,4 @@ public interface CmsTopicMapper {
 
     int updateByPrimaryKey(CmsTopic record);
 }
+

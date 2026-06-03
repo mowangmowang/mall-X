@@ -28,3 +28,4 @@ public interface UmsMemberReceiveAddressMapper {
 
     int updateByPrimaryKey(UmsMemberReceiveAddress record);
 }
+

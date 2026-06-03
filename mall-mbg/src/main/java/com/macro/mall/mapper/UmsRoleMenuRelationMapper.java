@@ -28,3 +28,4 @@ public interface UmsRoleMenuRelationMapper {
 
     int updateByPrimaryKey(UmsRoleMenuRelation record);
 }
+

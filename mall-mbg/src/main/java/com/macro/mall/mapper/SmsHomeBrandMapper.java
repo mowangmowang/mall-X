@@ -28,3 +28,4 @@ public interface SmsHomeBrandMapper {
 
     int updateByPrimaryKey(SmsHomeBrand record);
 }
+

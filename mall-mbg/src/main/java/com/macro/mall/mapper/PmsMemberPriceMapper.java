@@ -28,3 +28,4 @@ public interface PmsMemberPriceMapper {
 
     int updateByPrimaryKey(PmsMemberPrice record);
 }
+

@@ -28,3 +28,4 @@ public interface OmsCartItemMapper {
 
     int updateByPrimaryKey(OmsCartItem record);
 }
+

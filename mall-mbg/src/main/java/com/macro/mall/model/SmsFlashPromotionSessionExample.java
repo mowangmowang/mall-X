@@ -595,3 +595,4 @@ public class SmsFlashPromotionSessionExample {
         }
     }
 }
+

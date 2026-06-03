@@ -28,3 +28,4 @@ public interface SmsFlashPromotionSessionMapper {
 
     int updateByPrimaryKey(SmsFlashPromotionSession record);
 }
+

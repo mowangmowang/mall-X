@@ -28,3 +28,4 @@ public interface SmsHomeNewProductMapper {
 
     int updateByPrimaryKey(SmsHomeNewProduct record);
 }
+

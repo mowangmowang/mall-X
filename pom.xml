@@ -39,7 +39,7 @@
         <hutool.version>5.8.25</hutool.version>
         <mybatis-generator.version>1.4.2</mybatis-generator.version>
         <mybatis.version>3.5.19</mybatis.version>
-        <mysql-connector.version>8.0.33</mysql-connector.version>
+        <mysql-connector.version>8.0.29</mysql-connector.version>
         <jjwt.version>0.12.6</jjwt.version>
         <aliyun-oss.version>2.5.0</aliyun-oss.version>
         <alipay-sdk.version>4.38.61.ALL</alipay-sdk.version>
@@ -143,11 +143,11 @@
                 <artifactId>mybatis</artifactId>
                 <version>${mybatis.version}</version>
             </dependency>
-            <!--Mysql数据库驱动-->
+<!--Mysql数据库驱动-->
             <dependency>
-                <groupId>com.mysql.cj</groupId>
-                <artifactId>mysql-connector-j</artifactId>
-                <version>${mysql-connector.version}</version>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.29</version>
             </dependency>
             <!--JWT(Json Web Token)登录支持-->
             <dependency>

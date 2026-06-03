@@ -36,8 +36,9 @@
             <artifactId>mybatis-generator-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.mysql.cj</groupId>
-            <artifactId>mysql-connector-j</artifactId>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.29</version>
         </dependency>
     </dependencies>
 

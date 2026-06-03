@@ -28,3 +28,4 @@ public interface SmsHomeAdvertiseMapper {
 
     int updateByPrimaryKey(SmsHomeAdvertise record);
 }
+

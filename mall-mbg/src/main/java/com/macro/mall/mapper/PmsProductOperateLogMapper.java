@@ -28,3 +28,4 @@ public interface PmsProductOperateLogMapper {
 
     int updateByPrimaryKey(PmsProductOperateLog record);
 }
+

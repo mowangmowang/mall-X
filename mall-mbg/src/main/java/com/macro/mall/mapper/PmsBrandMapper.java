@@ -34,3 +34,4 @@ public interface PmsBrandMapper {
 
     int updateByPrimaryKey(PmsBrand record);
 }
+

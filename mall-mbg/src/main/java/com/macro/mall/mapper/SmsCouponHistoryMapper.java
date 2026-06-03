@@ -28,3 +28,4 @@ public interface SmsCouponHistoryMapper {
 
     int updateByPrimaryKey(SmsCouponHistory record);
 }
+

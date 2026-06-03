@@ -28,3 +28,4 @@ public interface UmsGrowthChangeHistoryMapper {
 
     int updateByPrimaryKey(UmsGrowthChangeHistory record);
 }
+
