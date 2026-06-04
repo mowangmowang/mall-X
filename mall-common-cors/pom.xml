@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.macro.mall</groupId>
+        <artifactId>mall</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>mall-common-cors</artifactId>
+    <packaging>jar</packaging>
+    <name>mall-common-cors</name>
+    <description>统一 CORS 跨域策略配置 - 4 个服务（admin/portal/search/ai）共享</description>
+
+    <dependencies>
+        <!-- 仅依赖 spring-web（CorsConfigurationSource 接口所在地），
+             不引入 spring-boot-starter-web / spring-boot-starter-security，
+             保持模块最小化，不污染消费方上下文 -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <!-- lombok 继承自根 pom 的 dependencyManagement -->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <!-- 库模块不需要 spring-boot-maven-plugin 重新打包 -->
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
