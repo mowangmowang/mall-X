@@ -72,3 +72,6 @@ mall:
       allowed-headers: "*"
       allow-credentials: true
       max-age: 3600
+  # 图片代理服务对外地址（指向当前服务），由 ImageUrlRewriter 改写 OSS URL
+  pic:
+    proxy-base-url: http://localhost:8085

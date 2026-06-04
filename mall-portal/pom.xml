@@ -44,6 +44,10 @@
             <groupId>com.macro.mall</groupId>
             <artifactId>mall-common-cors</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.macro.mall</groupId>
+            <artifactId>mall-common-pic</artifactId>
+        </dependency>
         <!--mongodb依赖配置-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
