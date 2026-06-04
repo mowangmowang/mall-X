@@ -3,42 +3,51 @@ package com.macro.mall.search.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 /**
- * 全局跨域配置类 (Global CORS Configuration)
+ * 搜索服务 CORS 配置
  * <p>
- * 配置跨域资源共享 (Cross-Origin Resource Sharing, CORS) 策略，
- * 允许前端应用（如 mall-admin-web、mall-app-web）跨域访问搜索服务 API。
+ * 注意：mall-search 不依赖 mall-security（搜索服务面向内网调用为主，不强制鉴权），
+ * 故本地保留一份 CORS 配置。结构与 mall-security 的 CorsConfig 保持完全一致，
+ * 后续如需统一，可将 CORS 规则下沉到 mall-common 模块。
  * </p>
  * <p>
- * 安全提示：生产环境应限制 allowedOriginPattern 为具体的域名，避免使用 "*" 通配符。
+ * 本类从 {@code CorsFilter} Bean 模式迁移到 {@code CorsConfigurationSource} Bean 模式，
+ * 与 Spring Security 6 推荐的配置风格保持一致。Spring Boot 会自动将本 Bean 注入到
+ * 内置的 MVC CORS 处理（{@code WebMvcConfigurer.addCorsMappings} 行为相同）。
  * </p>
  *
  * @author alan
- * @since 1.0
+ * @since 2026-06
  */
 @Configuration
 public class MallCorsConfig {
+
     /**
-     * 创建跨域过滤器 (Create CORS Filter)
+     * 创建跨域策略源（搜索服务版）
      * <p>
-     * 配置跨域访问规则，允许所有来源、请求头及 HTTP 方法，
-     * 并支持携带凭证（Cookie、Authorization Header 等）。
+     * 与 mall-security 中 CorsConfig 的策略保持完全一致：
+     * - 允许所有来源（生产环境必须改为具体域名）
+     * - 允许携带凭证（Cookie / Authorization）
+     * - 允许所有请求头（含 Authorization）
+     * - 允许所有 HTTP 方法
+     * - 预检结果缓存 3600 秒
      * </p>
      *
-     * @return CorsFilter 跨域过滤器实例
+     * @return CorsConfigurationSource 实例
      */
     @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);  // 允许携带凭证（Cookie）
-        config.addAllowedOriginPattern("*");  // 允许所有来源
-        config.addAllowedHeader("*");  // 允许所有请求头
-        config.addAllowedMethod("*");  // 允许所有 HTTP 方法（GET, POST, PUT, DELETE 等）
-        source.registerCorsConfiguration("/**", config);  // 应用到所有路径
-        return new CorsFilter(source);
+        config.addAllowedOriginPattern("*");
+        config.setAllowCredentials(true);
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        config.setMaxAge(3600L);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }
