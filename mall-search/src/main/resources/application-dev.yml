@@ -18,6 +18,15 @@ spring:
         enabled: true
   elasticsearch:
     uris: localhost:9200
+    # 连接超时配置（毫秒）
+    connection-timeout: 5s
+    socket-timeout: 30s
+
+# Actuator 健康检查配置
+management:
+  health:
+    elasticsearch:
+      enabled: false
 
 logging:
   level:

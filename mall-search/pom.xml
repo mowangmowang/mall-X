@@ -35,7 +35,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- Spring Data Elasticsearch：提供 Elasticsearch 操作接口 -->
+        <!-- Spring Data Elasticsearch：客户端版本由 Spring Boot 3.5.14 BOM 管理 (8.18.8) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
