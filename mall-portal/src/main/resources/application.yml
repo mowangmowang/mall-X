@@ -40,6 +40,7 @@ secure:
       - /product/**
       - /brand/**
       - /alipay/**
+      - /pic/**            # 图片代理入口（mall-common-pic，需放行避免被 Spring Security 拦截）
 
 # 自定义redis key
 redis:
