@@ -217,7 +217,7 @@ public class UmsMemberServiceImpl implements UmsMemberService {
      */
     @Override
     public String refreshToken(String token) {
-        return jwtTokenUtil.refreshHeadToken(token);
+        return jwtTokenUtil.refreshToken(token);
     }
 
     /**
