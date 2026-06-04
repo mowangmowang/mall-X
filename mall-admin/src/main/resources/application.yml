@@ -21,7 +21,10 @@ mybatis:
 
 jwt:
   tokenHeader: Authorization #JWT存储的请求头
-  secret: mall-admin-secret #JWT加解密使用的密钥
+  # secret 必须 >= 64 字符（512 bits），JJWT 0.12+ 强制 RFC 7518 §3.2 约束
+  # 当前签名算法为 Jwts.SIG.HS512（见 mall-security/util/JwtTokenUtil.java）
+  # 生产环境务必替换为高熵随机串（如 `openssl rand -base64 64`）
+  secret: mall-admin-secret-PLEASE-CHANGE-IN-PROD-must-be-64-chars-min-HS512
   expiration: 604800 #JWT的超期限时间(60*60*24*7)
   tokenHead: 'Bearer '  #JWT负载中拿到开头
 
@@ -65,3 +68,17 @@ aliyun:
     callback: http://39.98.190.128:8080/aliyun/oss/callback # 文件上传成功后的回调地址
     dir:
       prefix: mall/images/ # 上传文件夹路径前缀
+
+# ====== 跨域策略（由 mall-security 统一读取）======
+# 生产环境必须把 allowed-origins 改为具体域名
+mall:
+  security:
+    cors:
+      allowed-origins: "*"
+      allowed-methods: "*"
+      allowed-headers: "*"
+      allow-credentials: true
+      max-age: 3600
+  # 图片代理服务对外地址（指向 mall-portal，由 ImageUrlRewriter 改写 OSS URL）
+  pic:
+    proxy-base-url: http://localhost:8085

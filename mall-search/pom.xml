@@ -24,6 +24,11 @@
             <groupId>com.macro.mall</groupId>
             <artifactId>mall-common</artifactId>
         </dependency>
+        <!-- 引入 mall-common-cors 模块（统一 CORS 跨域策略） -->
+        <dependency>
+            <groupId>com.macro.mall</groupId>
+            <artifactId>mall-common-cors</artifactId>
+        </dependency>
         <!-- 引入 mall-mbg 模块（MyBatis Generator 生成的代码），排除 Redis 依赖避免冲突 -->
         <dependency>
             <groupId>com.macro.mall</groupId>
@@ -35,7 +40,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- Spring Data Elasticsearch：提供 Elasticsearch 操作接口 -->
+        <!-- Spring Data Elasticsearch：客户端版本由 Spring Boot 3.5.14 BOM 管理 (8.18.8) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
@@ -44,6 +49,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+        <!-- springdoc-openapi：Swagger 3 (OpenAPI 3) 文档 -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
     </dependencies>
 

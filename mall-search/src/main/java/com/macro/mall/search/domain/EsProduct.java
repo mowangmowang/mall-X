@@ -23,7 +23,7 @@ import java.util.List;
  * <ul>
  *   <li>分片数 (Shards)：1</li>
  *   <li>副本数 (Replicas)：0（单节点环境）</li>
- *   <li>分词器 (Analyzer)：ik_max_word（最大细粒度分词）</li>
+ *   <li>分词器 (Analyzer)：ik_max_word（索引，IK 细粒度切分，高召回）+ ik_smart（搜索，IK 粗粒度切分，高精确）</li>
  * </ul>
  * </p>
  *
@@ -47,11 +47,11 @@ public class EsProduct implements Serializable {
     @Field(type = FieldType.Keyword)  // 精确匹配，不分词
     private String productCategoryName;  // 分类名称 (Category Name)
     private String pic;  // 商品主图 URL (Main Image URL)
-    @Field(analyzer = "ik_max_word",type = FieldType.Text)  // 使用 IK 分词器，支持全文搜索 (Full-text Search with IK Analyzer)
+    @Field(analyzer = "ik_max_word", searchAnalyzer = "ik_smart", type = FieldType.Text)  // IK 索引时细粒度切分（高召回），搜索时粗粒度切分（高精确）
     private String name;  // 商品名称 (Product Name)
-    @Field(analyzer = "ik_max_word",type = FieldType.Text)  // 使用 IK 分词器，支持全文搜索
+    @Field(analyzer = "ik_max_word", searchAnalyzer = "ik_smart", type = FieldType.Text)  // IK 分词器，支持全文搜索
     private String subTitle;  // 副标题 (Sub Title)
-    @Field(analyzer = "ik_max_word",type = FieldType.Text)  // 使用 IK 分词器，支持全文搜索
+    @Field(analyzer = "ik_max_word", searchAnalyzer = "ik_smart", type = FieldType.Text)  // IK 分词器，支持全文搜索
     private String keywords;  // 关键词 (Keywords)
     private BigDecimal price;  // 销售价格 (Sale Price)
     private Integer sale;  // 销量 (Sales Volume)

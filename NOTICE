@@ -1,0 +1,31 @@
+Mall-X
+Copyright 2026 mowangmowang
+
+This product is a derivative work based on:
+  Mall (https://github.com/macrozheng/mall)
+  Copyright 2018-2024 macrozheng
+  Licensed under the Apache License, Version 2.0
+
+Major modifications (2026):
+  - Upgrade Spring Boot 2.7.5 -> 3.5.14 (Jakarta EE 9 namespace)
+  - Upgrade Java 8 -> 17
+  - Extract mall-common-cors (unified CORS configuration module shared by 4 services)
+  - Add mall-common-pic (image proxy to bypass OSS CORS restrictions on <img>)
+  - Add ImageUrlRewriter utility (transparent OSS URL -> proxy URL rewriting at Service layer)
+  - Elasticsearch 8.x: HTTPS support + IK analyzer (infinilabs/analysis-ik)
+  - Refactor: JJWT 0.12 HS512 compliance (64-char minimum secret)
+  - Refactor: Spring Security 6 explicit CORS chain
+  - Add: AI assistant service (mall-ai, DeepSeek integration)
+  - Module: 7-stage Spring Boot 3.5 migration journey preserved as git branches
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

@@ -18,6 +18,7 @@ public class CmsPrefrenceAreaServiceImpl implements CmsPrefrenceAreaService {
 
     @Override
     public List<CmsPrefrenceArea> listAll() {
+        // CmsPrefrenceArea.pic 是 byte[]（BLOB），非 URL，无需 ImageUrlRewriter 改写
         return prefrenceAreaMapper.selectByExample(new CmsPrefrenceAreaExample());
     }
 }

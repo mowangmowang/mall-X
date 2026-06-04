@@ -45,23 +45,25 @@ public class RestfulAccessDeniedHandler implements AccessDeniedHandler{
     public void handle(HttpServletRequest request,
                        HttpServletResponse response,
                        AccessDeniedException e) throws IOException, ServletException {
-        // 设置跨域资源共享 (CORS) 允许所有来源访问
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        
+        // 注意：不再手工设置 Access-Control-Allow-Origin 响应头
+        // 历史原因：早期 GlobalCorsConfig 未生效时，由这里兜底写入 CORS 头。
+        // 现在 CorsConfigurationSource 已在 SecurityConfig.filterChain 中通过 .cors() 接入，
+        // 所有响应（包括 403 异常响应）都会经过 CORS 处理。
+
         // 禁止浏览器缓存响应
         response.setHeader("Cache-Control","no-cache");
-        
+
         // 设置响应字符编码为 UTF-8
         response.setCharacterEncoding("UTF-8");
-        
+
         // 设置响应内容类型为 JSON 格式
         response.setContentType("application/json");
-        
+
         // 构建统一的 403 禁止访问响应
         // CommonResult.forbidden() 创建标准的权限不足响应（HTTP 403）
         // e.getMessage() 获取具体的权限拒绝原因
         response.getWriter().println(JSONUtil.parse(CommonResult.forbidden(e.getMessage())));
-        
+
         // 强制刷新输出流，确保响应立即发送
         response.getWriter().flush();
     }

@@ -10,8 +10,7 @@ import com.macro.mall.model.UmsAdmin;
 import com.macro.mall.model.UmsRole;
 import com.macro.mall.service.UmsAdminService;
 import com.macro.mall.service.UmsRoleService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +30,6 @@ import java.util.stream.Collectors;
  * 提供管理员注册、登录、信息查询、权限分配等功能
  */
 @Controller
-@Api(tags = "UmsAdminController")
 @Tag(name = "UmsAdminController", description = "后台用户管理")
 @RequestMapping("/admin")
 public class UmsAdminController {
@@ -64,7 +62,7 @@ public class UmsAdminController {
      * @param umsAdminParam 注册参数（包含用户名、密码、昵称等）
      * @return 注册成功返回管理员信息，失败返回错误提示
      */
-    @ApiOperation(value = "用户注册")
+    @Operation(summary = "用户注册")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult<UmsAdmin> register(@Validated @RequestBody UmsAdminParam umsAdminParam) {
@@ -81,7 +79,7 @@ public class UmsAdminController {
      * @param umsAdminLoginParam 登录参数（用户名、密码）
      * @return 返回 Token 和 Token 前缀，前端需在后续请求中携带
      */
-    @ApiOperation(value = "登录以后返回token")
+    @Operation(summary = "登录以后返回token")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult login(@Validated @RequestBody UmsAdminLoginParam umsAdminLoginParam) {
@@ -101,7 +99,7 @@ public class UmsAdminController {
      * @param request HTTP 请求对象，从中提取旧 Token
      * @return 返回新的 Token 和 Token 前缀
      */
-    @ApiOperation(value = "刷新token")
+    @Operation(summary = "刷新token")
     @RequestMapping(value = "/refreshToken", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult refreshToken(HttpServletRequest request) {
@@ -122,7 +120,7 @@ public class UmsAdminController {
      * @param principal Spring Security 提供的当前用户身份信息
      * @return 返回管理员信息和权限数据
      */
-    @ApiOperation(value = "获取当前登录用户信息")
+    @Operation(summary = "获取当前登录用户信息")
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult getAdminInfo(Principal principal) {
@@ -151,7 +149,7 @@ public class UmsAdminController {
      * @param principal 当前用户身份信息
      * @return 操作结果
      */
-    @ApiOperation(value = "登出功能")
+    @Operation(summary = "登出功能")
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult logout(Principal principal) {
@@ -167,7 +165,7 @@ public class UmsAdminController {
      * @param pageNum 页码，默认第1页
      * @return 分页的管理员列表
      */
-    @ApiOperation("根据用户名或姓名分页获取用户列表")
+    @Operation(summary = "根据用户名或姓名分页获取用户列表")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<CommonPage<UmsAdmin>> list(@RequestParam(value = "keyword", required = false) String keyword,
@@ -182,7 +180,7 @@ public class UmsAdminController {
      * @param id 管理员 ID
      * @return 管理员信息
      */
-    @ApiOperation("获取指定用户信息")
+    @Operation(summary = "获取指定用户信息")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<UmsAdmin> getItem(@PathVariable Long id) {
@@ -196,7 +194,7 @@ public class UmsAdminController {
      * @param admin 待更新的管理员信息
      * @return 操作结果
      */
-    @ApiOperation("修改指定用户信息")
+    @Operation(summary = "修改指定用户信息")
     @RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult update(@PathVariable Long id, @RequestBody UmsAdmin admin) {
@@ -213,7 +211,7 @@ public class UmsAdminController {
      * @param updatePasswordParam 包含旧密码和新密码的参数对象
      * @return 操作结果及失败原因提示
      */
-    @ApiOperation("修改指定用户密码")
+    @Operation(summary = "修改指定用户密码")
     @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult updatePassword(@Validated @RequestBody UpdateAdminPasswordParam updatePasswordParam) {
@@ -236,7 +234,7 @@ public class UmsAdminController {
      * @param id 管理员 ID
      * @return 操作结果
      */
-    @ApiOperation("删除指定用户信息")
+    @Operation(summary = "删除指定用户信息")
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult delete(@PathVariable Long id) {
@@ -253,7 +251,7 @@ public class UmsAdminController {
      * @param status 状态值：1-启用，0-禁用
      * @return 操作结果
      */
-    @ApiOperation("修改帐号状态")
+    @Operation(summary = "修改帐号状态")
     @RequestMapping(value = "/updateStatus/{id}", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult updateStatus(@PathVariable Long id, @RequestParam(value = "status") Integer status) {
@@ -272,7 +270,7 @@ public class UmsAdminController {
      * @param roleIds 角色 ID 列表
      * @return 操作结果
      */
-    @ApiOperation("给用户分配角色")
+    @Operation(summary = "给用户分配角色")
     @RequestMapping(value = "/role/update", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult updateRole(@RequestParam("adminId") Long adminId,
@@ -289,7 +287,7 @@ public class UmsAdminController {
      * @param adminId 管理员 ID
      * @return 角色列表
      */
-    @ApiOperation("获取指定用户的角色")
+    @Operation(summary = "获取指定用户的角色")
     @RequestMapping(value = "/role/{adminId}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<List<UmsRole>> getRoleList(@PathVariable Long adminId) {

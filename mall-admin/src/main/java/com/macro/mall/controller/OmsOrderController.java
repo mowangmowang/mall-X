@@ -5,8 +5,7 @@ import com.macro.mall.common.api.CommonResult;
 import com.macro.mall.dto.*;
 import com.macro.mall.model.OmsOrder;
 import com.macro.mall.service.OmsOrderService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,7 +18,6 @@ import java.util.List;
  * 提供订单查询、发货、关闭、删除、修改及备注等核心业务功能。
  */
 @Controller
-@Api(tags = "OmsOrderController")
 @Tag(name = "OmsOrderController", description = "订单管理")
 @RequestMapping("/order")
 public class OmsOrderController {
@@ -38,7 +36,7 @@ public class OmsOrderController {
      * @param pageNum 当前页码，默认第 1 页
      * @return 分页后的订单列表数据
      */
-    @ApiOperation("查询订单列表")
+    @Operation(summary = "查询订单列表")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<CommonPage<OmsOrder>> list(OmsOrderQueryParam queryParam,
@@ -50,12 +48,12 @@ public class OmsOrderController {
 
     /**
      * 批量处理订单发货
-     * 更新订单物流信息（物流公司、单号）并将状态流转为“已发货”。
+     * 更新订单物流信息（物流公司、单号）并将状态流转为"已发货"。
      *
      * @param deliveryParamList 发货参数集合，包含订单 ID 及物流详情
      * @return 操作结果
      */
-    @ApiOperation("批量发货")
+    @Operation(summary = "批量发货")
     @RequestMapping(value = "/update/delivery", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult delivery(@RequestBody List<OmsOrderDeliveryParam> deliveryParamList) {
@@ -74,7 +72,7 @@ public class OmsOrderController {
      * @param note 关闭原因或管理员备注
      * @return 操作结果
      */
-    @ApiOperation("批量关闭订单")
+    @Operation(summary = "批量关闭订单")
     @RequestMapping(value = "/update/close", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult close(@RequestParam("ids") List<Long> ids, @RequestParam String note) {
@@ -92,7 +90,7 @@ public class OmsOrderController {
      * @param ids 待删除的订单 ID 集合
      * @return 操作结果
      */
-    @ApiOperation("批量删除订单")
+    @Operation(summary = "批量删除订单")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult delete(@RequestParam("ids") List<Long> ids) {
@@ -110,7 +108,7 @@ public class OmsOrderController {
      * @param id 目标订单 ID
      * @return 订单详情对象
      */
-    @ApiOperation("获取订单详情")
+    @Operation(summary = "获取订单详情")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<OmsOrderDetail> detail(@PathVariable Long id) {
@@ -125,7 +123,7 @@ public class OmsOrderController {
      * @param receiverInfoParam 收货人更新参数
      * @return 操作结果
      */
-    @ApiOperation("修改收货人信息")
+    @Operation(summary = "修改收货人信息")
     @RequestMapping(value = "/update/receiverInfo", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult updateReceiverInfo(@RequestBody OmsReceiverInfoParam receiverInfoParam) {
@@ -143,7 +141,7 @@ public class OmsOrderController {
      * @param moneyInfoParam 费用调整参数
      * @return 操作结果
      */
-    @ApiOperation("修改订单费用信息")
+    @Operation(summary = "修改订单费用信息")
     @RequestMapping(value = "/update/moneyInfo", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult updateMoneyInfo(@RequestBody OmsMoneyInfoParam moneyInfoParam) {
@@ -162,7 +160,7 @@ public class OmsOrderController {
      * @param status 当前订单状态
      * @return 操作结果
      */
-    @ApiOperation("备注订单")
+    @Operation(summary = "备注订单")
     @RequestMapping(value = "/update/note", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult updateNote(@RequestParam("id") Long id,
@@ -183,7 +181,7 @@ public class OmsOrderController {
      * @param note 取消原因说明
      * @return 操作结果
      */
-    @ApiOperation("取消订单")
+    @Operation(summary = "取消订单")
     @RequestMapping(value = "/update/cancel", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult cancel(@RequestParam("id") Long id, @RequestParam("note") String note) {

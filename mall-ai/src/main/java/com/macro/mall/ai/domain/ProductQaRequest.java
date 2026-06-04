@@ -1,10 +1,10 @@
 package com.macro.mall.ai.domain;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 /**
  * 商品问答请求参数 (Product Q&A Request)
@@ -39,9 +39,9 @@ public class ProductQaRequest {
      * <p>用于标识具体商品，便于日志追踪和数据分析</p>
      */
     @NotNull(message = "商品ID不能为空")
-    @ApiModelProperty(value = "商品ID", required = true, example = "1")
+    @Schema(description = "商品ID", example = "1", nullable = false)
     private Long productId;
-    
+
     /**
      * 用户问题 (User Question)
      * <p>用户对商品的提问，如“这款手机拍照效果怎么样？”</p>
@@ -49,37 +49,37 @@ public class ProductQaRequest {
      */
     @NotBlank(message = "问题不能为空")
     @Size(max = 500, message = "问题长度不能超过500字符")
-    @ApiModelProperty(value = "用户问题", required = true, example = "这个商品的材质是什么？")
+    @Schema(description = "用户问题", example = "这个商品的材质是什么？", nullable = false)
     private String question;
-    
+
     /**
      * 商品名称 (Product Name)
      * <p>如“Redmi Note 13 Pro”</p>
      */
-    @ApiModelProperty(value = "商品名称", example = "iPhone 15 Pro")
+    @Schema(description = "商品名称", example = "iPhone 15 Pro")
     private String productName;
-    
+
     /**
      * 商品品牌 (Product Brand)
      * <p>如“小米”、“Apple”、“华为”</p>
      */
-    @ApiModelProperty(value = "商品品牌", example = "Apple")
+    @Schema(description = "商品品牌", example = "Apple")
     private String productBrand;
-    
+
     /**
      * 商品价格 (Product Price)
      * <p>单位：元，如“1999”、“7999.00”</p>
      */
-    @ApiModelProperty(value = "商品价格", example = "7999")
+    @Schema(description = "商品价格", example = "7999")
     private String productPrice;
-    
+
     /**
      * 商品副标题/描述 (Product Subtitle/Description)
      * <p>商品的简短描述或卖点，如“性能小钢炮 5G 手机”</p>
      */
-    @ApiModelProperty(value = "商品副标题/描述", example = "钛金属设计，A17 Pro芯片")
+    @Schema(description = "商品副标题/描述", example = "钛金属设计，A17 Pro芯片")
     private String productSubTitle;
-    
+
     /**
      * 对话历史上下文 (Conversation History)
      * <p>用于多轮对话场景，记录之前的对话内容</p>
@@ -87,7 +87,7 @@ public class ProductQaRequest {
      * <p>最大长度：2000 字符</p>
      */
     @Size(max = 2000, message = "对话历史长度不能超过2000字符")
-    @ApiModelProperty(value = "对话历史上下文，用于多轮对话", example = "用户: 这个手机拍照怎么样？\nAI: 该手机配备4800万像素摄像头...")
+    @Schema(description = "对话历史上下文，用于多轮对话", example = "用户: 这个手机拍照怎么样？\nAI: 该手机配备4800万像素摄像头...")
     private String conversationHistory;
 
     // Getter and Setter methods with detailed comments

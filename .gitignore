@@ -35,3 +35,14 @@ guidence/
 # Skills directory with embedded git repo
 skills/lunwen/
 
+# Internal planning docs (not for public release)
+plan.md
+proposal.md
+
+# Playwright CLI artifacts
+.playwright-cli/
+**/.playwright-cli/
+
+# mall-app-web debug screenshots
+mall-app-web/*.png
+

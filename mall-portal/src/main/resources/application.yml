@@ -14,7 +14,10 @@ mybatis:
 
 jwt:
   tokenHeader: Authorization #JWT存储的请求头
-  secret: mall-portal-secret #JWT加解密使用的密钥
+  # secret 必须 >= 64 字符（512 bits），JJWT 0.12+ 强制 RFC 7518 §3.2 约束
+  # 当前签名算法为 Jwts.SIG.HS512（见 mall-security/util/JwtTokenUtil.java）
+  # 生产环境务必替换为高熵随机串（如 `openssl rand -base64 64`）
+  secret: mall-portal-secret-PLEASE-CHANGE-IN-PROD-must-be-64-chars-min-HS512
   expiration: 604800 #JWT的超期限时间(60*60*24*7)
   tokenHead: 'Bearer '  #JWT负载中拿到开头
 
@@ -37,6 +40,7 @@ secure:
       - /product/**
       - /brand/**
       - /alipay/**
+      - /pic/**            # 图片代理入口（mall-common-pic，需放行避免被 Spring Security 拦截）
 
 # 自定义redis key
 redis:
@@ -59,3 +63,16 @@ rabbitmq:
     name:
       cancelOrder: cancelOrderQueue
 
+# ====== 跨域策略（由 mall-security 统一读取）======
+# 生产环境必须把 allowed-origins 改为具体域名
+mall:
+  security:
+    cors:
+      allowed-origins: "*"
+      allowed-methods: "*"
+      allowed-headers: "*"
+      allow-credentials: true
+      max-age: 3600
+  # 图片代理服务对外地址（指向当前服务），由 ImageUrlRewriter 改写 OSS URL
+  pic:
+    proxy-base-url: http://localhost:8085

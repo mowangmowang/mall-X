@@ -9,8 +9,7 @@ import com.macro.mall.dto.PmsProductResult;
 import com.macro.mall.model.PmsProduct;
 import com.macro.mall.model.PmsProductVerifyRecord;
 import com.macro.mall.service.PmsProductService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,7 +23,6 @@ import java.util.List;
  * 集成 Elasticsearch 搜索引擎，通过 RabbitMQ 异步同步商品数据
  */
 @Controller
-@Api(tags = "PmsProductController")
 @Tag(name = "PmsProductController", description = "商品管理")
 @RequestMapping("/product")
 public class PmsProductController {
@@ -47,7 +45,7 @@ public class PmsProductController {
      * @param productParam 商品参数对象（包含所有商品信息）
      * @return 操作结果
      */
-    @ApiOperation("创建商品")
+    @Operation(summary = "创建商品")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult create(@RequestBody PmsProductParam productParam) {
@@ -67,7 +65,7 @@ public class PmsProductController {
      * @param id 商品 ID
      * @return 商品编辑信息
      */
-    @ApiOperation("根据商品id获取商品编辑信息")
+    @Operation(summary = "根据商品id获取商品编辑信息")
     @RequestMapping(value = "/updateInfo/{id}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<PmsProductResult> getUpdateInfo(@PathVariable Long id) {
@@ -82,7 +80,7 @@ public class PmsProductController {
      * @param productParam 待更新的商品信息
      * @return 操作结果
      */
-    @ApiOperation("根据ID修改商品信息")
+    @Operation(summary = "根据ID修改商品信息")
     @RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult update(@PathVariable Long id, @RequestBody PmsProductParam productParam) {
@@ -104,7 +102,7 @@ public class PmsProductController {
      * @param pageNum 页码，默认第1页
      * @return 分页商品列表
      */
-    @ApiOperation("查询商品")
+    @Operation(summary = "查询商品")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<CommonPage<PmsProduct>> getList(PmsProductQueryParam productQueryParam,
@@ -120,7 +118,7 @@ public class PmsProductController {
      * @param keyword 搜索关键词
      * @return 商品列表
      */
-    @ApiOperation("根据商品名称或货号模糊查询")
+    @Operation(summary = "根据商品名称或货号模糊查询")
     @RequestMapping(value = "/simpleList", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<List<PmsProduct>> getList(String keyword) {
@@ -135,7 +133,7 @@ public class PmsProductController {
      * @param detail 审核详情/原因
      * @return 操作结果
      */
-    @ApiOperation("批量修改审核状态")
+    @Operation(summary = "批量修改审核状态")
     @RequestMapping(value = "/update/verifyStatus", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult updateVerifyStatus(@RequestParam("ids") List<Long> ids,
@@ -155,7 +153,7 @@ public class PmsProductController {
      * @param publishStatus 上架状态：0-下架，1-上架
      * @return 操作结果
      */
-    @ApiOperation("批量上下架商品")
+    @Operation(summary = "批量上下架商品")
     @RequestMapping(value = "/update/publishStatus", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult updatePublishStatus(@RequestParam("ids") List<Long> ids,
@@ -178,7 +176,7 @@ public class PmsProductController {
      * @param recommendStatus 推荐状态：0-不推荐，1-推荐
      * @return 操作结果
      */
-    @ApiOperation("批量推荐商品")
+    @Operation(summary = "批量推荐商品")
     @RequestMapping(value = "/update/recommendStatus", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult updateRecommendStatus(@RequestParam("ids") List<Long> ids,
@@ -201,7 +199,7 @@ public class PmsProductController {
      * @param newStatus 新品状态：0-非新品，1-新品
      * @return 操作结果
      */
-    @ApiOperation("批量设为新品")
+    @Operation(summary = "批量设为新品")
     @RequestMapping(value = "/update/newStatus", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult updateNewStatus(@RequestParam("ids") List<Long> ids,
@@ -225,7 +223,7 @@ public class PmsProductController {
      * @param deleteStatus 删除状态：0-未删除，1-删除
      * @return 操作结果
      */
-    @ApiOperation("批量修改删除状态")
+    @Operation(summary = "批量修改删除状态")
     @RequestMapping(value = "/update/deleteStatus", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult updateDeleteStatus(@RequestParam("ids") List<Long> ids,
@@ -249,7 +247,7 @@ public class PmsProductController {
      * @param productId 商品 ID
      * @return 审核记录列表
      */
-    @ApiOperation("根据商品ID查询审核记录")
+    @Operation(summary = "根据商品ID查询审核记录")
     @RequestMapping(value = "/vertifyRecord/{productId}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<List<PmsProductVerifyRecord>> getVerifyRecord(@PathVariable Long productId) {

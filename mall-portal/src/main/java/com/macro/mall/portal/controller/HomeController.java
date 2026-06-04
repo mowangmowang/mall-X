@@ -9,8 +9,7 @@ import com.macro.mall.portal.domain.HomeContentResult;
 import com.macro.mall.portal.domain.PrefrenceAreaResult;
 import com.macro.mall.portal.domain.SubjectDetail;
 import com.macro.mall.portal.service.HomeService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,14 +21,13 @@ import java.util.List;
  * 提供首页展示所需的各种数据，包括轮播广告、推荐商品、商品分类、专题等
  */
 @RestController
-@Api(tags = "HomeController")
 @Tag(name = "HomeController", description = "首页内容管理")
 @RequestMapping("/home")
 public class HomeController {
     @Autowired
     private HomeService homeService;
 
-    @ApiOperation("首页内容信息展示")
+    @Operation(summary = "首页内容信息展示")
     @RequestMapping(value = "/content", method = RequestMethod.GET)
     public CommonResult<HomeContentResult> content() {
         // 获取首页所有数据：轮播广告、推荐品牌、新品、热销商品等
@@ -37,7 +35,7 @@ public class HomeController {
         return CommonResult.success(contentResult);
     }
 
-    @ApiOperation("分页获取推荐商品")
+    @Operation(summary = "分页获取推荐商品")
     @RequestMapping(value = "/recommendProductList", method = RequestMethod.GET)
     public CommonResult<List<PmsProduct>> recommendProductList(@RequestParam(value = "pageSize", defaultValue = "4") Integer pageSize,
                                                                @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
@@ -46,7 +44,7 @@ public class HomeController {
         return CommonResult.success(productList);
     }
 
-    @ApiOperation("获取首页商品分类")
+    @Operation(summary = "获取首页商品分类")
     @RequestMapping(value = "/productCateList/{parentId}", method = RequestMethod.GET)
     public CommonResult<List<PmsProductCategory>> getProductCateList(@PathVariable Long parentId) {
         // 根据父分类ID查询子分类列表，用于构建分类导航
@@ -54,7 +52,7 @@ public class HomeController {
         return CommonResult.success(productCategoryList);
     }
 
-    @ApiOperation("根据分类分页获取专题")
+    @Operation(summary = "根据分类分页获取专题")
     @RequestMapping(value = "/subjectList", method = RequestMethod.GET)
     public CommonResult<List<CmsSubject>> getSubjectList(@RequestParam(required = false) Long cateId,
                                                          @RequestParam(value = "pageSize", defaultValue = "4") Integer pageSize,
@@ -64,7 +62,7 @@ public class HomeController {
         return CommonResult.success(subjectList);
     }
 
-    @ApiOperation("分页获取人气推荐商品")
+    @Operation(summary = "分页获取人气推荐商品")
     @RequestMapping(value = "/hotProductList", method = RequestMethod.GET)
     public CommonResult<List<PmsProduct>> hotProductList(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                                          @RequestParam(value = "pageSize", defaultValue = "6") Integer pageSize) {
@@ -73,7 +71,7 @@ public class HomeController {
         return CommonResult.success(productList);
     }
 
-    @ApiOperation("分页获取新品推荐商品")
+    @Operation(summary = "分页获取新品推荐商品")
     @RequestMapping(value = "/newProductList", method = RequestMethod.GET)
     public CommonResult<List<PmsProduct>> newProductList(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                                          @RequestParam(value = "pageSize", defaultValue = "6") Integer pageSize) {
@@ -82,7 +80,7 @@ public class HomeController {
         return CommonResult.success(productList);
     }
 
-    @ApiOperation("获取专题详情及关联商品")
+    @Operation(summary = "获取专题详情及关联商品")
     @RequestMapping(value = "/subject/{id}", method = RequestMethod.GET)
     public CommonResult<SubjectDetail> getSubjectDetail(@PathVariable Long id) {
         // 查询专题详细信息及其关联的商品列表
@@ -90,7 +88,7 @@ public class HomeController {
         return CommonResult.success(detail);
     }
 
-    @ApiOperation("获取优选专区列表")
+    @Operation(summary = "获取优选专区列表")
     @RequestMapping(value = "/prefrenceAreaList", method = RequestMethod.GET)
     public CommonResult<List<PrefrenceAreaResult>> getPrefrenceAreaList() {
         // 查询优选专区列表，用于展示精选商品区域
@@ -98,14 +96,14 @@ public class HomeController {
         return CommonResult.success(list);
     }
 
-    @ApiOperation("获取话题详情")
+    @Operation(summary = "获取话题详情")
     @RequestMapping(value = "/topic/{id}", method = RequestMethod.GET)
     public CommonResult<CmsTopic> getTopicDetail(@PathVariable Long id) {
         CmsTopic topic = homeService.getTopicDetail(id);
         return CommonResult.success(topic);
     }
 
-    @ApiOperation("分页获取进行中的热门话题")
+    @Operation(summary = "分页获取进行中的热门话题")
     @RequestMapping(value = "/topicList", method = RequestMethod.GET)
     public CommonResult<List<CmsTopic>> getTopicList(@RequestParam(value = "pageSize", defaultValue = "4") Integer pageSize,
                                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {

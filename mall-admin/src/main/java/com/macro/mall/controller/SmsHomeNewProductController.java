@@ -4,8 +4,7 @@ import com.macro.mall.common.api.CommonPage;
 import com.macro.mall.common.api.CommonResult;
 import com.macro.mall.model.SmsHomeNewProduct;
 import com.macro.mall.service.SmsHomeNewProductService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,14 +15,13 @@ import java.util.List;
 /**
  * 首页新品管理Controller */
 @Controller
-@Api(tags = "SmsHomeNewProductController")
 @Tag(name = "SmsHomeNewProductController", description = "首页新品管理")
 @RequestMapping("/home/newProduct")
 public class SmsHomeNewProductController {
     @Autowired
     private SmsHomeNewProductService homeNewProductService;
 
-    @ApiOperation("批量添加首页新品")
+    @Operation(summary = "批量添加首页新品")
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult create(@RequestBody List<SmsHomeNewProduct> homeNewProductList) {
@@ -34,7 +32,7 @@ public class SmsHomeNewProductController {
         return CommonResult.failed();
     }
 
-    @ApiOperation("修改首页新品排序")
+    @Operation(summary = "修改首页新品排序")
     @RequestMapping(value = "/update/sort/{id}", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult updateSort(@PathVariable Long id, Integer sort) {
@@ -45,7 +43,7 @@ public class SmsHomeNewProductController {
         return CommonResult.failed();
     }
 
-    @ApiOperation("批量删除首页新品")
+    @Operation(summary = "批量删除首页新品")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult delete(@RequestParam("ids") List<Long> ids) {
@@ -56,7 +54,7 @@ public class SmsHomeNewProductController {
         return CommonResult.failed();
     }
 
-    @ApiOperation("批量修改首页新品状态")
+    @Operation(summary = "批量修改首页新品状态")
     @RequestMapping(value = "/update/recommendStatus", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult updateRecommendStatus(@RequestParam("ids") List<Long> ids, @RequestParam Integer recommendStatus) {
@@ -67,7 +65,7 @@ public class SmsHomeNewProductController {
         return CommonResult.failed();
     }
 
-    @ApiOperation("分页查询首页新品")
+    @Operation(summary = "分页查询首页新品")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<CommonPage<SmsHomeNewProduct>> list(@RequestParam(value = "productName", required = false) String productName,

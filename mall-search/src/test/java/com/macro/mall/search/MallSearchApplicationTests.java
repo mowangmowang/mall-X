@@ -5,9 +5,8 @@ import com.macro.mall.search.domain.EsProduct;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.IndexOperations;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.Map;
@@ -21,6 +20,9 @@ import java.util.Map;
  *   <li>Elasticsearch 索引映射测试 (Index Mapping Test)</li>
  * </ul>
  * </p>
+ * <p>
+ * 需要 MySQL 和 Elasticsearch 真实服务。
+ * </p>
  *
  * @author alan
  * @since 1.0
@@ -30,36 +32,36 @@ public class MallSearchApplicationTests {
     @Autowired
     private EsProductDao productDao;
     @Autowired
-    private ElasticsearchRestTemplate elasticsearchTemplate;
-    
-    /**
-     * 上下文加载测试 (Context Load Test)
-     * 验证 Spring Boot 应用上下文是否正常加载
-     */
+    private ElasticsearchOperations elasticsearchOperations;
+
     @Test
     public void contextLoads() {
     }
-    
-    /**
-     * 测试商品数据查询 (Test Product Data Query)
-     * 验证 MyBatis DAO 是否能正确从 MySQL 查询商品数据并映射为 EsProduct 对象
-     */
+
     @Test
     public void testGetAllEsProductList(){
         List<EsProduct> esProductList = productDao.getAllEsProductList(null);
         System.out.print(esProductList);
     }
-    
-    /**
-     * 测试 Elasticsearch 索引映射 (Test Elasticsearch Index Mapping)
-     * 验证 EsProduct 实体是否能正确映射为 Elasticsearch 索引结构
-     */
+
     @Test
-    public void testEsProductMapping(){
-        IndexOperations indexOperations = elasticsearchTemplate.indexOps(EsProduct.class);
-        indexOperations.putMapping(indexOperations.createMapping(EsProduct.class));
+    public void testEsProductMapping_usesIkAnalyzer(){
+        IndexOperations indexOperations = elasticsearchOperations.indexOps(EsProduct.class);
         Map mapping = indexOperations.getMapping();
         System.out.println(mapping);
+        org.junit.jupiter.api.Assertions.assertNotNull(mapping, "pms 索引 mapping 应存在");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> properties = (Map<String, Object>) mapping.get("properties");
+        org.junit.jupiter.api.Assertions.assertNotNull(properties, "pms properties 应存在");
+        for (String field : new String[]{"name", "subTitle", "keywords"}) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> fieldMapping = (Map<String, Object>) properties.get(field);
+            org.junit.jupiter.api.Assertions.assertNotNull(fieldMapping, field + " mapping 应存在");
+            org.junit.jupiter.api.Assertions.assertEquals("text", fieldMapping.get("type"),
+                    field + " 字段类型应为 text");
+            org.junit.jupiter.api.Assertions.assertEquals("ik_max_word", fieldMapping.get("analyzer"),
+                    field + " 字段应使用 ik_max_word 分词器（中文品牌词识别）");
+        }
     }
 
 }

@@ -39,12 +39,14 @@ services:
       - 5672:5672
       - 15672:15672
   elasticsearch:
-    image: elasticsearch:7.17.3
+    image: elasticsearch:8.11.0
     container_name: elasticsearch
     environment:
       - "cluster.name=elasticsearch" #设置集群名称为elasticsearch
       - "discovery.type=single-node" #以单一节点模式启动
       - "ES_JAVA_OPTS=-Xms512m -Xmx1024m" #设置es使用的jvm内存大小
+      - "xpack.security.enabled=false" #禁用安全认证（开发环境）
+      - "xpack.security.enrollment.enabled=false" #禁用安全注册
     volumes:
       - /mydata/elasticsearch/plugins:/usr/share/elasticsearch/plugins #插件文件目录挂载
       - /mydata/elasticsearch/data:/usr/share/elasticsearch/data #数据文件目录挂载
@@ -52,7 +54,7 @@ services:
       - 9200:9200
       - 9300:9300
   logstash:
-    image: logstash:7.17.3
+    image: logstash:8.11.0
     container_name: logstash
     environment:
       - TZ=Asia/Shanghai
@@ -68,7 +70,7 @@ services:
       - 4562:4562
       - 4563:4563
   kibana:
-    image: kibana:7.17.3
+    image: kibana:8.11.0
     container_name: kibana
     links:
       - elasticsearch:es #可以用es这个域名访问elasticsearch服务

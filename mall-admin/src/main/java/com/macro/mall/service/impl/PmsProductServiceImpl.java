@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.macro.mall.bo.AdminUserDetails;
+import com.macro.mall.common.util.ImageUrlRewriter;
 import com.macro.mall.dao.*;
 import com.macro.mall.dto.PmsProductParam;
 import com.macro.mall.dto.PmsProductQueryParam;
@@ -139,6 +140,12 @@ public class PmsProductServiceImpl implements PmsProductService {
      */
     @Autowired
     private PmsProductVerifyRecordDao productVerifyRecordDao;
+
+    /**
+     * 图片 URL 改写器
+     */
+    @Autowired
+    private ImageUrlRewriter imageUrlRewriter;
 
     /**
      * 创建商品
@@ -320,7 +327,12 @@ public class PmsProductServiceImpl implements PmsProductService {
         if (productQueryParam.getProductCategoryId() != null) {
             criteria.andProductCategoryIdEqualTo(productQueryParam.getProductCategoryId());
         }
-        return productMapper.selectByExample(productExample);
+        List<PmsProduct> products = productMapper.selectByExample(productExample);
+        // 改写商品图 OSS URL 为代理 URL
+        if (products != null) {
+            products.forEach(p -> p.setPic(imageUrlRewriter.rewrite(p.getPic())));
+        }
+        return products;
     }
 
     @Override
@@ -407,7 +419,11 @@ public class PmsProductServiceImpl implements PmsProductService {
             criteria.andNameLike("%" + keyword + "%");
             productExample.or().andDeleteStatusEqualTo(0).andProductSnLike("%" + keyword + "%");
         }
-        return productMapper.selectByExample(productExample);
+        List<PmsProduct> products = productMapper.selectByExample(productExample);
+        if (products != null) {
+            products.forEach(p -> p.setPic(imageUrlRewriter.rewrite(p.getPic())));
+        }
+        return products;
     }
 
     @Override

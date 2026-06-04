@@ -1,6 +1,6 @@
 package com.macro.mall.ai.domain;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 退货建议结果 (Return Suggestion Result)
@@ -36,9 +36,9 @@ public class ReturnSuggestionResult {
      * <p>从数据库启用的退货原因列表中选择，如“质量问题”、“商品损坏”等</p>
      * <p>仅在 step=3 且 finished=true 时提供，step=1/2 时为空字符串</p>
      */
-    @ApiModelProperty(value = "推荐的退货原因", example = "质量问题")
+    @Schema(description = "推荐的退货原因", example = "质量问题")
     private String suggestedReason;
-    
+
     /**
      * 推荐的问题描述 (Suggested Description)
      * <p>标准化的问题描述，基于用户多轮对话内容生成</p>
@@ -46,32 +46,32 @@ public class ReturnSuggestionResult {
      * <p>正确示例：“商品镜头内部进灰，从购买时一直存在，影响拍照效果”</p>
      * <p>错误示例：“该商品一直存在故障”（太笼统）</p>
      */
-    @ApiModelProperty(value = "推荐的问题描述", example = "商品收到后发现屏幕有明显裂痕，影响正常使用")
+    @Schema(description = "推荐的问题描述", example = "商品收到后发现屏幕有明显裂痕，影响正常使用")
     private String suggestedDescription;
-    
+
     /**
      * 问题分类 (Problem Category)
      * <p>对问题进行分类，便于后续统计分析</p>
      * <p>可选值：硬件故障、软件问题、商品不符、物流损坏、主观原因</p>
      */
-    @ApiModelProperty(value = "问题分类", example = "硬件故障", 
-                      allowableValues = "硬件故障,软件问题,商品不符,物流损坏,主观原因")
+    @Schema(description = "问题分类", example = "硬件故障",
+            allowableValues = {"硬件故障", "软件问题", "商品不符", "物流损坏", "主观原因"})
     private String category;
-    
+
     /**
      * 置信度 (Confidence Level)
      * <p>AI 对推荐结果的信心程度</p>
      * <p>可选值：high（高）、medium（中）、low（低）</p>
      */
-    @ApiModelProperty(value = "置信度", example = "high", allowableValues = "high,medium,low")
+    @Schema(description = "置信度", example = "high", allowableValues = {"high", "medium", "low"})
     private String confidence;
-    
+
     /**
      * 分析说明 (Analysis Note)
      * <p>AI 对问题的分析过程说明，用于调试和理解 AI 的推理逻辑</p>
      * <p>示例：“根据描述'无法开机'，判断为硬件故障，匹配'质量问题'原因”</p>
      */
-    @ApiModelProperty(value = "分析说明", example = "根据描述'无法开机'，判断为硬件故障")
+    @Schema(description = "分析说明", example = "根据描述'无法开机'，判断为硬件故障")
     private String analysisNote;
 
     /**
@@ -80,7 +80,7 @@ public class ReturnSuggestionResult {
      * <p>step=1/2 时：询问故障现象或追问细节</p>
      * <p>step=3 时：确认性语句，如“明白了，这确实影响了您的正常使用...”</p>
      */
-    @ApiModelProperty(value = "引导问题，用于下一步引导用户", example = "请问商品是否有物理损坏？")
+    @Schema(description = "引导问题，用于下一步引导用户", example = "请问商品是否有物理损坏？")
     private String guideQuestion;
 
     /**
@@ -91,7 +91,7 @@ public class ReturnSuggestionResult {
      *   <li>true - 引导已完成，前端应自动填写表单并关闭 AI 弹窗</li>
      * </ul>
      */
-    @ApiModelProperty(value = "是否完成引导", example = "false")
+    @Schema(description = "是否完成引导", example = "false")
     private Boolean finished;
 
     // Getter and Setter methods with detailed comments

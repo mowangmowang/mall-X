@@ -1,6 +1,6 @@
 package com.macro.mall.portal.domain;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,14 +13,14 @@ import java.util.List;
 @Data
 @EqualsAndHashCode
 public class OrderParam {
-    @ApiModelProperty("收货地址ID")
+    @Schema(description = "收货地址ID")
     private Long memberReceiveAddressId;
-    @ApiModelProperty("优惠券ID，不使用则为null")
+    @Schema(description = "优惠券ID，不使用则为null")
     private Long couponId;
-    @ApiModelProperty("使用的积分数，0表示不使用积分")
+    @Schema(description = "使用的积分数，0表示不使用积分")
     private Integer useIntegration;
-    @ApiModelProperty("支付方式：0->未支付；1->支付宝；2->微信")
+    @Schema(description = "支付方式：0->未支付；1->支付宝；2->微信")
     private Integer payType;
-    @ApiModelProperty("被选中的购物车商品ID列表")
+    @Schema(description = "被选中的购物车商品ID列表")
     private List<Long> cartIds;
 }

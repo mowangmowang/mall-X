@@ -33,7 +33,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -242,7 +242,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
      */
     @Override
     public String refreshToken(String oldToken) {
-        return jwtTokenUtil.refreshHeadToken(oldToken);
+        return jwtTokenUtil.refreshToken(oldToken);
     }
 
     /**

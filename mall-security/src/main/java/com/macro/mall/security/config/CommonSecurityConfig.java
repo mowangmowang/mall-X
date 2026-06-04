@@ -17,6 +17,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * 3. 异常处理器（认证失败、权限不足）
  * 4. 动态权限组件（条件加载，仅在业务模块提供 DynamicSecurityService 时生效）
  * </p>
+ * <p>
+ * 本类是 mall-security 模块对外暴露的"门面"，业务模块（mall-admin / mall-portal）通过
+ * Maven 依赖继承即可获得所有安全相关 Bean，无需各自实现。
+ * </p>
+ * <p>
+ * <b>关于 CORS</b>：CORS 配置已迁出到 {@code mall-common-cors} 模块（{@code CorsConfigurationSource}
+ * Bean 由该模块提供），本类不再负责 CorsProperties 绑定。
+ * </p>
  */
 @Configuration
 public class CommonSecurityConfig {

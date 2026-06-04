@@ -1,9 +1,9 @@
 package com.macro.mall.ai.domain;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 /**
  * 退货建议请求参数 (Return Suggestion Request)
@@ -44,28 +44,28 @@ public class ReturnSuggestionRequest {
      */
     @NotBlank(message = "问题描述不能为空")
     @Size(max = 1000, message = "问题描述长度不能超过1000字符")
-    @ApiModelProperty(value = "用户问题描述", required = true, example = "商品收到后发现屏幕有裂痕")
+    @Schema(description = "用户问题描述", example = "商品收到后发现屏幕有裂痕", nullable = false)
     private String issue;
-    
+
     /**
      * 商品名称 (Product Name)
      * <p>可选字段，帮助 AI 更准确地理解问题背景</p>
      */
-    @ApiModelProperty(value = "商品名称", example = "iPhone 15 Pro")
+    @Schema(description = "商品名称", example = "iPhone 15 Pro")
     private String productName;
-    
+
     /**
      * 商品属性 (Product Attributes)
      * <p>如“颜色:黑色,容量:256GB”，帮助 AI 了解具体配置</p>
      */
-    @ApiModelProperty(value = "商品属性", example = "颜色:黑色,容量:256GB")
+    @Schema(description = "商品属性", example = "颜色:黑色,容量:256GB")
     private String productAttr;
-    
+
     /**
      * 订单编号 (Order Serial Number)
      * <p>用于日志记录和数据分析，可选字段</p>
      */
-    @ApiModelProperty(value = "订单编号", example = "202401010001")
+    @Schema(description = "订单编号", example = "202401010001")
     private String orderSn;
 
     /**
@@ -73,7 +73,7 @@ public class ReturnSuggestionRequest {
      * <p>用于多轮对话状态管理，关联同一用户的多次请求</p>
      * <p>由前端生成 UUID，首次调用时创建，后续调用保持不变</p>
      */
-    @ApiModelProperty(value = "会话ID，用于多轮对话状态管理", example = "session_123456")
+    @Schema(description = "会话ID，用于多轮对话状态管理", example = "session_123456")
     private String sessionId;
 
     /**
@@ -86,7 +86,7 @@ public class ReturnSuggestionRequest {
      * </ul>
      * <p>由前端维护，每次调用后自增</p>
      */
-    @ApiModelProperty(value = "当前引导步骤 (1-3)", example = "1")
+    @Schema(description = "当前引导步骤 (1-3)", example = "1")
     private Integer step;
 
     // Getter and Setter methods with detailed comments

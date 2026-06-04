@@ -1,6 +1,7 @@
 package com.macro.mall.portal.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.macro.mall.common.util.ImageUrlRewriter;
 import com.macro.mall.mapper.*;
 import com.macro.mall.model.*;
 import java.util.ArrayList;
@@ -70,6 +71,13 @@ public class HomeServiceImpl implements HomeService {
     @Autowired
     private CmsTopicMapper topicMapper;
 
+    /**
+     * 图片 URL 改写器（OSS 域名前缀的 URL 自动改写为后端代理 URL）
+     * <p>解决前端 {@code <img>} 加载 OSS 图片 403 的问题，详见 {@link ImageUrlRewriter}。</p>
+     */
+    @Autowired
+    private ImageUrlRewriter imageUrlRewriter;
+
     @Override
     public HomeContentResult content() {
         HomeContentResult result = new HomeContentResult();
@@ -96,7 +104,10 @@ public class HomeServiceImpl implements HomeService {
         example.createCriteria()
                 .andDeleteStatusEqualTo(0)
                 .andPublishStatusEqualTo(1);
-        return productMapper.selectByExample(example);
+        List<PmsProduct> products = productMapper.selectByExample(example);
+        // 改写 OSS 域名前缀的 pic 字段为后端代理 URL
+        products.forEach(p -> p.setPic(imageUrlRewriter.rewrite(p.getPic())));
+        return products;
     }
 
     @Override
@@ -180,6 +191,10 @@ public class HomeServiceImpl implements HomeService {
                 }
             }
         }
+        // 改写专题封面图 OSS URL 为代理 URL
+        if (subjectList != null) {
+            subjectList.forEach(s -> s.setPic(imageUrlRewriter.rewrite(s.getPic())));
+        }
         return subjectList;
     }
 
@@ -219,6 +234,11 @@ public class HomeServiceImpl implements HomeService {
                 subject.setPic(firstProduct.getPic());
             }
         }
+        // 改写专题封面图与所有商品图的 OSS URL 为代理 URL
+        if (subject != null) {
+            subject.setPic(imageUrlRewriter.rewrite(subject.getPic()));
+        }
+        productList.forEach(p -> p.setPic(imageUrlRewriter.rewrite(p.getPic())));
         return detail;
     }
 
@@ -242,6 +262,8 @@ public class HomeServiceImpl implements HomeService {
                     productList.add(product);
                 }
             }
+            // 改写优选商品图 OSS URL 为代理 URL
+            productList.forEach(p -> p.setPic(imageUrlRewriter.rewrite(p.getPic())));
             result.setProductList(productList);
             resultList.add(result);
         }
@@ -306,7 +328,12 @@ public class HomeServiceImpl implements HomeService {
         SmsHomeAdvertiseExample example = new SmsHomeAdvertiseExample();
         example.createCriteria().andTypeEqualTo(1).andStatusEqualTo(1);
         example.setOrderByClause("sort desc");
-        return advertiseMapper.selectByExample(example);
+        List<SmsHomeAdvertise> advertiseList = advertiseMapper.selectByExample(example);
+        // 改写首页广告图 OSS URL 为代理 URL
+        if (advertiseList != null) {
+            advertiseList.forEach(a -> a.setPic(imageUrlRewriter.rewrite(a.getPic())));
+        }
+        return advertiseList;
     }
 
     //根据时间获取秒杀活动

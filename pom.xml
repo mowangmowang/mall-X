@@ -11,6 +11,8 @@
 
     <modules>
         <module>mall-common</module>
+        <module>mall-common-cors</module>
+        <module>mall-common-pic</module>
         <module>mall-mbg</module>
         <module>mall-security</module>
         <module>mall-admin</module>
@@ -47,6 +49,8 @@
         <minio.version>8.5.9</minio.version>
         <springdoc-openapi.version>2.6.0</springdoc-openapi.version>
         <mall-common.version>1.0-SNAPSHOT</mall-common.version>
+        <mall-common-cors.version>1.0-SNAPSHOT</mall-common-cors.version>
+        <mall-common-pic.version>1.0-SNAPSHOT</mall-common-pic.version>
         <mall-mbg.version>1.0-SNAPSHOT</mall-mbg.version>
         <mall-security.version>1.0-SNAPSHOT</mall-security.version>
     </properties>
@@ -88,6 +92,18 @@
                 <groupId>com.macro.mall</groupId>
                 <artifactId>mall-common</artifactId>
                 <version>${mall-common.version}</version>
+            </dependency>
+            <!--mall CORS 跨域统一模块-->
+            <dependency>
+                <groupId>com.macro.mall</groupId>
+                <artifactId>mall-common-cors</artifactId>
+                <version>${mall-common-cors.version}</version>
+            </dependency>
+            <!--mall 图片代理模块-->
+            <dependency>
+                <groupId>com.macro.mall</groupId>
+                <artifactId>mall-common-pic</artifactId>
+                <version>${mall-common-pic.version}</version>
             </dependency>
             <!--mall中MBG生成模块-->
             <dependency>
@@ -142,6 +158,17 @@
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis</artifactId>
                 <version>${mybatis.version}</version>
+            </dependency>
+            <!-- MyBatis Spring Boot Starter (Spring Boot 3 兼容版本) -->
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>3.0.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>3.0.3</version>
             </dependency>
 <!--Mysql数据库驱动-->
             <dependency>

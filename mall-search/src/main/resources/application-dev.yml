@@ -18,6 +18,15 @@ spring:
         enabled: true
   elasticsearch:
     uris: localhost:9200
+    # 连接超时配置（毫秒）
+    connection-timeout: 5s
+    socket-timeout: 30s
+
+# Actuator 健康检查配置
+management:
+  health:
+    elasticsearch:
+      enabled: false
 
 logging:
   level:
@@ -27,3 +36,14 @@ logging:
 logstash:
   host: localhost
   enableInnerLog: false
+
+# ====== 跨域策略（由 mall-common-cors 统一读取）======
+# 生产环境必须把 allowed-origins 改为具体域名
+mall:
+  security:
+    cors:
+      allowed-origins: "*"
+      allowed-methods: "*"
+      allowed-headers: "*"
+      allow-credentials: true
+      max-age: 3600
