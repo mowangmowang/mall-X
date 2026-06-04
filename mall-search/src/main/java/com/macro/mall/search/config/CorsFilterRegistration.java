@@ -1,5 +1,6 @@
 package com.macro.mall.search.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +39,7 @@ public class CorsFilterRegistration {
      * @return FilterRegistrationBean 实例
      */
     @Bean
-    public FilterRegistrationBean<CorsFilter> corsFilterRegistration(CorsConfigurationSource source) {
+    public FilterRegistrationBean<CorsFilter> corsFilter(@Qualifier("corsConfigurationSource") CorsConfigurationSource source) {
         CorsFilter filter = new CorsFilter(source);
         FilterRegistrationBean<CorsFilter> registration = new FilterRegistrationBean<>(filter);
         registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
