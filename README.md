@@ -1,5 +1,17 @@
 # Mall 电商系统 - 完整微服务架构解决方案
 
+<div align="center">
+
+**🌐 Languages: [🇺🇸 English](README.en.md) | [🇨🇳 简体中文](README.md)**
+
+</div>
+
+> **⚠️ 本项目 Fork 自 [macrozheng/mall](https://github.com/macrozheng/mall)**，基于 Apache 2.0 协议。
+> 完整差异列表见 [NOTICE](./NOTICE) 与 [CHANGELOG.md](./CHANGELOG.md)。
+> 主要变更：Spring Boot 2.7.5 → 3.5.14、Java 8 → 17、`mall-common-cors` 独立模块、`mall-common-pic` 图片代理、AI 助手等。
+
+---
+
 ## 📋 项目简介
 
 **Mall** 是一套基于 Spring Boot + Vue.js 的现代化电商系统，采用前后端分离架构，集成了 Elasticsearch、RabbitMQ、Redis、MongoDB、MinIO 等主流中间件，提供完整的电商业务功能，包括商品管理、订单处理、会员系统、营销推广、智能搜索等核心模块。
@@ -257,8 +269,8 @@ mall/
 ### 1. 克隆项目
 
 ```bash
-git clone https://github.com/macrozheng/mall.git
-cd mall
+git clone https://github.com/mowangmowang/mall-X.git
+cd mall-X
 ```
 
 ### 2. 数据库初始化
