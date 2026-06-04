@@ -65,3 +65,14 @@ aliyun:
     callback: http://39.98.190.128:8080/aliyun/oss/callback # 文件上传成功后的回调地址
     dir:
       prefix: mall/images/ # 上传文件夹路径前缀
+
+# ====== 跨域策略（由 mall-security 统一读取）======
+# 生产环境必须把 allowed-origins 改为具体域名
+mall:
+  security:
+    cors:
+      allowed-origins: "*"
+      allowed-methods: "*"
+      allowed-headers: "*"
+      allow-credentials: true
+      max-age: 3600

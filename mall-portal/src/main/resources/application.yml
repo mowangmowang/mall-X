@@ -59,3 +59,13 @@ rabbitmq:
     name:
       cancelOrder: cancelOrderQueue
 
+# ====== 跨域策略（由 mall-security 统一读取）======
+# 生产环境必须把 allowed-origins 改为具体域名
+mall:
+  security:
+    cors:
+      allowed-origins: "*"
+      allowed-methods: "*"
+      allowed-headers: "*"
+      allow-credentials: true
+      max-age: 3600
