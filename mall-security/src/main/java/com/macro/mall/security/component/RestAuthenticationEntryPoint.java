@@ -44,24 +44,27 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
      */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        // 设置跨域资源共享 (CORS) 允许所有来源访问
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        
+        // 注意：不再手工设置 Access-Control-Allow-Origin 响应头
+        // 历史原因：早期 GlobalCorsConfig 未生效时，由这里兜底写入 CORS 头。
+        // 现在 CorsConfigurationSource 已在 SecurityConfig.filterChain 中通过 .cors() 接入，
+        // 所有响应（包括 401 异常响应）都会经过 CORS 处理，无需也不应在异常处理器中重复注入。
+        // 手工注入反而会与 setAllowCredentials(true) 冲突（Origin: * + credentials 会被浏览器拒绝）。
+
         // 禁止浏览器缓存响应，确保每次都能获取最新的认证状态
         response.setHeader("Cache-Control","no-cache");
-        
+
         // 设置响应字符编码为 UTF-8，支持中文内容
         response.setCharacterEncoding("UTF-8");
-        
+
         // 设置响应内容类型为 JSON 格式
         response.setContentType("application/json");
-        
+
         // 构建统一的错误响应结果
         // CommonResult.unauthorized() 创建标准的未授权响应（HTTP 401）
         // authException.getMessage() 获取具体的错误信息（如："Full authentication is required to access this resource"）
         // JSONUtil.parse() 将 CommonResult 对象序列化为 JSON 字符串
         response.getWriter().println(JSONUtil.parse(CommonResult.unauthorized(authException.getMessage())));
-        
+
         // 强制刷新输出流，确保响应立即发送给客户端
         response.getWriter().flush();
     }
