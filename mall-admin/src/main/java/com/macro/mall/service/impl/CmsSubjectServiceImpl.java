@@ -2,6 +2,7 @@ package com.macro.mall.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
+import com.macro.mall.common.util.ImageUrlRewriter;
 import com.macro.mall.mapper.CmsSubjectMapper;
 import com.macro.mall.model.CmsSubject;
 import com.macro.mall.model.CmsSubjectExample;
@@ -18,9 +19,16 @@ public class CmsSubjectServiceImpl implements CmsSubjectService {
     @Autowired
     private CmsSubjectMapper subjectMapper;
 
+    @Autowired
+    private ImageUrlRewriter imageUrlRewriter;
+
     @Override
     public List<CmsSubject> listAll() {
-        return subjectMapper.selectByExample(new CmsSubjectExample());
+        List<CmsSubject> subjects = subjectMapper.selectByExample(new CmsSubjectExample());
+        if (subjects != null) {
+            subjects.forEach(s -> s.setPic(imageUrlRewriter.rewrite(s.getPic())));
+        }
+        return subjects;
     }
 
     @Override
@@ -31,6 +39,10 @@ public class CmsSubjectServiceImpl implements CmsSubjectService {
         if (!StrUtil.isEmpty(keyword)) {
             criteria.andTitleLike("%" + keyword + "%");
         }
-        return subjectMapper.selectByExample(example);
+        List<CmsSubject> subjects = subjectMapper.selectByExample(example);
+        if (subjects != null) {
+            subjects.forEach(s -> s.setPic(imageUrlRewriter.rewrite(s.getPic())));
+        }
+        return subjects;
     }
 }

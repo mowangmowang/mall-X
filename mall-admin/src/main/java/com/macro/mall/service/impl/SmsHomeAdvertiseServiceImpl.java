@@ -2,6 +2,7 @@ package com.macro.mall.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
+import com.macro.mall.common.util.ImageUrlRewriter;
 import com.macro.mall.mapper.SmsHomeAdvertiseMapper;
 import com.macro.mall.model.SmsHomeAdvertise;
 import com.macro.mall.model.SmsHomeAdvertiseExample;
@@ -20,6 +21,9 @@ import java.util.List;
 public class SmsHomeAdvertiseServiceImpl implements SmsHomeAdvertiseService {
     @Autowired
     private SmsHomeAdvertiseMapper advertiseMapper;
+
+    @Autowired
+    private ImageUrlRewriter imageUrlRewriter;
 
     @Override
     public int create(SmsHomeAdvertise advertise) {
@@ -86,6 +90,11 @@ public class SmsHomeAdvertiseServiceImpl implements SmsHomeAdvertiseService {
             }
         }
         example.setOrderByClause("sort desc");
-        return advertiseMapper.selectByExample(example);
+        List<SmsHomeAdvertise> advertiseList = advertiseMapper.selectByExample(example);
+        // 改写首页广告图 OSS URL 为代理 URL
+        if (advertiseList != null) {
+            advertiseList.forEach(a -> a.setPic(imageUrlRewriter.rewrite(a.getPic())));
+        }
+        return advertiseList;
     }
 }
