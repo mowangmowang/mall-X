@@ -63,7 +63,11 @@ Multi-module Maven project. Base package: `com.macro.mall`.
 - **MinIO**: endpoint must be port `9000` (API), not `9001` (console).
 - **ES Java client version** is managed by Spring Boot 3.5.14 BOM (`elasticsearch-client.version` = `8.18.8`). Do NOT manually pin `co.elastic.clients:elasticsearch-java` or `org.elasticsearch.client:elasticsearch-rest-client` in `mall-search/pom.xml` — let the BOM handle it. Manual pinning was an old 2.x-era workaround and is now wrong (locks to a stale version).
 - **ES 8.x local dev requires HTTP (no SSL)**: The default `xpack.security.http.ssl.enabled: true` (set by ES 8.x auto-config) makes ES reject plain HTTP connections with `plaintext http traffic on an https channel`. For local dev, set `xpack.security.enabled`, `xpack.security.http.ssl.enabled`, `xpack.security.transport.ssl.enabled` all to `false` in `E:\ElasticSearch\elasticsearch-8.19.16\config\elasticsearch.yml`. Production must keep SSL on and configure HTTPS + auth in `application-*.yml`.
-- **Chinese analyzer is `smartcn`, not IK**: Use `analyzer = "smartcn"` in `@Field` annotations. IK (`medcl/elasticsearch-analysis-ik`) has not released an ES 8.19 compatible version. The `analysis-smartcn` plugin ships with the local ES 8.19.16 install and is maintained by Elastic.
+- **Chinese analyzer MUST be IK (infinilabs/analysis-ik), not smartcn**:
+  - IK 8.19.16 release ships at `https://get.infini.cloud/elasticsearch/analysis-ik/8.19.16` (the project moved from `medcl/elasticsearch-analysis-ik` to `infinilabs/analysis-ik` and is actively maintained).
+  - Install: `E:\ElasticSearch\elasticsearch-8.19.16\bin\elasticsearch-plugin install -b https://get.infini.cloud/elasticsearch/analysis-ik/8.19.16`
+  - Use `analyzer = "ik_max_word"` (index) + `searchAnalyzer = "ik_smart"` (search) on `Text` fields.
+  - **Do NOT use `smartcn`**: it is HMM-based and context-dependent — for "小米 8 全面屏手机" smartcn tokenizes as `[小, 米, 8, 全面, 屏, 手机]`, splitting brand names into single characters and breaking product search.
 - **Tests are disabled globally** (`<skipTests>true</skipTests>` in root pom.xml). To run a specific test class: `mvn test -pl <module> -DskipTests=false -Dtest=ClassName`. Maven Surefire also fails on `docker:build` during `install` if remote Docker host is unreachable — pass `-Ddocker.skip=true` to skip the Docker plugin when not building images.
 
 ## External Dependencies

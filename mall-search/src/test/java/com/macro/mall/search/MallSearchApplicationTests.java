@@ -45,7 +45,7 @@ public class MallSearchApplicationTests {
     }
 
     @Test
-    public void testEsProductMapping_usesSmartcnAnalyzer(){
+    public void testEsProductMapping_usesIkAnalyzer(){
         IndexOperations indexOperations = elasticsearchOperations.indexOps(EsProduct.class);
         Map mapping = indexOperations.getMapping();
         System.out.println(mapping);
@@ -59,8 +59,8 @@ public class MallSearchApplicationTests {
             org.junit.jupiter.api.Assertions.assertNotNull(fieldMapping, field + " mapping 应存在");
             org.junit.jupiter.api.Assertions.assertEquals("text", fieldMapping.get("type"),
                     field + " 字段类型应为 text");
-            org.junit.jupiter.api.Assertions.assertEquals("smartcn", fieldMapping.get("analyzer"),
-                    field + " 字段应使用 smartcn 分词器（IK 已废弃）");
+            org.junit.jupiter.api.Assertions.assertEquals("ik_max_word", fieldMapping.get("analyzer"),
+                    field + " 字段应使用 ik_max_word 分词器（中文品牌词识别）");
         }
     }
 
