@@ -45,11 +45,23 @@ public class MallSearchApplicationTests {
     }
 
     @Test
-    public void testEsProductMapping(){
+    public void testEsProductMapping_usesSmartcnAnalyzer(){
         IndexOperations indexOperations = elasticsearchOperations.indexOps(EsProduct.class);
-        indexOperations.putMapping(indexOperations.createMapping(EsProduct.class));
         Map mapping = indexOperations.getMapping();
         System.out.println(mapping);
+        org.junit.jupiter.api.Assertions.assertNotNull(mapping, "pms 索引 mapping 应存在");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> properties = (Map<String, Object>) mapping.get("properties");
+        org.junit.jupiter.api.Assertions.assertNotNull(properties, "pms properties 应存在");
+        for (String field : new String[]{"name", "subTitle", "keywords"}) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> fieldMapping = (Map<String, Object>) properties.get(field);
+            org.junit.jupiter.api.Assertions.assertNotNull(fieldMapping, field + " mapping 应存在");
+            org.junit.jupiter.api.Assertions.assertEquals("text", fieldMapping.get("type"),
+                    field + " 字段类型应为 text");
+            org.junit.jupiter.api.Assertions.assertEquals("smartcn", fieldMapping.get("analyzer"),
+                    field + " 字段应使用 smartcn 分词器（IK 已废弃）");
+        }
     }
 
 }

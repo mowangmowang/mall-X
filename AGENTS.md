@@ -52,7 +52,6 @@ Multi-module Maven project. Base package: `com.macro.mall`.
 ## Gotchas
 
 - **mall-mbg is generated code.** Do not manually edit files under `mall-mbg/src/main/java`. Regenerate via `generatorConfig.xml` instead.
-- **Tests are disabled globally** (`<skipTests>true</skipTests>` in root pom.xml). Run `mvn test` explicitly if you need them.
 - **Redis dev address** is `172.23.31.76` (WSL2 port-forward), not `localhost`. See `mall-admin/src/main/resources/application-dev.yml`.
 - **Sensitive configs are gitignored**: `application-local.yml`, `application-secret.yml`, `*.env`, `.env.local`.
 - **JWT secrets are hardcoded** in `application.yml` per service — each service has a different secret.
@@ -62,6 +61,10 @@ Multi-module Maven project. Base package: `com.macro.mall`.
 - **Swagger UI** at `http://localhost:8080/swagger-ui/`.
 - **RabbitMQ vhost** is `/mall` (not default `/`). Management UI: `http://localhost:15672`, user `mall`/`mall`.
 - **MinIO**: endpoint must be port `9000` (API), not `9001` (console).
+- **ES Java client version** is managed by Spring Boot 3.5.14 BOM (`elasticsearch-client.version` = `8.18.8`). Do NOT manually pin `co.elastic.clients:elasticsearch-java` or `org.elasticsearch.client:elasticsearch-rest-client` in `mall-search/pom.xml` — let the BOM handle it. Manual pinning was an old 2.x-era workaround and is now wrong (locks to a stale version).
+- **ES 8.x local dev requires HTTP (no SSL)**: The default `xpack.security.http.ssl.enabled: true` (set by ES 8.x auto-config) makes ES reject plain HTTP connections with `plaintext http traffic on an https channel`. For local dev, set `xpack.security.enabled`, `xpack.security.http.ssl.enabled`, `xpack.security.transport.ssl.enabled` all to `false` in `E:\ElasticSearch\elasticsearch-8.19.16\config\elasticsearch.yml`. Production must keep SSL on and configure HTTPS + auth in `application-*.yml`.
+- **Chinese analyzer is `smartcn`, not IK**: Use `analyzer = "smartcn"` in `@Field` annotations. IK (`medcl/elasticsearch-analysis-ik`) has not released an ES 8.19 compatible version. The `analysis-smartcn` plugin ships with the local ES 8.19.16 install and is maintained by Elastic.
+- **Tests are disabled globally** (`<skipTests>true</skipTests>` in root pom.xml). To run a specific test class: `mvn test -pl <module> -DskipTests=false -Dtest=ClassName`. Maven Surefire also fails on `docker:build` during `install` if remote Docker host is unreachable — pass `-Ddocker.skip=true` to skip the Docker plugin when not building images.
 
 ## External Dependencies
 
