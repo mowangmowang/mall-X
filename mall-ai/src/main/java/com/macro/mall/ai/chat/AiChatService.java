@@ -2,26 +2,20 @@ package com.macro.mall.ai.chat;
 
 import com.macro.mall.ai.config.PromptProperties;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 /**
- * AI 聊天服务 (AI Chat Service) - Stage 3
+ * AI 聊天服务 (AI Chat Service) - Stage 4
  *
  * <p>封装 Spring AI {@link ChatClient}，为业务层提供简洁的 API。
  * 替代 Stage 1-2 时期的 {@code AiClient} 接口 + {@code OpenAiCompatibleClient} 手写实现。</p>
  *
- * <p><b>职责：</b></p>
- * <ul>
- *   <li>管理 {@link ChatClient} 单例（线程安全）</li>
- *   <li>提供字符串返回的同步调用</li>
- *   <li>提供模板渲染（{@code {placeholder}}）后调用的方法</li>
- *   <li>注入 {@link PromptProperties}，业务代码可直接 {@code prompts.productQaSystem()}</li>
- * </ul>
- *
- * <p><b>Stage 4 计划：</b>新增 {@code <T> T chatEntity(...)} 重载，用
- * {@code BeanOutputConverter} 替代手写 JSON 解析。</p>
+ * <p><b>Stage 4 升级：</b>新增 {@code <T> T chatEntity(...)} / {@code renderAndChatEntity(...)} 重载，
+ * 用 {@link BeanOutputConverter} 自动注入 JSON schema 到 prompt 并反序列化为 record，
+ * 替代业务层手写的 JSON 解析代码。</p>
  *
  * @author alan
  * @since 2026-06
@@ -32,11 +26,6 @@ public class AiChatService {
     private final ChatClient chatClient;
     private final PromptProperties prompts;
 
-    /**
-     * 直接注入 ChatClient（由 Spring AI 自动配置 + {@link ChatClient.Builder#build()} 创建）
-     *
-     * <p>设计为接受 ChatClient 而非 Builder，便于单元测试时直接 mock。</p>
-     */
     public AiChatService(ChatClient chatClient, PromptProperties prompts) {
         this.chatClient = chatClient;
         this.prompts = prompts;
@@ -55,8 +44,6 @@ public class AiChatService {
 
     /**
      * 模板对话：先用 {@code {placeholder}} 占位符渲染模板，再调用
-     *
-     * <p>Stage 3 用 {@code String.replace} 简单实现（Stage 4+ 可换 {@code PromptTemplate}）。</p>
      */
     public String chat(String template, Map<String, Object> vars, String userContent) {
         String rendered = renderTemplate(template, vars);
@@ -68,6 +55,31 @@ public class AiChatService {
      */
     public String renderAndChat(String template, Map<String, Object> vars, String userContent) {
         return chat(template, vars, userContent);
+    }
+
+    /**
+     * Stage 4: 结构化输出 - 直接对话返回 record
+     *
+     * <p>{@link BeanOutputConverter} 会自动在 system prompt 末尾追加 JSON schema 描述，
+     * 并把 AI 响应直接反序列化为 {@code responseType}。</p>
+     */
+    public <T> T chatEntity(String systemPrompt, String userContent, Class<T> responseType) {
+        BeanOutputConverter<T> converter = new BeanOutputConverter<>(responseType);
+        String enhancedPrompt = systemPrompt + "\n" + converter.getFormat();
+        return chatClient.prompt()
+            .system(enhancedPrompt)
+            .user(userContent)
+            .call()
+            .entity(responseType);
+    }
+
+    /**
+     * Stage 4: 结构化输出 - 模板渲染后返回 record
+     */
+    public <T> T renderAndChatEntity(String template, Map<String, Object> vars,
+                                     String userContent, Class<T> responseType) {
+        String rendered = renderTemplate(template, vars);
+        return chatEntity(rendered, userContent, responseType);
     }
 
     private static String renderTemplate(String template, Map<String, Object> vars) {

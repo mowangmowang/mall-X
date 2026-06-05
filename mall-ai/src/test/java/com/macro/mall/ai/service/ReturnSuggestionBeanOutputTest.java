@@ -137,7 +137,7 @@ class ReturnSuggestionBeanOutputTest {
     }
 
     @Test
-    void suggestReturn_passesFormatToTemplate() {
+    void suggestReturn_passesReasonsToTemplate() {
         ReturnSuggestionResult aiResult = new ReturnSuggestionResult(
             "", "", "", "medium", "x", false, "");
         when(aiChat.renderAndChatEntity(anyString(), anyMap(), anyString(), eq(ReturnSuggestionResult.class)))
@@ -148,17 +148,14 @@ class ReturnSuggestionBeanOutputTest {
 
         service.suggestReturn(req);
 
-        // 验证 system prompt 包含 BeanOutputConverter 的 format 描述（含 "JSON"）
-        ArgumentCaptor<String> templateCaptor = ArgumentCaptor.forClass(String.class);
+        // 验证 vars 包含 reasons 占位符的值
         ArgumentCaptor<Map<String, Object>> varsCaptor = ArgumentCaptor.forClass(Map.class);
         verify(aiChat).renderAndChatEntity(
-            templateCaptor.capture(), varsCaptor.capture(), anyString(),
+            anyString(), varsCaptor.capture(), anyString(),
             eq(ReturnSuggestionResult.class));
 
-        String rendered = templateCaptor.getValue();
         Map<String, Object> vars = varsCaptor.getValue();
-        // 验证占位符已被替换
-        assertThat(rendered).contains("质量问题、商品损坏、7天无理由退货");
-        // 验证 {format} 占位符由 AiChatService 内部处理（已替换为 JSON schema）
+        assertThat(vars).containsKey("reasons");
+        assertThat(vars.get("reasons")).isEqualTo("质量问题、商品损坏、7天无理由退货");
     }
 }
