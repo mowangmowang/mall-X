@@ -236,11 +236,15 @@ Content-Type: application/json
 
 **核心流程**
 
-```
-┌─────────┐   step=1   ┌──────────┐   step=2   ┌──────────┐   step=3   ┌──────────────┐
-│ 用户提交 │ ─────────▶ │ 询问故障 │ ─────────▶ │ 追问细节 │ ─────────▶ │ 给出建议     │
-│ 退货申请 │            │ 现象     │            │ 细节     │            │ reason+desc  │
-└─────────┘            └──────────┘            └──────────┘            └──────────────┘
+```mermaid
+stateDiagram-v2
+    [*] --> Step1: 用户提交退货申请
+    Step1: 询问故障现象
+    Step2: 追问细节
+    Step3: 给出建议<br/>reason + description
+    Step1 --> Step2: step=2<br/>前端自增
+    Step2 --> Step3: step=3<br/>前端自增
+    Step3 --> [*]: finished=true<br/>自动填表
 ```
 
 每轮返回 `guideQuestion` 引导用户回答，第 3 轮返回 `finished: true` + 完整 JSON。
