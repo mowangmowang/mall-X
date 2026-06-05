@@ -187,15 +187,16 @@ mall-X
 
 ### 🤖 AI 助手 `mall-ai` (`:8086`) ★ Mall-X 新增
 
-独立的 Spring Boot 微服务，提供两大端点，零业务耦合（仅依赖 `mall-common` + MyBatis）。
+独立的 Spring Boot 3.5 / Java 17 微服务，基于 **Spring AI 1.0** + **Spring Cloud OpenFeign**。零数据库依赖（`ReturnReasonService` 通过 Feign 远程调 mall-portal 拉取退货原因列表）。
 
 **API 总览**
 
-| 端点 | 功能 | 鉴权 |
-| --- | --- | --- |
-| `POST /ai/product/qa` | 基于商品上下文的智能问答（多轮对话可选） | 公开（mall-portal 内部调用） |
-| `POST /ai/return/suggest` | 3 轮引导式退货建议，自动生成标准化退货原因 + 描述 | 公开（mall-portal 内部调用） |
-| `GET  /v3/api-docs` | SpringDoc OpenAPI 文档 | — |
+| 端点 | 功能 | 协议 | 鉴权 |
+| --- | --- | --- | --- |
+| `POST /ai/product/qa` | 基于商品上下文的智能问答（多轮对话可选） | JSON 同步 | 公开（mall-portal 内部调用） |
+| `POST /ai/product/qa/stream` | 商品问答（**SSE 流式**，逐 token 推送，"打字机"效果） | `text/event-stream` | 公开 |
+| `POST /ai/return/suggest` | 3 轮引导式退货建议，自动生成标准化退货原因 + 描述 | JSON 同步 | 公开 |
+| `GET  /swagger-ui/index.html` | SpringDoc OpenAPI 3 文档 | — | — |
 
 #### ① 商品智能问答
 
@@ -226,6 +227,8 @@ Content-Type: application/json
   "data": { "reply": "该手机配备高像素主摄，支持夜景模式..." }
 }
 ```
+
+**SSE 流式版本**（`/ai/product/qa/stream`）返回 `text/event-stream`，每行 `data: <chunk>`，前端用 `fetch + ReadableStream` 消费即可。底层走 servlet 原生 `SseEmitter` + 内部订阅 Spring AI `chatClient.stream().content()` 返回的 `Flux`，**不引入 webflux 容器**。
 
 **安全约束**（写死在 System Prompt）：仅基于提供的商品信息回答 · 不承诺优惠/赠品 · 不使用"绝对/保证"等绝对化词语 · 100 字以内。
 
@@ -260,10 +263,10 @@ Content-Type: application/json
 ```
 
 **智能点**：
-- 退货原因**从数据库动态读取**（`oms_order_return_reason` 表 `status=1` 的项），与后台配置实时一致
-- 数据库查询失败时**降级**到 5 项默认列表（质量问题 / 尺码太大 / 颜色不喜欢 / 7天无理由退货 / 其他）
-- AI 输出非 JSON / Markdown 包裹时**自动剥离**（`​```json ... ```​` 提取纯 JSON）
-- JSON 解析失败时**按当前步骤兜底**（第 1/2 轮给引导问题，第 3 轮给完整建议）
+- 退货原因通过 **OpenFeign** 远程调 mall-portal 的 `/returnReason/list`，mall-portal 不可用时**降级**到 yml 配置的默认列表（质量问题 / 商品损坏 / 尺码不符 / 7天无理由退货 / 其他）
+- **Spring AI `BeanOutputConverter`** 自动把 JSON schema 注入 Prompt 并把 AI 响应反序列化为 `ReturnSuggestionResult` record，**不再手写 JSON 解析**
+- AI 输出非 JSON / Markdown 包裹时由 `BeanOutputConverter` 自动剥离
+- AI 调用失败时**按当前步骤兜底**（第 1/2 轮给引导问题，第 3 轮给完整建议）
 - 强制 step=3 时 `finished=true` 且 reason/description 非空
 
 #### 架构与安全
@@ -274,46 +277,66 @@ mall-portal (前端触发)
     ▼
 ┌──────────────────────────────────────────────┐
 │  mall-ai (:8086)                             │
-│  ┌──────────┐  ┌──────────────┐  ┌────────┐  │
-│  │Controller│─▶│InputSanitizer│─▶│Service │  │
-│  └──────────┘  └──────────────┘  └────┬───┘  │
-│  ┌──────────┐  ┌──────────────┐       │      │
-│  │AiClient  │◀─┤ReturnReason  │◀──────┘      │
-│  │(策略模式)│  │Service(读DB) │              │
-│  └────┬─────┘  └──────────────┘              │
-│       │ HTTPS (Bearer)                       │
+│  ┌────────────────┐  ┌────────────────────┐  │
+│  │Controller      │─▶│ChatClient          │  │
+│  │/ai/product/qa  │  │(Spring AI)         │  │
+│  │/ai/.../stream  │  │  + InputSanitization│  │
+│  │/ai/return/...  │  │    Advisor          │  │
+│  └────────────────┘  └─────┬──────────────┘  │
+│  ┌────────────────┐        │                 │
+│  │ReturnReason    │◀───────┘  (Feign)        │
+│  │Client          │──HTTP──▶ mall-portal:8085│
+│  └────────────────┘                          │
+│       │ HTTPS                                │
 └───────┼──────────────────────────────────────┘
         ▼
    OpenAI 兼容 API
    (DeepSeek / OpenAI / SiliconFlow)
 ```
 
-**🛡️ 三重安全防护**（`InputSanitizer` 工具类）：
+**🛡️ 输入清理**（`InputSanitizationAdvisor`，实现 Spring AI `CallAdvisor` 接口，order=HIGHEST_PRECEDENCE）：
 
 1. **控制字符过滤** —— 移除 `\x00-\x1F`（保留换行/Tab）
-2. **Prompt Injection 检测** —— 30+ 攻击模式正则（忽略指令 / 角色伪装 / 系统提示 / 命令执行 / SQL 注入 / XSS）
-3. **长度截断** —— 用户问题 ≤ 5000 字符，商品信息 ≤ 1000 字符
+2. **Prompt Injection 检测** —— 10+ 攻击模式正则（忽略指令 / 角色伪装 / 系统提示等），命中仅 warn 不阻断
+3. **长度截断** —— 用户问题 ≤ 5000 字符（`ai.security.sanitization.max-length` 可配）
+4. **业务无感** —— 所有 `ChatClient` 调用（`chat()` / `chatEntity()` / `stream()`）自动经过 Advisor 链
 
-**🔌 可插拔 AI Provider**（策略模式 `AiClient` 接口）：
+**🔌 切换 LLM 厂商**：改 `application.yml` 的 `spring.ai.openai.*` 即可，**所有 OpenAI Chat Completions 兼容的 API 都直接接入**。
 
-| 实现 | 适用场景 | 切换成本 |
+| base-url | model | 厂商 |
 | --- | --- | --- |
-| `OpenAiCompatibleClient`（默认） | DeepSeek · OpenAI · SiliconFlow · 任何 OpenAI 兼容 API | 改 `application.yml` 即可 |
-| 自定义实现 | 私有化部署 / 内部模型 | 实现 `AiClient` 接口 + 注入 Bean |
+| `https://api.deepseek.com` | `deepseek-chat` | DeepSeek（默认） |
+| `https://api.openai.com/v1` | `gpt-4o-mini` | OpenAI |
+| `https://api.siliconflow.cn/v1` | `Qwen/Qwen2.5-7B-Instruct` | SiliconFlow |
+| 任意 OpenAI 兼容 URL | 自定义 | 自部署 / 私有化 |
 
-**⚙️ 典型配置**
+**⚙️ 典型配置**（`application.yml` + `application-local.yml`）
 
 ```yaml
-ai:
-  client:
-    base-url: https://api.deepseek.com/v1
-    api-key: ${AI_API_KEY:your-api-key-here}  # 推荐用环境变量
-    model: deepseek-chat
-    temperature: 0.7
-    max-tokens: 1024
+# application.yml（基线，被 git 追踪）
+spring:
+  ai:
+    openai:
+      api-key: ${DEEPSEEK_API_KEY:your-api-key-here}   # 占位符：env var → 默认值
+      base-url: https://api.deepseek.com
+      chat:
+        options:
+          model: deepseek-chat
+          temperature: 0.7
+          max-tokens: 1024
 ```
 
-详细架构与暗坑见 `mall-ai/README.md`。
+```yaml
+# application-local.yml（已被 .gitignore 排除，**不进 git**）
+spring:
+  ai:
+    openai:
+      api-key: sk-你的-deepseek-key
+```
+
+> **Spring AI 只认 `spring.ai.openai.api-key` 一个 key**。Stage 3 之前的 `ai.client.*` 旧前缀已废弃，写在 yml 也不会被读。
+
+详细架构、源码结构、41/41 单元测试覆盖见 `mall-ai/README.md`。
 
 ### 🖼️ 图片代理 `mall-common-pic` ★ Mall-X 新增
 
