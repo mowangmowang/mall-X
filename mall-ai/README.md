@@ -32,6 +32,23 @@ graph TB
 - **无数据库依赖**：商品信息由前端传入，无需连接 MySQL/MyBatis，模块轻量
 - **独立部署**：作为独立微服务运行，不影响现有 mall-portal 等模块
 
+## 现代化重构进度
+
+mall-ai 正在按 [mall-ai-fix-task](../mall-ai-fix-task/) 中的 8 阶段计划重构为 Spring Boot 3.5 时代最佳实践。
+
+| Stage | 状态 | 摘要 |
+|---|---|---|
+| 1 | ✅ | DTO 全面 Java 17 Record 化 + 构造器注入（净减 468 行） |
+| 2 | ⏳ | 配置 Record 化 + Prompt 外置到 application.yml |
+| 3 | ⏳ | 引入 Spring AI 替代 97 行手写 HTTP 客户端 |
+| 4 | ⏳ | BeanOutputConverter 替换 90 行手写 JSON 解析 |
+| 5 | ⏳ | InputSanitizer 收编为 Spring AI Advisor |
+| 6 | ⏳ | 移除 MyBatis 依赖，ReturnReason 走 OpenFeign |
+| 7 | ⏳ | 流式输出 (SSE) |
+| 8 | ⏳ | 对话记忆 + Function Calling |
+
+Stage 1 成果：代码量从 ~1500 行 → ~1100 行（-27%），5 个 DTO 全部 record 化，0 个 `@Autowired` 字段注入。
+
 ## 快速开始
 
 ### 1. 获取 API Key
@@ -699,9 +716,9 @@ flowchart TD
 
 ## 技术栈
 
-- **框架**: Spring Boot 2.7.5
-- **语言**: Java 8
-- **HTTP 客户端**: RestTemplate（spring-boot-starter-web）
+- **框架**: Spring Boot 3.5.14
+- **语言**: Java 17
+- **HTTP 客户端**: RestTemplate（spring-boot-starter-web，Stage 3 替换为 Spring AI）
 - **AI 接口**: OpenAI Chat Completions API 格式（兼容 DeepSeek / OpenAI / SiliconFlow 等）
 - **API 风格**: RESTful JSON，统一响应格式 `CommonResult<T>`
 

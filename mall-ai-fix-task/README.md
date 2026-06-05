@@ -17,7 +17,7 @@ Stage 2 (配置 yml)  ───┘                       ─> Stage 5 (Advisor) 
 
 | Stage | 分支 | 类型 | 行数变化 | 状态 |
 |---|---|---|---|---|
-| 1 | `refactor/mall-ai-stage-1-dto-record` | refactor | ~700 → ~55 | ⏳ 待开始 |
+| 1 | `refactor/mall-ai-stage-1-dto-record` | refactor | ~1500 → ~1100 (-468) | ✅ 完成 |
 | 2 | `refactor/mall-ai-stage-2-config-record-prompts` | refactor | ~150 → ~30 | ⏳ |
 | 3 | `feat/mall-ai-stage-3-spring-ai` | **feat** | ~270 → ~30 | ⏳ |
 | 4 | `refactor/mall-ai-stage-4-bean-output-converter` | refactor | ~90 → ~5 | ⏳ |
@@ -74,7 +74,7 @@ Refs: mall-ai-fix-task/stage-X-*.md
 `[mall-ai] Stage X: <阶段名>`
 
 ## 任务清单
-- [ ] Stage 1: DTO 全面 Record 化 → [stage-1-dto-record.md](stage-1-dto-record.md)
+- [x] Stage 1: DTO 全面 Record 化 → [stage-1-dto-record.md](stage-1-dto-record.md) ✅
 - [ ] Stage 2: 配置 Record 化 + Prompt 外置 → [stage-2-config-record-prompts.md](stage-2-config-record-prompts.md)
 - [ ] Stage 3: 引入 Spring AI → [stage-3-spring-ai.md](stage-3-spring-ai.md)
 - [ ] Stage 4: BeanOutputConverter 替换手写 JSON → [stage-4-bean-output-converter.md](stage-4-bean-output-converter.md)
