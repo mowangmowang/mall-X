@@ -3,6 +3,7 @@ package com.macro.mall.ai.service.impl;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.macro.mall.ai.client.AiClient;
+import com.macro.mall.ai.config.PromptProperties;
 import com.macro.mall.ai.domain.*;
 import com.macro.mall.ai.service.AiAssistantService;
 import com.macro.mall.ai.service.ReturnReasonService;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * AI 助手服务实现类 (AI Assistant Service Implementation)
@@ -24,6 +26,14 @@ import java.util.List;
  *   <li>DTO 全部改为 Java 17 record，业务代码用 record accessor 替代 getter</li>
  *   <li>{@code @Autowired} 字段注入改为 Lombok {@code @RequiredArgsConstructor} 构造器注入</li>
  *   <li>JSON 解析时构造新 record 替代 setter 原地修改</li>
+ * </ul>
+ *
+ * <p><b>Stage 2 改造：</b></p>
+ * <ul>
+ *   <li>100+ 行硬编码 Prompt 迁出到 {@code application.yml} 的 {@code ai.prompts.*}</li>
+ *   <li>注入 {@link PromptProperties}，通过 {@code prompts.productQaSystem()} 等方法读取</li>
+ *   <li>硬编码的 fallback 字符串（"质量问题" / "硬件故障"）改为配置化</li>
+ *   <li>使用 {@code org.springframework.ai.chat.prompt.PromptTemplate} 占位符渲染（Stage 3 引入）</li>
  * </ul>
  *
  * @author alan
@@ -40,31 +50,6 @@ public class AiAssistantServiceImpl implements AiAssistantService {
     private static final Logger log = LoggerFactory.getLogger(AiAssistantServiceImpl.class);
 
     /**
-     * 商品问答系统 Prompt
-     * 优化版：明确回答边界、防止过度承诺、结构化回答
-     */
-    private static final String QA_SYSTEM_PROMPT =
-            "你是专业电商购物助手，帮助顾客了解商品信息。请严格遵循以下规范：\n\n" +
-            "【回答原则】\n" +
-            "1. 仅基于提供的商品信息回答，不要编造或推测未提供的信息\n" +
-            "2. 回答简洁明了，分点说明，便于顾客理解\n" +
-            "3. 使用专业但易懂的语言，避免过度技术化\n" +
-            "4. 对于不确定的信息，诚实说明'该信息暂未提供，建议咨询客服'\n\n" +
-            "【禁止承诺】\n" +
-            "- 不要承诺价格优惠、赠品、售后服务等未明确说明的内容\n" +
-            "- 不要使用'绝对'、'保证'、'100%'等绝对化词语\n" +
-            "- 不要提供竞品对比或贬低其他品牌\n" +
-            "- 不要提供购买建议（如'强烈推荐'），仅客观介绍商品\n\n" +
-            "【回答结构】\n" +
-            "- 先直接回答顾客问题的核心\n" +
-            "- 然后补充相关的商品特点（如有）\n" +
-            "- 最后询问是否还有其他问题\n\n" +
-            "【示例】\n" +
-            "顾客问：'这款手机拍照效果怎么样？'\n" +
-            "回答：'该手机配备XX万像素摄像头，支持光学防抖和夜景模式。根据商品描述，拍照效果满足日常使用需求。如果您需要了解更详细的拍照参数，建议咨询客服。还有其他问题吗？'\n\n" +
-            "【重要】只使用中文回答，回答控制在100字以内。";
-
-    /**
      * AI 客户端实例 (AI Client Instance)
      * <p>用于调用外部 AI API（DeepSeek/OpenAI/SiliconFlow 等）</p>
      * <p>通过 Lombok {@code @RequiredArgsConstructor} 生成构造器注入</p>
@@ -77,6 +62,12 @@ public class AiAssistantServiceImpl implements AiAssistantService {
      * <p>确保 AI 推荐的退货原因与后台配置保持一致</p>
      */
     private final ReturnReasonService returnReasonService;
+
+    /**
+     * Prompt 配置 (Stage 2)
+     * <p>从 application.yml 注入，存储商品问答/退货建议的系统提示词和 fallback 默认值。</p>
+     */
+    private final PromptProperties prompts;
 
     @Override
     public AiResponse chatAboutProduct(ProductQaRequest request) {
@@ -106,7 +97,7 @@ public class AiAssistantServiceImpl implements AiAssistantService {
                 request.conversationHistory() != null && !request.conversationHistory().isEmpty());
 
         // 【步骤5】调用 AI 客户端：传入系统提示词和用户内容，获取 AI 回复
-        String reply = aiClient.chat(QA_SYSTEM_PROMPT, content);
+        String reply = aiClient.chat(prompts.productQaSystem(), content);
 
         // 【步骤6】封装响应：将 AI 回复包装成 AiResponse 对象返回
         return new AiResponse(reply);
@@ -151,49 +142,16 @@ public class AiAssistantServiceImpl implements AiAssistantService {
 
     /**
      * 动态生成退货建议系统 Prompt (Build Return System Prompt Dynamically)
+     *
+     * <p>Stage 2：从 {@link PromptProperties#returnSuggestionSystem()} 读取模板，
+     * 用 {@code {reasons}} 占位符动态填充从数据库加载的退货原因列表。</p>
      */
     private String buildReturnSystemPrompt() {
         List<String> reasons = returnReasonService.getEnabledReturnReasons();
         String reasonsStr = String.join("、", reasons);
 
-        return "你是专业电商售后客服助手，严格遵循商城售后政策。请根据用户描述的问题进行专业分析。\n\n" +
-               "【退货原因选项】（必须从以下选项中选择）：\n" +
-               reasonsStr + "\n\n" +
-               "【3轮引导流程 - 严格按步骤执行】\n" +
-               "你的任务是通过3轮对话引导用户清晰描述问题，最后给出建议。\n" +
-               "⚠️ 重要：你会收到'当前引导步骤：X/3'的信息，你必须严格按照这个数字执行对应步骤！\n\n" +
-               "📌 第1轮 (step=1) - 询问故障现象：\n" +
-               "  - 目标：了解商品出现了什么具体问题\n" +
-               "  - 示例问题：'请问商品具体出现了什么问题？是无法开机、屏幕显示异常还是有其他表现？'\n" +
-               "  - 此轮不输出 reason 和 description\n\n" +
-               "📌 第2轮 (step=2) - 追问细节：\n" +
-               "  - 目标：了解故障的细节或用户已尝试的解决方式\n" +
-               "  - 示例问题：'请问这个问题是突然出现的还是一直存在？您是否尝试过重启或其他解决方式？'\n" +
-               "  - 此轮不输出 reason 和 description\n\n" +
-               "📌 第3轮 (step=3) - 确认并给出建议：\n" +
-               "  - 目标：确认问题影响，给出最终退货建议\n" +
-               "  - 此时必须设置 finished=true，并输出 reason、description、category\n" +
-               "  - 你会收到'用户描述的问题'中包含完整的对话历史（用；分隔）\n" +
-               "  - ️ description 必须基于所有对话内容生成，包含具体问题和细节！\n" +
-               "  - 正确示例：'商品镜头内部进灰，从购买时一直存在，影响拍照效果'\n" +
-               "  - 错误示例：'该商品一直存在故障'（太笼统，缺少具体问题）\n" +
-               "  - 确认语句示例：'明白了，这确实影响了您的正常使用。我将为您推荐最合适的退货原因。'\n\n" +
-               "【输出格式】\n" +
-               "返回 JSON 格式，必须包含以下字段：\n" +
-               "{\n" +
-               "  \"reason\": \"退货原因（仅在 step=3 且 finished=true 时提供，否则必须为空字符串\"\n" +
-               "  \"description\": \"标准化的问题描述（仅在 step=3 且 finished=true 时提供，否则必须为空字符串\"\n" +
-               "  \"category\": \"问题分类（仅在 step=3 且 finished=true 时提供，否则必须为空字符串\"\n" +
-               "  \"confidence\": \"置信度（high/medium/low）\"\n" +
-               "  \"guideQuestion\": \"当前步骤需要问用户的问题（step=3 时为确认性语句）\"\n" +
-               "  \"finished\": false // 仅在 step=3 时为 true，step=1或2时必须为 false\n" +
-               "}\n\n" +
-               "【重要原则】\n" +
-               "- 必须严格按照收到的 step 数字执行对应步骤，不能跳步或重复\n" +
-               "- step=1 和 step=2 时，finished 必须为 false，reason/description/category 必须为空字符串\n" +
-               "- step=3 时，finished 必须为 true，必须提供 reason/description/category\n" +
-               "- guideQuestion 必须简洁、有针对性，一次只问一个核心问题\n" +
-               "- 只返回 JSON，不要包含其他文字";
+        // Stage 2: 用 String.replace 占位符（Stage 3 替换为 PromptTemplate）
+        return prompts.returnSuggestionSystem().replace("{reasons}", reasonsStr);
     }
 
     /**
@@ -242,9 +200,9 @@ public class AiAssistantServiceImpl implements AiAssistantService {
             // 【步骤5】强制校验：如果是第3步，必须结束对话并给出建议
             if (currentStep >= 3) {
                 finished = true;
-                if (reason == null || reason.isEmpty()) reason = "质量问题";
+                if (reason == null || reason.isEmpty()) reason = prompts.returnReasonDefault();
                 if (description == null || description.isEmpty()) description = fallbackIssue;
-                if (category == null || category.isEmpty()) category = "硬件故障";
+                if (category == null || category.isEmpty()) category = prompts.categoryDefault();
             }
 
             // 【步骤6】生成分析说明
@@ -272,7 +230,7 @@ public class AiAssistantServiceImpl implements AiAssistantService {
 
             if (currentStep >= 3) {
                 return new ReturnSuggestionResult(
-                    "质量问题", fallbackIssue, "硬件故障", "low",
+                    prompts.returnReasonDefault(), fallbackIssue, prompts.categoryDefault(), "low",
                     "已为您生成建议，请确认。", true,
                     "解析失败，但已为您生成默认建议");
             }

@@ -2,60 +2,56 @@ package com.macro.mall.ai.config;
 
 import com.macro.mall.ai.client.AiClient;
 import com.macro.mall.ai.client.OpenAiCompatibleClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-import jakarta.annotation.PostConstruct;
-
+/**
+ * AI 配置注册 (AI Configuration Registration) - Stage 2
+ *
+ * <p>本类作为 {@code @ConfigurationProperties} 记录的注册入口，
+ * 同时保留 {@link AiClient} 的 Bean 定义（Stage 3 由 Spring AI ChatClient 替代）。</p>
+ *
+ * <p><b>Stage 2 改造：</b></p>
+ * <ul>
+ *   <li>手写 getter/setter 全部删除，{@code AiClientProperties} 用 record + @Validated</li>
+ *   <li>{@code @PostConstruct} 手动校验删除，由 Bean Validation 自动接管</li>
+ *   <li>Prompt 从 Java 硬编码迁出到 {@code application.yml} 的 {@code ai.prompts.*}，
+ *       注入到 {@link PromptProperties}</li>
+ * </ul>
+ *
+ * @author alan
+ * @since 1.0
+ */
 @Configuration
-@ConfigurationProperties(prefix = "ai.client")
+@EnableConfigurationProperties({AiClientProperties.class, PromptProperties.class})
 public class AiClientConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(AiClientConfig.class);
-
-    private String baseUrl = "https://api.deepseek.com/v1";
-    private String apiKey;
-    private String model = "deepseek-chat";
-    private Double temperature = 0.7;
-    private Integer maxTokens = 1024;
-
+    /**
+     * AI 客户端 Bean（Stage 2 仍由 {@link OpenAiCompatibleClient} 提供）
+     *
+     * <p>Stage 3 将删除此 Bean，改用 Spring AI {@code ChatClient} 替代。</p>
+     */
     @Bean
-    public AiClient aiClient(RestTemplate restTemplate) {
-        return new OpenAiCompatibleClient(baseUrl, apiKey, model,
-                temperature, maxTokens, restTemplate);
+    public AiClient aiClient(AiClientProperties props) {
+        return new OpenAiCompatibleClient(
+            props.baseUrl(), props.apiKey(), props.model(),
+            props.temperature(), props.maxTokens(),
+            restTemplate());
     }
 
-    public String getBaseUrl() { return baseUrl; }
-    public void setBaseUrl(String baseUrl) { this.baseUrl = baseUrl; }
-    public String getApiKey() { return apiKey; }
-    public void setApiKey(String apiKey) { this.apiKey = apiKey; }
-    public String getModel() { return model; }
-    public void setModel(String model) { this.model = model; }
-    public Double getTemperature() { return temperature; }
-    public void setTemperature(Double temperature) { this.temperature = temperature; }
-    public Integer getMaxTokens() { return maxTokens; }
-    public void setMaxTokens(Integer maxTokens) { this.maxTokens = maxTokens; }
-
     /**
-     * 在 Bean 初始化后校验必填配置项
+     * RestTemplate Bean（Stage 2 仍由 OpenAiCompatibleClient 使用）
+     *
+     * <p>Stage 3 将删除此 Bean，改用 Spring AI 内置 HTTP 客户端。</p>
      */
-    @PostConstruct
-    public void validate() {
-        if (!StringUtils.hasText(apiKey)) {
-            log.error("AI API Key is not configured! Please set environment variable AI_API_KEY or configure ai.client.api-key in application.yml");
-            throw new IllegalStateException("AI API Key 未配置，请设置环境变量 AI_API_KEY 或在配置文件中设置 ai.client.api-key");
-        }
-        
-        if (!StringUtils.hasText(baseUrl)) {
-            log.error("AI Base URL is not configured!");
-            throw new IllegalStateException("AI Base URL 未配置");
-        }
-        
-        log.info("AI Client configuration validated successfully. Model: {}, BaseURL: {}", model, baseUrl);
+    @Bean
+    public RestTemplate restTemplate() {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(30000);
+        factory.setReadTimeout(60000);
+        return new RestTemplate(factory);
     }
 }

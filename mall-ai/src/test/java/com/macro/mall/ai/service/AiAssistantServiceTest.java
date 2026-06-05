@@ -1,6 +1,7 @@
 package com.macro.mall.ai.service;
 
 import com.macro.mall.ai.client.AiClient;
+import com.macro.mall.ai.config.PromptProperties;
 import com.macro.mall.ai.domain.AiResponse;
 import com.macro.mall.ai.domain.ProductQaRequest;
 import com.macro.mall.ai.domain.ReturnSuggestionRequest;
@@ -27,14 +28,23 @@ class AiAssistantServiceTest {
 
     private AiClient aiClient;
     private ReturnReasonService returnReasonService;
+    private PromptProperties prompts;
     private AiAssistantServiceImpl service;
 
     @BeforeEach
     void setUp() {
         aiClient = mock(AiClient.class);
         returnReasonService = mock(ReturnReasonService.class);
+        // Stage 2: PromptProperties 通过 mock 提供测试用 prompt 与默认值
+        prompts = new PromptProperties(
+            "QA system prompt",
+            "RETURN system prompt {reasons}",
+            "fallback",
+            "质量问题",
+            "硬件故障"
+        );
         // Stage 1: 构造器注入
-        service = new AiAssistantServiceImpl(aiClient, returnReasonService);
+        service = new AiAssistantServiceImpl(aiClient, returnReasonService, prompts);
         when(returnReasonService.getEnabledReturnReasons())
                 .thenReturn(List.of("质量问题", "商品损坏", "7天无理由退货"));
     }
