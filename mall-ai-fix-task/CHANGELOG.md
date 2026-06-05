@@ -4,6 +4,46 @@
 
 ---
 
+## 2026-06-05 - refactor - Stage 3: 引入 Spring AI 替代手写 OpenAI 客户端
+
+**PR**: 待创建
+**分支**: `feat/mall-ai-stage-3-spring-ai`
+**Commit 数**: 3 (test red / refactor green / docs)
+**行数变化**: +204 / -505 (净减 301 行, -22% vs master)
+**验证**:
+- ✅ `mvn test -pl mall-ai -DskipTests=false` 全绿 29/29 (新增 3 个 AiChatServiceTest)
+- ✅ curl HTTP 400 校验 (Test 1, 3)
+- ✅ curl HTTP 500 with deepseek 401 (Test 2 证明 Spring AI 真的打到 DeepSeek)
+- ✅ App 启动 13.0s，Spring AI ChatClient Bean 注入成功
+
+**变更摘要**:
+- 根 pom.xml: 加 `spring-ai.version=1.0.0` + `spring-ai-bom` 依赖管理
+- mall-ai/pom.xml: 加 `spring-ai-starter-model-openai`
+- application.yml: `ai.client.*` → `spring.ai.openai.*`
+- 新建 `AiChatService`：封装 `ChatClient`，提供 `chat()` / `renderAndChat()` / 模板渲染
+- 新建 `ChatClientConfig`：显式 `builder.build()` 创建 `ChatClient` 单例 + 注册 `PromptProperties`
+- `AiAssistantServiceImpl` 改用 `AiChatService`（97 行手写 OpenAICompatibleClient 消失）
+- 删除 `client/{AiClient, ChatMessage, OpenAiCompatibleClient}.java` (3 个文件，~270 行)
+- 删除 `config/AiClientConfig.java` + `config/AiClientProperties.java` (~90 行)
+- `AiAssistantServiceTest` 适配新构造器（mock `AiChatService`）
+- `PromptPropertiesTest` 去除 `AiClientProperties` 引用
+
+**e2e 实际行为**:
+```
+Test 2 用真实 sk-test-key 调 DeepSeek -> 401 invalid_request_error
+-> Spring AI 自动重试 1 次 -> 抛 NonTransientAiException
+-> 返 HTTP 500 (含 deepseek error 信息)
+```
+证明 Spring AI ChatClient 已正确替换手写 HTTP 客户端，仅需真实 API Key 即可全链路打通。
+
+**风险与回滚**:
+- 风险：Spring AI 1.0.0 API 与未来 1.x 兼容性（小版本可能微调）
+- 风险：`max_tokens` vs `max_completion_tokens`（DeepSeek 用前者，已验证兼容）
+- 风险：aliyun maven 镜像可能缓存滞后，已 fallback 到 Maven Central
+- 回滚：`git revert <merge-commit-of-stage-3>`
+
+---
+
 ## 2026-06-05 - refactor - Stage 2: 配置 Record 化 + Prompt 外置
 
 **PR**: 待创建
