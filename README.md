@@ -1,4 +1,4 @@
-# mall-X
+# mall-X -开源 spring boot 商城系统
 
 <p>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/mowangmowang/mall-X?style=flat-square" alt="License"></a>
@@ -15,7 +15,6 @@
 </p>
 
 <div align="center">
-
 **🌐 Languages: [🇺🇸 English](README.en.md) | [🇨🇳 简体中文](README.md)**
 
 </div>
@@ -23,22 +22,20 @@
 > ⚠️ **本项目 Fork 自 [macrozheng/mall](https://github.com/macrozheng/mall)**，基于 Apache 2.0 协议。
 > 上游 Copyright 2018-2024 macrozheng。Mall-X 在其之上完成了 Spring Boot 2.7 → 3.5、Java 8 → 17 升级，
 > 新增 `mall-common-cors` / `mall-common-pic` / `mall-ai` 模块，重构了 CORS 与图片代理。
+> 原项目 **断档**：部分模块（运营/统计/财务/客服/帮助）只有后端骨架，前端缺对应页面**（缺失搜索/注册等关键功能**），不可"复制即用"。
+> 补全：删除上游多个未实现模块（（运营/统计/财务/客服/帮助），保留功能前后端 100% 配对。
+>
 > 完整差异与 commit 列表见 [CHANGELOG.md](./CHANGELOG.md) 与 [NOTICE](./NOTICE)。
 
----
 
-## 友情提示
-
-> 1. **在线 Demo**：[macrozheng 官方在线演示](https://www.macrozheng.com/admin/index.html)（默认账号 `admin` / `macro123`）
-> 2. **完整教程**：[《mall学习教程》](https://www.macrozheng.com)（本项目在架构与业务上与上游保持一致）
-> 3. **微服务版**：基于 Spring Cloud Alibaba 的 [mall-swarm](https://github.com/macrozheng/mall-swarm)
-> 4. **Mall-X 特有增强**：Spring Boot 3.5 升级路径 · AI 助手 · 统一 CORS · 图片代理 — 见 [CHANGELOG.md](./CHANGELOG.md)
-> 5. **开发规范 / Gotchas**：[AGENTS.md](./AGENTS.md) 必读
 
 ## 项目介绍
 
-`mall-X` 是基于 **Spring Boot 3.5 + Vue 3** 的电商系统，前后台分离架构，集成
-Elasticsearch、RabbitMQ、Redis、MongoDB、MinIO 等主流中间件。
+`mall-X` 是基于 **Spring Boot 3.5 + Vue 3** 的电商系统，前后台分离架构，集成 Elasticsearch、RabbitMQ、Redis、MongoDB、MinIO 等主流中间件。
+
+本项目十分适合毕业设计/大作业，附带可编辑架构图（\document\resource）和大量文档（\guidence）可供AI参考！
+
+
 
 ## 🎯 项目特色
 
@@ -385,6 +382,14 @@ cd mall-admin-web && npm install && npm run dev   # http://localhost:5173
 | [document/sql/mall.sql](./document/sql/mall.sql) | 数据库脚本 |
 | [document/reference/](./document/reference/) | Windows 部署、快捷键、参考手册 |
 | [mall-common-pic/README.md](./mall-common-pic/README.md) | 图片代理模块原理与暗坑 |
+
+## 友情提示
+
+> 1. **在线 Demo**：[macrozheng 官方在线演示](https://www.macrozheng.com/admin/index.html)（默认账号 `admin` / `macro123`）
+> 2. **完整教程**：[《mall学习教程》](https://www.macrozheng.com)（本项目在架构与业务上与上游保持一致）
+>    其实用AI生成对你专属的教程更有用！！！
+> 3. **Mall-X 特有增强**：Spring Boot 3.5 升级路径 · AI 助手 · 统一 CORS · 图片代理 — 见 [CHANGELOG.md](./CHANGELOG.md)
+> 4. **开发规范 / Gotchas**：[AGENTS.md](./AGENTS.md) 必读（本质是一份AI文档）
 
 ## 许可证
 
