@@ -4,18 +4,17 @@ import com.macro.mall.ai.config.PromptProperties;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 import java.util.Map;
 
 /**
- * AI 聊天服务 (AI Chat Service) - Stage 4
+ * AI 聊天服务 (AI Chat Service) - Stage 7
  *
- * <p>封装 Spring AI {@link ChatClient}，为业务层提供简洁的 API。
- * 替代 Stage 1-2 时期的 {@code AiClient} 接口 + {@code OpenAiCompatibleClient} 手写实现。</p>
+ * <p>封装 Spring AI {@link ChatClient}，为业务层提供简洁的 API。</p>
  *
- * <p><b>Stage 4 升级：</b>新增 {@code <T> T chatEntity(...)} / {@code renderAndChatEntity(...)} 重载，
- * 用 {@link BeanOutputConverter} 自动注入 JSON schema 到 prompt 并反序列化为 record，
- * 替代业务层手写的 JSON 解析代码。</p>
+ * <p><b>Stage 7 升级：</b>新增 {@code streamChat(...)} 返回 {@link Flux}，
+ * 用于 SSE 流式输出端点。</p>
  *
  * @author alan
  * @since 2026-06
@@ -59,9 +58,6 @@ public class AiChatService {
 
     /**
      * Stage 4: 结构化输出 - 直接对话返回 record
-     *
-     * <p>{@link BeanOutputConverter} 会自动在 system prompt 末尾追加 JSON schema 描述，
-     * 并把 AI 响应直接反序列化为 {@code responseType}。</p>
      */
     public <T> T chatEntity(String systemPrompt, String userContent, Class<T> responseType) {
         BeanOutputConverter<T> converter = new BeanOutputConverter<>(responseType);
@@ -80,6 +76,19 @@ public class AiChatService {
                                      String userContent, Class<T> responseType) {
         String rendered = renderTemplate(template, vars);
         return chatEntity(rendered, userContent, responseType);
+    }
+
+    /**
+     * Stage 7: 流式输出 - 返回逐 token 的 Flux
+     *
+     * <p>前端通过 SSE (text/event-stream) 消费 {@link Flux}，实现"打字机"效果。</p>
+     */
+    public Flux<String> streamChat(String systemPrompt, String userContent) {
+        return chatClient.prompt()
+            .system(systemPrompt)
+            .user(userContent)
+            .stream()
+            .content();
     }
 
     private static String renderTemplate(String template, Map<String, Object> vars) {

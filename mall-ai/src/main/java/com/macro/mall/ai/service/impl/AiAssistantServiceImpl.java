@@ -38,26 +38,37 @@ public class AiAssistantServiceImpl implements AiAssistantService {
 
     @Override
     public AiResponse chatAboutProduct(ProductQaRequest request) {
-        // Stage 5: 不再显式 sanitize，由 AiChatService 注入的 InputSanitizationAdvisor 自动拦截
-        String sanitizedQuestion = request.question();
-        String context = buildProductContext(request);
-
-        StringBuilder contentBuilder = new StringBuilder();
-        contentBuilder.append(context);
-
-        if (request.conversationHistory() != null && !request.conversationHistory().isEmpty()) {
-            contentBuilder.append("\n\n【对话历史】\n").append(request.conversationHistory());
-        }
-        contentBuilder.append("\n\n【顾客问题】").append(sanitizedQuestion);
-
-        String content = contentBuilder.toString();
+        String content = buildProductQaContent(request);
 
         log.info("AI product Q&A - productId={}, question={}, hasHistory={}",
-                request.productId(), sanitizedQuestion,
+                request.productId(), request.question(),
                 request.conversationHistory() != null && !request.conversationHistory().isEmpty());
 
         String reply = aiChat.chat(prompts.productQaSystem(), content);
         return new AiResponse(reply);
+    }
+
+    @Override
+    public reactor.core.publisher.Flux<String> streamChatAboutProduct(ProductQaRequest request) {
+        String content = buildProductQaContent(request);
+
+        log.info("AI product Q&A (stream) - productId={}, question={}",
+                request.productId(), request.question());
+
+        return aiChat.streamChat(prompts.productQaSystem(), content);
+    }
+
+    /**
+     * Stage 7: 共用上下文构建逻辑（同步 + 流式）
+     */
+    private String buildProductQaContent(ProductQaRequest request) {
+        String context = buildProductContext(request);
+        StringBuilder sb = new StringBuilder(context);
+        if (request.conversationHistory() != null && !request.conversationHistory().isEmpty()) {
+            sb.append("\n\n【对话历史】\n").append(request.conversationHistory());
+        }
+        sb.append("\n\n【顾客问题】").append(request.question());
+        return sb.toString();
     }
 
     @Override
