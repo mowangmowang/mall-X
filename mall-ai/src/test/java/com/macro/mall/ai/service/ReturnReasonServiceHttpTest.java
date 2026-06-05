@@ -1,12 +1,11 @@
 package com.macro.mall.ai.service;
 
 import com.macro.mall.ai.config.PromptProperties;
+import com.macro.mall.ai.domain.ReturnReasonDto;
 import com.macro.mall.ai.feign.ReturnReasonClient;
 import com.macro.mall.common.api.CommonResult;
-import com.macro.mall.model.OmsOrderReturnReason;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.List;
 
@@ -36,13 +35,8 @@ class ReturnReasonServiceHttpTest {
         service = new ReturnReasonService(client, prompts);
     }
 
-    private OmsOrderReturnReason reason(Long id, String name, Integer status, Integer sort) {
-        OmsOrderReturnReason r = new OmsOrderReturnReason();
-        r.setId(id);
-        r.setName(name);
-        r.setStatus(status);
-        r.setSort(sort);
-        return r;
+    private ReturnReasonDto reason(Long id, String name, Integer status, Integer sort) {
+        return new ReturnReasonDto(id, name, status, sort);
     }
 
     @Test

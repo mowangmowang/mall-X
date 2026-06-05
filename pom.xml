@@ -48,6 +48,8 @@
         <logstash-logback.version>7.4</logstash-logback.version>
         <minio.version>8.5.9</minio.version>
         <springdoc-openapi.version>2.6.0</springdoc-openapi.version>
+        <spring-ai.version>1.0.0</spring-ai.version>
+        <spring-cloud.version>2025.0.0</spring-cloud.version>
         <mall-common.version>1.0-SNAPSHOT</mall-common.version>
         <mall-common-cors.version>1.0-SNAPSHOT</mall-common-cors.version>
         <mall-common-pic.version>1.0-SNAPSHOT</mall-common-pic.version>
@@ -147,6 +149,22 @@
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${springdoc-openapi.version}</version>
             </dependency>
+        <!--Spring AI BOM (Stage 3: 引入 spring-ai-starter-model-openai) -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-bom</artifactId>
+            <version>${spring-ai.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <!--Spring Cloud BOM (Stage 6: 引入 spring-cloud-starter-openfeign) -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-dependencies</artifactId>
+            <version>${spring-cloud.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
             <!-- MyBatis 生成器 -->
             <dependency>
                 <groupId>org.mybatis.generator</groupId>
