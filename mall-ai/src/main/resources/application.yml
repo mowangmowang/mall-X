@@ -71,3 +71,9 @@ ai:
     product-qa-fallback: "该信息暂未提供，建议咨询客服"
     return-reason-default: "质量问题"
     category-default: "硬件故障"
+  # Stage 5: InputSanitizationAdvisor 配置
+  security:
+    sanitization:
+      max-length: 5000          # 输入最大长度（超长截断）
+      strip-control-chars: true # 剥离控制字符（除换行/制表）
+      detect-prompt-injection: true # 检测并 warn Prompt Injection 模式

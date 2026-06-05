@@ -5,7 +5,6 @@ import com.macro.mall.ai.config.PromptProperties;
 import com.macro.mall.ai.domain.*;
 import com.macro.mall.ai.service.AiAssistantService;
 import com.macro.mall.ai.service.ReturnReasonService;
-import com.macro.mall.ai.util.InputSanitizer;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +14,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * AI 助手服务实现类 (AI Assistant Service Implementation) - Stage 4
+ * AI 助手服务实现类 (AI Assistant Service Implementation) - Stage 5
  *
  * <p><b>Stage 1：</b>DTO Record 化 + 构造器注入</p>
  * <p><b>Stage 2：</b>Prompt 外置到 application.yml + PromptProperties 注入</p>
  * <p><b>Stage 3：</b>用 Spring AI ChatClient 替代手写 OpenAI 客户端</p>
  * <p><b>Stage 4：</b>用 {@code BeanOutputConverter} 替换 90 行手写 JSON 解析</p>
+ * <p><b>Stage 5：</b>删除显式 {@code InputSanitizer.sanitize()} 调用 — 改由
+ * Spring AI {@code InputSanitizationAdvisor} 自动拦截 ChatClient 调用</p>
  *
  * @author alan
  * @since 1.0
@@ -37,7 +38,8 @@ public class AiAssistantServiceImpl implements AiAssistantService {
 
     @Override
     public AiResponse chatAboutProduct(ProductQaRequest request) {
-        String sanitizedQuestion = InputSanitizer.sanitize(request.question());
+        // Stage 5: 不再显式 sanitize，由 AiChatService 注入的 InputSanitizationAdvisor 自动拦截
+        String sanitizedQuestion = request.question();
         String context = buildProductContext(request);
 
         StringBuilder contentBuilder = new StringBuilder();
@@ -60,8 +62,6 @@ public class AiAssistantServiceImpl implements AiAssistantService {
 
     @Override
     public ReturnSuggestionResult suggestReturn(ReturnSuggestionRequest request) {
-        String sanitizedIssue = InputSanitizer.sanitize(request.issue());
-
         int currentStep = request.step() == null ? 1 : request.step();
         String sessionId = request.sessionId();
         if (sessionId == null || sessionId.isEmpty()) {
@@ -71,19 +71,20 @@ public class AiAssistantServiceImpl implements AiAssistantService {
         String content = String.format(
                 "当前引导步骤：%d/3\n用户描述的问题：%s\n商品名称：%s\n商品属性：%s\n订单编号：%s",
                 currentStep,
-                sanitizedIssue,
-                InputSanitizer.sanitizeProductInfo(nullToEmpty(request.productName())),
-                InputSanitizer.sanitizeProductInfo(nullToEmpty(request.productAttr())),
+                request.issue(),
+                nullToEmpty(request.productName()),
+                nullToEmpty(request.productAttr()),
                 nullToEmpty(request.orderSn())
         );
 
-        log.info("AI return suggest - step={}, issue={}", currentStep, sanitizedIssue);
+        log.info("AI return suggest - step={}, issue={}", currentStep, request.issue());
 
         List<String> reasons = returnReasonService.getEnabledReturnReasons();
         String reasonsStr = String.join("、", reasons);
 
         try {
-            // Stage 4: BeanOutputConverter 自动注入 JSON schema 到 prompt 并反序列化为 record
+            // Stage 4: BeanOutputConverter 自动注入 JSON schema + 反序列化为 record
+            // Stage 5: InputSanitizationAdvisor 自动清洗 user text
             ReturnSuggestionResult aiResult = aiChat.renderAndChatEntity(
                 prompts.returnSuggestionSystem(),
                 Map.of("reasons", reasonsStr),
@@ -92,18 +93,15 @@ public class AiAssistantServiceImpl implements AiAssistantService {
             );
 
             if (currentStep >= 3) {
-                return enforceStep3Defaults(aiResult, sanitizedIssue);
+                return enforceStep3Defaults(aiResult, request.issue());
             }
             return aiResult;
         } catch (Exception e) {
             log.warn("Failed to call AI for return suggestion, using fallback. err={}", e.getMessage());
-            return fallbackResult(currentStep, sanitizedIssue);
+            return fallbackResult(currentStep, request.issue());
         }
     }
 
-    /**
-     * Stage 4: 强制校验 step=3 默认值（替代原 parseReturnSuggestion 内的 if 块）
-     */
     private ReturnSuggestionResult enforceStep3Defaults(ReturnSuggestionResult r, String issue) {
         return new ReturnSuggestionResult(
             r.suggestedReason() == null || r.suggestedReason().isEmpty()
@@ -119,9 +117,6 @@ public class AiAssistantServiceImpl implements AiAssistantService {
         );
     }
 
-    /**
-     * Stage 4: 兜底逻辑（替代原 catch 块）
-     */
     private ReturnSuggestionResult fallbackResult(int currentStep, String issue) {
         if (currentStep >= 3) {
             return new ReturnSuggestionResult(
@@ -138,10 +133,10 @@ public class AiAssistantServiceImpl implements AiAssistantService {
     private String buildProductContext(ProductQaRequest request) {
         StringBuilder sb = new StringBuilder();
         sb.append("【商品信息】\n");
-        sb.append("名称：").append(InputSanitizer.sanitizeProductInfo(nullToEmpty(request.productName()))).append("\n");
-        sb.append("品牌：").append(InputSanitizer.sanitizeProductInfo(nullToEmpty(request.productBrand()))).append("\n");
-        sb.append("价格：").append(InputSanitizer.sanitizeProductInfo(nullToEmpty(request.productPrice()))).append("元\n");
-        sb.append("描述：").append(InputSanitizer.sanitizeProductInfo(nullToEmpty(request.productSubTitle())));
+        sb.append("名称：").append(nullToEmpty(request.productName())).append("\n");
+        sb.append("品牌：").append(nullToEmpty(request.productBrand())).append("\n");
+        sb.append("价格：").append(nullToEmpty(request.productPrice())).append("元\n");
+        sb.append("描述：").append(nullToEmpty(request.productSubTitle()));
         return sb.toString();
     }
 
