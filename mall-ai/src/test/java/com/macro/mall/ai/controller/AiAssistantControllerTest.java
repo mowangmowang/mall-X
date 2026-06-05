@@ -17,12 +17,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * AI 助手控制器 MockMvc 测试
- * <p>
- * 注意: 全局异常处理 GlobalExceptionHandler (位于 mall-common) 不在 @WebMvcTest
- * 扫描范围, 因此 @Valid 校验失败测试需要 SpringBootTest 集成测试覆盖.
- * 本测试只覆盖 controller 的成功路径.
- * </p>
+ * AI 助手控制器 MockMvc 测试 (Stage 1 - Record 化)
+ *
+ * <p>DTO 已迁移为 Java 17 record，测试改用 record 构造器。</p>
  */
 @WebMvcTest(AiAssistantController.class)
 class AiAssistantControllerTest {
@@ -50,11 +47,8 @@ class AiAssistantControllerTest {
 
     @Test
     void returnSuggest_shouldReturn200() throws Exception {
-        ReturnSuggestionResult result = new ReturnSuggestionResult();
-        result.setSuggestedReason("质量问题");
-        result.setSuggestedDescription("屏幕有明显裂痕");
-        result.setFinished(true);
-        result.setConfidence("high");
+        ReturnSuggestionResult result = new ReturnSuggestionResult(
+            "质量问题", "屏幕有明显裂痕", null, "high", null, true, null);
         when(aiAssistantService.suggestReturn(any())).thenReturn(result);
 
         String requestBody = "{\"issue\":\"屏幕有裂痕\",\"step\":3}";
@@ -70,10 +64,8 @@ class AiAssistantControllerTest {
 
     @Test
     void returnSuggest_step1_returnsGuideQuestion() throws Exception {
-        ReturnSuggestionResult result = new ReturnSuggestionResult();
-        result.setGuideQuestion("请问具体什么故障？");
-        result.setFinished(false);
-        result.setConfidence("high");
+        ReturnSuggestionResult result = new ReturnSuggestionResult(
+            null, null, null, "high", "请问具体什么故障？", false, null);
         when(aiAssistantService.suggestReturn(any())).thenReturn(result);
 
         String requestBody = "{\"issue\":\"手机有问题\",\"step\":1}";

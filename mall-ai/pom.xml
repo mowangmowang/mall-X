@@ -28,12 +28,23 @@
             <artifactId>mall-common-cors</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.macro.mall</groupId>
-            <artifactId>mall-mbg</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- Stage 3: Spring AI (替代手写 OpenAI 兼容客户端) -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-openai</artifactId>
+        </dependency>
+        <!-- Stage 7: Reactor Core (Spring AI ChatClient.stream() 内部用 Flux) -->
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+        </dependency>
+        <!-- Stage 6: OpenFeign (远程调 mall-portal 替代 MyBatis) -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
         <!-- springdoc-openapi: Swagger 3 (OpenAPI 3) 文档 -->
         <dependency>

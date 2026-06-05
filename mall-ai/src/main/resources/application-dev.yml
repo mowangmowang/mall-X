@@ -1,30 +1,34 @@
 server:
   port: 8086
 
+# Stage 6: 移除 MyBatis + Druid + DataSource 配置（改用 OpenFeign 调 mall-portal）
+# spring:
+#   datasource:
+#     url: jdbc:mysql://...
+#   druid: ...
+
+# mybatis:
+#   mapper-locations:
+#     - classpath:mapper/*.xml
+
+# ====== OpenFeign 配置 (Stage 6) ======
+# 默认指向 mall-portal (8085)，可在 application-local.yml 覆盖
 spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/mall?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password: root
-    druid:
-      initial-size: 5 #连接池初始化大小
-      min-idle: 10 #最小空闲连接数
-      max-active: 20 #最大连接数
+  cloud:
+    # 关闭服务发现（mall-ai 不接 Nacos），仅用 URL 直连 mall-portal
+    discovery:
+      enabled: false
+    openfeign:
+      client:
+        config:
+          mall-portal:
+            url: http://localhost:8085
+            connect-timeout: 3000
+            read-timeout: 5000
+            logger-level: basic
+      lazy-attributes-resolution: true
 
-mybatis:
-  mapper-locations:
-    - classpath:mapper/*.xml
-    - classpath*:com/**/mapper/*.xml
-
-ai:
-  client:
-    api-key: ${AI_API_KEY:your-api-key-here}  # 请通过环境变量 AI_API_KEY 或 application-local.yml 配置
-    base-url: https://api.deepseek.com/v1
-    model: deepseek-v4-flash
-    temperature: 0.7
-    max-tokens: 1024
-
-# ====== 跨域策略（由 mall-common-cors 统一读取）======
+# ====== CORS 策略 (由 mall-common-cors 统一读取) ======
 # 生产环境必须把 allowed-origins 改为具体域名
 mall:
   security:
