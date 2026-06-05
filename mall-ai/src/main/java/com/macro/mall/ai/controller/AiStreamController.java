@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
  * AI 流式输出控制器 (AI Stream Controller) - Stage 7
@@ -57,7 +57,7 @@ public class AiStreamController {
                description = "通过 SSE 逐 token 返回 AI 回复，实现打字机效果")
     @PostMapping(value = "/product/qa/stream",
                  produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<String> productQaStream(@Valid @RequestBody ProductQaRequest request) {
+    public SseEmitter productQaStream(@Valid @RequestBody ProductQaRequest request) {
         return aiAssistantService.streamChatAboutProduct(request);
     }
 }

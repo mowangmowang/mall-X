@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class AiAssistantServiceImpl implements AiAssistantService {
     }
 
     @Override
-    public reactor.core.publisher.Flux<String> streamChatAboutProduct(ProductQaRequest request) {
+    public SseEmitter streamChatAboutProduct(ProductQaRequest request) {
         String content = buildProductQaContent(request);
 
         log.info("AI product Q&A (stream) - productId={}, question={}",
