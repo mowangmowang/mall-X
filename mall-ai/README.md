@@ -39,7 +39,7 @@ mall-ai 正在按 [mall-ai-fix-task](../mall-ai-fix-task/) 中的 8 阶段计划
 | Stage | 状态 | 摘要 |
 |---|---|---|
 | 1 | ✅ | DTO 全面 Java 17 Record 化 + 构造器注入（净减 468 行） |
-| 2 | ⏳ | 配置 Record 化 + Prompt 外置到 application.yml |
+| 2 | ✅ | 配置 Record 化 + 100+ 行 Prompt 外置到 application.yml |
 | 3 | ⏳ | 引入 Spring AI 替代 97 行手写 HTTP 客户端 |
 | 4 | ⏳ | BeanOutputConverter 替换 90 行手写 JSON 解析 |
 | 5 | ⏳ | InputSanitizer 收编为 Spring AI Advisor |
@@ -48,6 +48,8 @@ mall-ai 正在按 [mall-ai-fix-task](../mall-ai-fix-task/) 中的 8 阶段计划
 | 8 | ⏳ | 对话记忆 + Function Calling |
 
 Stage 1 成果：代码量从 ~1500 行 → ~1100 行（-27%），5 个 DTO 全部 record 化，0 个 `@Autowired` 字段注入。
+
+Stage 2 成果：100+ 行硬编码 Prompt 全部外置到 `application.yml` 的 `ai.prompts.*`，运营/产品可独立修改 Prompt 无需重新编译；`AiClientConfig` 简化为 `@EnableConfigurationProperties` 注册入口，配置校验由 Bean Validation 自动接管。
 
 ## 快速开始
 

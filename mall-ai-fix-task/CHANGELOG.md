@@ -4,12 +4,41 @@
 
 ---
 
+## 2026-06-05 - refactor - Stage 2: 配置 Record 化 + Prompt 外置
+
+**PR**: 待创建
+**分支**: `refactor/mall-ai-stage-2-config-record-prompts`
+**Commit 数**: 3 (test red / refactor green / docs)
+**行数变化**: +228 / -129 (净增 99 行 — yml 配置占大头)
+**验证**:
+- ✅ `mvn test -pl mall-ai -DskipTests=false` 全绿 28/28 (新增 4 个 PromptPropertiesTest)
+- ✅ curl 端到端 2 个接口 HTTP 400 校验 + HTTP 200 真实 DeepSeek 调用
+- ✅ App 启动 11.9s，无配置加载错误
+
+**变更摘要**:
+- 新增 `AiClientProperties` record（@ConfigurationProperties + @Validated）
+- 新增 `PromptProperties` record
+- `AiClientConfig`: 61 → 47 行，删除 12 个手写 getter/setter
+- 删除 `@PostConstruct` 手动校验
+- application.yml: 100+ 行硬编码 Prompt 迁到 `ai.prompts.*`
+- `AiAssistantServiceImpl` 注入 `PromptProperties`
+- 硬编码 fallback（"质量问题" / "硬件故障"）改读配置
+- 删除 `RestTemplateConfig.java`（合并到 `AiClientConfig`）
+- `buildReturnSystemPrompt` 用 `String.replace("{reasons}", ...)` 占位符渲染
+
+**风险与回滚**:
+- 风险：yml 多行字符串（`|`）缩进敏感，IDE 格式化可能破坏 Prompt
+- 风险：`{reasons}` 占位符在 yml 模板中若与其他字段冲突需 escape
+- 回滚：`git revert <merge-commit-of-stage-2>`
+
+---
+
 ## 2026-06-05 - refactor - Stage 1: DTO 全面 Record 化 + 构造器注入
 
 **PR**: 待创建
 **分支**: `refactor/mall-ai-stage-1-dto-record`
-**Commit 数**: 3 (chore / test red / refactor green)
-**行数变化**: +385 / -853 (净减 468 行, -57%)
+**Commit 数**: 4 (chore / test red / refactor green / docs)
+**行数变化**: +430 / -869 (净减 439 行, -57%)
 **验证**:
 - ✅ `mvn test -pl mall-ai -DskipTests=false` 全绿 24/24
 - ✅ curl 端到端 2 个接口 400 校验生效
