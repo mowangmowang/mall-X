@@ -8,6 +8,10 @@
   <a href="https://vuejs.org/"><img src="https://img.shields.io/badge/Vue-3.3-4FC08D?style=flat-square&logo=vue.js&logoColor=white" alt="Vue 3"></a>
   <a href="https://maven.apache.org/"><img src="https://img.shields.io/badge/Maven-3.8+-C71A36?style=flat-square&logo=apachemaven&logoColor=white" alt="Maven"></a>
   <a href="https://github.com/macrozheng/mall/stargazers"><img src="https://img.shields.io/github/stars/macrozheng/mall?style=flat-square" alt="Upstream stars"></a>
+  <a href="https://github.com/mowangmowang/mall-X"><img src="https://img.shields.io/github/last-commit/mowangmowang/mall-X?style=flat-square" alt="Last commit"></a>
+  <a href="https://github.com/mowangmowang/mall-X"><img src="https://img.shields.io/github/languages/code-size/mowangmowang/mall-X?style=flat-square" alt="Code size"></a>
+  <a href="https://github.com/mowangmowang/mall-X/releases"><img src="https://img.shields.io/github/v/release/mowangmowang/mall-X?style=flat-square" alt="Release"></a>
+  <a href="https://github.com/mowangmowang/mall-X/commits/master"><img src="https://img.shields.io/github/commit-activity/m/mowangmowang/mall-X?style=flat-square" alt="Commit activity"></a>
 </p>
 
 <div align="center">
