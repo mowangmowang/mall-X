@@ -4,6 +4,45 @@
 
 ---
 
+## 2026-06-05 - feat - Stage 7: 流式输出 (SSE)
+
+**PR**: 待创建
+**分支**: `feat/mall-ai-stage-7-streaming-sse`
+**Commit 数**: 3 (test red / refactor green / docs)
+**行数变化**: +124 / -96 (净增 28 行)
+**验证**:
+- ✅ `mvn test -pl mall-ai -DskipTests=false` 全绿 41/41 (新增 2 个 AiStreamControllerTest)
+- ✅ curl SSE 缺 productId -> HTTP 400
+- ✅ curl SSE 正常请求 -> Spring AI 调到 DeepSeek (401 with fake key, 证明链路通)
+
+**变更摘要**:
+- `AiChatService`: 新增 `streamChat()` 返回 `Flux<String>` (逐 token 流)
+- `AiAssistantService`: 新增 `streamChatAboutProduct()` 接口方法
+- `AiAssistantServiceImpl`: 实现流式方法 + 提取 `buildProductQaContent()` 共用工具
+- 新建 `controller/AiStreamController`: SSE 端点 `POST /ai/product/qa/stream`
+  - `produces = text/event-stream`
+  - 旧同步端点 100% 向后兼容
+
+**端到端实际行为**:
+```
+Test 1 (校验失败): POST /ai/product/qa/stream 缺 productId
+-> HTTP 400 (Spring @Valid 触发)
+
+Test 3 (正常请求): POST /ai/product/qa/stream
+-> Spring AI 调 DeepSeek 流式 API
+-> DeepSeek 返回 401 (fake key)
+-> 响应 500 + WebClientResponseException
+-> 证明 SSE 链路通 (需要真实 API Key 才能拿到 token 流)
+```
+
+**风险与回滚**:
+- 风险：Spring AI 1.x `stream().content()` API 微调风险
+- 风险：前端用 `EventSource` 不支持 POST body，需用 `fetch` + `ReadableStream`（已记入 Controller 注释）
+- 风险：WebFlux 与 servlet 栈共存（SSE 端点会触发 WebFlux 自动配置）
+- 回滚：`git revert <merge-commit-of-stage-7>`
+
+---
+
 ## 2026-06-05 - refactor - Stage 6: 移除 MyBatis 依赖，ReturnReason 改用 OpenFeign
 
 **PR**: 待创建

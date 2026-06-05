@@ -23,7 +23,7 @@ Stage 2 (配置 yml)  ───┘                       ─> Stage 5 (Advisor) 
 | 4 | `refactor/mall-ai-stage-4-bean-output-converter` | refactor | -250 行 (parseReturnSuggestion -90) | ✅ 完成 |
 | 5 | `refactor/mall-ai-stage-5-advisor-sanitizer` | refactor | InputSanitizer -146 行 → Advisor | ✅ 完成 |
 | 6 | `refactor/mall-ai-stage-6-remove-mybatis` | refactor | -4 个依赖 (mall-mbg/druid/mybatis/mysql) | ✅ 完成 |
-| 7 | `feat/mall-ai-stage-7-streaming-sse` | **feat** | +SSE 端点 | ⏳ |
+| 7 | `feat/mall-ai-stage-7-streaming-sse` | **feat** | +SSE Controller (~30 行) | ✅ 完成 |
 | 8 | `feat/mall-ai-stage-8-function-calling` | **feat** | 协议升级 | ⏳ |
 
 ## 全局测试规范
@@ -80,5 +80,5 @@ Refs: mall-ai-fix-task/stage-X-*.md
 - [x] Stage 4: BeanOutputConverter 替换手写 JSON → [stage-4-bean-output-converter.md](stage-4-bean-output-converter.md) ✅
 - [x] Stage 5: InputSanitizer 收编为 Advisor → [stage-5-advisor-sanitizer.md](stage-5-advisor-sanitizer.md) ✅
 - [x] Stage 6: 移除 MyBatis 依赖 → [stage-6-remove-mybatis.md](stage-6-remove-mybatis.md) ✅
-- [ ] Stage 7: 流式输出 SSE（可选）→ [stage-7-streaming-sse.md](stage-7-streaming-sse.md)
+- [x] Stage 7: 流式输出 SSE → [stage-7-streaming-sse.md](stage-7-streaming-sse.md) ✅
 - [ ] Stage 8: 对话记忆 + Function Calling（可选）→ [stage-8-function-calling.md](stage-8-function-calling.md)
