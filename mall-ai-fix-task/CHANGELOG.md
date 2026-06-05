@@ -4,6 +4,30 @@
 
 ---
 
+## 2026-06-05 - refactor - Stage 4: BeanOutputConverter 替换手写 JSON 解析
+
+**PR**: 待创建
+**分支**: `refactor/mall-ai-stage-4-bean-output-converter`
+**Commit 数**: 3 (test red / refactor green / docs)
+**行数变化**: +89 / -339 (净减 250 行)
+**验证**:
+- ✅ `mvn test -pl mall-ai -DskipTests=false` 全绿 26/26 (新增 6 个 ReturnSuggestionBeanOutputTest)
+
+**变更摘要**:
+- `AiChatService` 新增 `chatEntity()` 和 `renderAndChatEntity()` 重载，用 `BeanOutputConverter` 自动注入 JSON schema 并反序列化为 record
+- `AiAssistantServiceImpl.suggestReturn` 重构：删除 90 行 `parseReturnSuggestion` 手写 JSON 解析
+- 强制校验逻辑简化：`enforceStep3Defaults()` (15 行)
+- Fallback 逻辑独立：`fallbackResult()` (15 行)
+- 删除 hutool `JSONUtil` / `JSONObject` 依赖（业务侧）
+- 删除 `AiAssistantServiceTest.java`（被 `ReturnSuggestionBeanOutputTest` 覆盖）
+
+**风险与回滚**:
+- 风险：BeanOutputConverter 对 record 的支持需要 Jackson 2.15+（Spring Boot 3.5 BOM 自带 2.18，已 OK）
+- 风险：AI 返回的 JSON 字段名若与 record 字段名不一致 → 显式 `@JsonProperty` 注解（当前无此需求）
+- 回滚：`git revert <merge-commit-of-stage-4>`
+
+---
+
 ## 2026-06-05 - refactor - Stage 3: 引入 Spring AI 替代手写 OpenAI 客户端
 
 **PR**: 待创建
