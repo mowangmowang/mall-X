@@ -42,7 +42,7 @@ mall-ai 正在按 [mall-ai-fix-task](../mall-ai-fix-task/) 中的 8 阶段计划
 | 2 | ✅ | 配置 Record 化 + 100+ 行 Prompt 外置到 application.yml |
 | 3 | ✅ | 引入 Spring AI 替代 97 行手写 OpenAI 兼容客户端（-301 行） |
 | 4 | ✅ | BeanOutputConverter 替换 90 行手写 JSON 解析（-250 行） |
-| 5 | ⏳ | InputSanitizer 收编为 Spring AI Advisor |
+| 5 | ✅ | InputSanitizer 收编为 Spring AI Advisor（删除 146 行工具类） |
 | 6 | ⏳ | 移除 MyBatis 依赖，ReturnReason 走 OpenFeign |
 | 7 | ⏳ | 流式输出 (SSE) |
 | 8 | ⏳ | 对话记忆 + Function Calling |
@@ -54,6 +54,8 @@ Stage 2 成果：100+ 行硬编码 Prompt 全部外置到 `application.yml` 的 
 Stage 3 成果：删除 97 行手写 `OpenAiCompatibleClient` + 整个 `client/` 目录，改用 Spring AI `ChatClient`。`application.yml` 改用 `spring.ai.openai.*` 标准化配置；白送 SSE 流式、BeanOutputConverter 结构化输出、Tool Calling 等"0 能力 → 现成"特性（Stage 4/8 落地）。`spring-ai.version=1.0.0` GA。
 
 Stage 4 成果：删除 90 行手写 JSON 解析（含 markdown code block 剥离、字段提取、强制校验、Fallback），改用 `BeanOutputConverter<T>` 自动注入 JSON schema 到 prompt 并反序列化 AI 响应为 record。`enforceStep3Defaults()` / `fallbackResult()` 各自 15 行，业务代码精简 22%。
+
+Stage 5 成果：删除 146 行 `InputSanitizer` 工具类，改用 Spring AI `CallAdvisor` 拦截所有 ChatClient 调用。`InputSanitizationAdvisor` 自动剥离控制字符、检测 Prompt Injection、截断超长输入，业务层完全无感。`ai.security.sanitization.*` 配置化。
 
 ## 快速开始
 

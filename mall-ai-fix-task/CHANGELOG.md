@@ -4,6 +4,36 @@
 
 ---
 
+## 2026-06-05 - refactor - Stage 5: InputSanitizer 收编为 Spring AI Advisor
+
+**PR**: 待创建
+**分支**: `refactor/mall-ai-stage-5-advisor-sanitizer`
+**Commit 数**: 3 (test red / refactor green / docs)
+**行数变化**: +286 / -221 (净增 65 行 — Advisor 模板代码 vs 删除 InputSanitizer)
+**验证**:
+- ✅ `mvn test -pl mall-ai -DskipTests=false` 全绿 34/34 (新增 8 个 InputSanitizationAdvisorTest)
+
+**变更摘要**:
+- 新增 `security/SanitizationProperties.java` (record + @ConfigurationProperties)
+- 新增 `security/InputSanitizationAdvisor.java` (实现 Spring AI `CallAdvisor`)
+- `ChatClientConfig`: 注册 Bean + `defaultAdvisors()` 注入
+- `AiAssistantServiceImpl`: 删除显式 `InputSanitizer.sanitize()` 调用
+- `application.yml`: 新增 `ai.security.sanitization.*`
+- 删除 `util/InputSanitizer.java` (-146 行)
+
+**安全收益**:
+- 输入清理从业务层下移到 Spring AI Advisor 链，业务代码不再关心
+- 所有 ChatClient 调用（`chat()` / `chatEntity()` / 未来 `stream()`）自动清洗
+- Order = HIGHEST_PRECEDENCE 确保最先执行
+- 危险模式检测 + 控制字符剥离 + 长度截断 一站式处理
+
+**风险与回滚**:
+- 风险：Spring AI 1.x 不同小版本 `CallAdvisor` API 微调
+- 风险：自定义 `RequestAdvisor` 接口在不同 Spring AI 版本间命名不同
+- 回滚：`git revert <merge-commit-of-stage-5>`
+
+---
+
 ## 2026-06-05 - refactor - Stage 4: BeanOutputConverter 替换手写 JSON 解析
 
 **PR**: 待创建
