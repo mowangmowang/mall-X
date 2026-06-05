@@ -4,6 +4,43 @@
 
 ---
 
+## 2026-06-05 - refactor - Stage 6: 移除 MyBatis 依赖，ReturnReason 改用 OpenFeign
+
+**PR**: 待创建
+**分支**: `refactor/mall-ai-stage-6-remove-mybatis`
+**Commit 数**: 3 (test red / refactor green / docs)
+**行数变化**: +197 / -108 (净增 89 行 — 新增 Feign 配置 + Fallback)
+**验证**:
+- ✅ `mvn test -pl mall-ai -DskipTests=false` 全绿 39/39 (新增 5 个 ReturnReasonServiceHttpTest)
+- ✅ 0 个 MyBatis 依赖 (mvn dependency:tree | grep mybatis -> 空)
+- ✅ 0 个 Druid 依赖
+- ✅ 0 个 mysql-connector-java 依赖
+
+**变更摘要**:
+- 根 pom.xml: `spring-cloud.version=2025.0.0` + `spring-cloud-dependencies` BOM
+- mall-ai/pom.xml: 删 `mall-mbg`，加 `spring-cloud-starter-openfeign`
+- 新增 `feign/ReturnReasonClient` (OpenFeign 接口)
+- 新增 `feign/ReturnReasonFallbackFactory` (降级)
+- 新增 `domain/ReturnReasonDto` (替代 mall-mbg 的 OmsOrderReturnReason)
+- 重写 `service/ReturnReasonService` (改用 Feign)
+- `MallAiApplication` 加 `@EnableFeignClients`
+- 删除 `config/MyBatisConfig.java`
+- `application-dev.yml`: 删 datasource/mybatis，加 feign 配置
+
+**依赖清理**:
+```
+- mall-mbg (~50MB transitive: mybatis, pagehelper, druid, mysql-connector)
++ spring-cloud-starter-openfeign (~3MB)
+```
+
+**风险与回滚**:
+- 风险：mall-portal 当前未暴露 `/returnReason/list` 端点 → Fallback 返回空 + 业务降级到 yml 默认列表
+- 风险：服务发现 (Nacos) 暂未启用 → 当前用 URL 直连 localhost:8085
+- 风险：Spring Cloud 2025.0.0 + Spring Boot 3.5.14 版本组合
+- 回滚：`git revert <merge-commit-of-stage-6>`
+
+---
+
 ## 2026-06-05 - refactor - Stage 5: InputSanitizer 收编为 Spring AI Advisor
 
 **PR**: 待创建
