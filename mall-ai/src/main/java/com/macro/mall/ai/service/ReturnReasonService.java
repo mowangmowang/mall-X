@@ -3,9 +3,9 @@ package com.macro.mall.ai.service;
 import com.macro.mall.mapper.OmsOrderReturnReasonMapper;
 import com.macro.mall.model.OmsOrderReturnReason;
 import com.macro.mall.model.OmsOrderReturnReasonExample;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,12 +16,12 @@ import java.util.stream.Collectors;
  * 用于获取数据库中启用的退货原因列表
  */
 @Service
+@RequiredArgsConstructor
 public class ReturnReasonService {
 
     private static final Logger log = LoggerFactory.getLogger(ReturnReasonService.class);
 
-    @Autowired
-    private OmsOrderReturnReasonMapper returnReasonMapper;
+    private final OmsOrderReturnReasonMapper returnReasonMapper;
 
     /**
      * 获取所有启用的退货原因名称列表

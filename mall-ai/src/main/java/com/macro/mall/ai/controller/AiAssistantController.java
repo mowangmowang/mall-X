@@ -6,7 +6,7 @@ import com.macro.mall.common.api.CommonResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,14 +30,14 @@ import jakarta.validation.Valid;
 @RestController
 @Tag(name = "AiAssistantController", description = "AI购物助手")
 @RequestMapping("/ai")
+@RequiredArgsConstructor
 public class AiAssistantController {
 
     /**
      * AI 助手服务层实例 (AI Assistant Service Instance)
-     * 通过 Spring 依赖注入自动装配
+     * 通过 Lombok {@code @RequiredArgsConstructor} 生成构造器注入
      */
-    @Autowired
-    private AiAssistantService aiAssistantService;
+    private final AiAssistantService aiAssistantService;
 
     /**
      * AI 商品问答接口 (AI Product Q&A API)
