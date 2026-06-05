@@ -2,7 +2,7 @@ package com.macro.mall.ai.service.impl;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.macro.mall.ai.client.AiClient;
+import com.macro.mall.ai.chat.AiChatService;
 import com.macro.mall.ai.config.PromptProperties;
 import com.macro.mall.ai.domain.*;
 import com.macro.mall.ai.service.AiAssistantService;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * AI 助手服务实现类 (AI Assistant Service Implementation)
+ * AI 助手服务实现类 (AI Assistant Service Implementation) - Stage 3
  *
  * <p>实现 AI 购物助手的核心业务逻辑，包括商品问答和退货建议两大功能。</p>
  *
@@ -33,7 +33,14 @@ import java.util.Map;
  *   <li>100+ 行硬编码 Prompt 迁出到 {@code application.yml} 的 {@code ai.prompts.*}</li>
  *   <li>注入 {@link PromptProperties}，通过 {@code prompts.productQaSystem()} 等方法读取</li>
  *   <li>硬编码的 fallback 字符串（"质量问题" / "硬件故障"）改为配置化</li>
- *   <li>使用 {@code org.springframework.ai.chat.prompt.PromptTemplate} 占位符渲染（Stage 3 引入）</li>
+ * </ul>
+ *
+ * <p><b>Stage 3 改造：</b></p>
+ * <ul>
+ *   <li>删除 97 行手写 {@code OpenAiCompatibleClient}</li>
+ *   <li>改用 Spring AI 的 {@code ChatClient}（通过 {@link AiChatService} 封装）</li>
+ *   <li>删除对 {@code AiClient} 接口和 {@code ChatMessage} record 的依赖</li>
+ *   <li>Stage 4 计划：用 {@code BeanOutputConverter} 替换 90 行手写 JSON 解析</li>
  * </ul>
  *
  * @author alan
@@ -43,84 +50,56 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AiAssistantServiceImpl implements AiAssistantService {
 
-    /**
-     * 日志记录器 (Logger)
-     * <p>用于记录 AI 调用过程、错误信息等</p>
-     */
     private static final Logger log = LoggerFactory.getLogger(AiAssistantServiceImpl.class);
 
-    /**
-     * AI 客户端实例 (AI Client Instance)
-     * <p>用于调用外部 AI API（DeepSeek/OpenAI/SiliconFlow 等）</p>
-     * <p>通过 Lombok {@code @RequiredArgsConstructor} 生成构造器注入</p>
-     */
-    private final AiClient aiClient;
-
-    /**
-     * 退货原因服务实例 (Return Reason Service Instance)
-     * <p>用于从数据库动态获取启用的退货原因列表</p>
-     * <p>确保 AI 推荐的退货原因与后台配置保持一致</p>
-     */
+    private final AiChatService aiChat;
     private final ReturnReasonService returnReasonService;
-
-    /**
-     * Prompt 配置 (Stage 2)
-     * <p>从 application.yml 注入，存储商品问答/退货建议的系统提示词和 fallback 默认值。</p>
-     */
     private final PromptProperties prompts;
 
     @Override
     public AiResponse chatAboutProduct(ProductQaRequest request) {
-        // 【步骤1】安全清理：对用户问题进行过滤，防止 Prompt Injection 攻击
+        // 【步骤1】安全清理
         String sanitizedQuestion = InputSanitizer.sanitize(request.question());
 
-        // 【步骤2】构建上下文：组装商品信息（名称、品牌、价格、描述）
+        // 【步骤2】构建上下文
         String context = buildProductContext(request);
 
-        // 【步骤3】构建完整内容：拼接商品信息 + 对话历史（可选） + 用户问题
+        // 【步骤3】构建完整内容
         StringBuilder contentBuilder = new StringBuilder();
-        contentBuilder.append(context);  // 添加商品信息
+        contentBuilder.append(context);
 
-        // 添加对话历史（如果存在多轮对话）
         if (request.conversationHistory() != null && !request.conversationHistory().isEmpty()) {
             contentBuilder.append("\n\n【对话历史】\n").append(request.conversationHistory());
         }
-
-        // 添加当前用户问题
         contentBuilder.append("\n\n【顾客问题】").append(sanitizedQuestion);
 
         String content = contentBuilder.toString();
 
-        // 【步骤4】记录日志：便于追踪和调试
+        // 【步骤4】记录日志
         log.info("AI product Q&A - productId={}, question={}, hasHistory={}",
                 request.productId(), sanitizedQuestion,
                 request.conversationHistory() != null && !request.conversationHistory().isEmpty());
 
-        // 【步骤5】调用 AI 客户端：传入系统提示词和用户内容，获取 AI 回复
-        String reply = aiClient.chat(prompts.productQaSystem(), content);
+        // 【步骤5】调用 AI 客户端 (Stage 3: 通过 Spring AI ChatClient)
+        String reply = aiChat.chat(prompts.productQaSystem(), content);
 
-        // 【步骤6】封装响应：将 AI 回复包装成 AiResponse 对象返回
+        // 【步骤6】封装响应
         return new AiResponse(reply);
     }
 
     @Override
     public ReturnSuggestionResult suggestReturn(ReturnSuggestionRequest request) {
-        // 【步骤1】安全清理：对用户问题描述进行过滤，防止恶意输入
+        // 【步骤1】安全清理
         String sanitizedIssue = InputSanitizer.sanitize(request.issue());
 
-        // 【步骤2】动态构建 Prompt：从数据库获取启用的退货原因列表，生成系统提示词
-        String systemPrompt = buildReturnSystemPrompt();
-
-        // 【步骤3】获取当前步骤：默认为第1步（询问故障现象）
+        // 【步骤2】动态构建 Prompt
         int currentStep = request.step() == null ? 1 : request.step();
-
-        // 【步骤4】会话管理：如果没有 sessionId，生成新的 UUID
         String sessionId = request.sessionId();
         if (sessionId == null || sessionId.isEmpty()) {
-            sessionId = java.util.UUID.randomUUID().toString();  // 生成唯一会话ID
+            sessionId = java.util.UUID.randomUUID().toString();
         }
 
-        // 【步骤5】构建用户内容：包含当前步骤、问题描述、商品信息等
+        // 【步骤3】构建用户内容
         String content = String.format(
                 "当前引导步骤：%d/3\n用户描述的问题：%s\n商品名称：%s\n商品属性：%s\n订单编号：%s",
                 currentStep,
@@ -130,28 +109,20 @@ public class AiAssistantServiceImpl implements AiAssistantService {
                 nullToEmpty(request.orderSn())
         );
 
-        // 【步骤6】记录日志：追踪引导进度
+        // 【步骤4】记录日志
         log.info("AI return suggest - step={}, issue={}", currentStep, sanitizedIssue);
 
-        // 【步骤7】调用 AI 客户端：传入系统提示词和用户内容，获取 JSON 格式响应
-        String jsonResponse = aiClient.chat(systemPrompt, content);
-
-        // 【步骤8】解析响应：解析 JSON，应用强制校验逻辑，返回结果
-        return parseReturnSuggestion(jsonResponse, sanitizedIssue, currentStep, sessionId);
-    }
-
-    /**
-     * 动态生成退货建议系统 Prompt (Build Return System Prompt Dynamically)
-     *
-     * <p>Stage 2：从 {@link PromptProperties#returnSuggestionSystem()} 读取模板，
-     * 用 {@code {reasons}} 占位符动态填充从数据库加载的退货原因列表。</p>
-     */
-    private String buildReturnSystemPrompt() {
+        // 【步骤5】调用 AI 客户端
         List<String> reasons = returnReasonService.getEnabledReturnReasons();
         String reasonsStr = String.join("、", reasons);
+        String jsonResponse = aiChat.renderAndChat(
+            prompts.returnSuggestionSystem(),
+            Map.of("reasons", reasonsStr),
+            content
+        );
 
-        // Stage 2: 用 String.replace 占位符（Stage 3 替换为 PromptTemplate）
-        return prompts.returnSuggestionSystem().replace("{reasons}", reasonsStr);
+        // 【步骤6】解析响应
+        return parseReturnSuggestion(jsonResponse, sanitizedIssue, currentStep, sessionId);
     }
 
     /**
@@ -170,14 +141,11 @@ public class AiAssistantServiceImpl implements AiAssistantService {
     /**
      * 解析退货建议响应 (Parse Return Suggestion Response)
      *
-     * <p>Stage 1 改造：因为 record 不可变，每次修改都生成新实例。</p>
+     * <p>Stage 3：保留手写 JSON 解析（Stage 4 用 {@code BeanOutputConverter} 替换）。</p>
      */
     private ReturnSuggestionResult parseReturnSuggestion(String json, String fallbackIssue, int currentStep, String sessionId) {
         try {
-            // 【步骤1】清理 JSON：去除首尾空白
             String cleaned = json.trim();
-
-            // 【步骤2】处理 Markdown 代码块
             if (cleaned.startsWith("```")) {
                 int start = cleaned.indexOf('\n');
                 if (start > 0) cleaned = cleaned.substring(start + 1);
@@ -186,10 +154,8 @@ public class AiAssistantServiceImpl implements AiAssistantService {
                 cleaned = cleaned.trim();
             }
 
-            // 【步骤3】解析 JSON
             JSONObject obj = JSONUtil.parseObj(cleaned);
 
-            // 【步骤4】提取字段
             String reason = obj.getStr("reason", "");
             String description = obj.getStr("description", "");
             String category = obj.getStr("category", "");
@@ -197,7 +163,6 @@ public class AiAssistantServiceImpl implements AiAssistantService {
             String guideQuestion = obj.getStr("guideQuestion", "");
             Boolean finished = obj.getBool("finished", false);
 
-            // 【步骤5】强制校验：如果是第3步，必须结束对话并给出建议
             if (currentStep >= 3) {
                 finished = true;
                 if (reason == null || reason.isEmpty()) reason = prompts.returnReasonDefault();
@@ -205,7 +170,6 @@ public class AiAssistantServiceImpl implements AiAssistantService {
                 if (category == null || category.isEmpty()) category = prompts.categoryDefault();
             }
 
-            // 【步骤6】生成分析说明
             String analysisNote;
             if (Boolean.TRUE.equals(finished)) {
                 String truncatedIssue = fallbackIssue.length() > 20
@@ -217,7 +181,6 @@ public class AiAssistantServiceImpl implements AiAssistantService {
                 analysisNote = "正在引导您完善问题描述...";
             }
 
-            // 【步骤7】记录成功日志
             log.info("AI 退货建议解析成功 - step={}, finished={}, reason={}",
                     currentStep, finished, reason);
 
@@ -225,7 +188,6 @@ public class AiAssistantServiceImpl implements AiAssistantService {
                 reason, description, category, confidence, guideQuestion, finished, analysisNote);
 
         } catch (Exception e) {
-            // 【异常处理】JSON 解析失败时的兜底逻辑
             log.warn("Failed to parse AI return suggestion JSON, using fallback. Raw: {}", json, e);
 
             if (currentStep >= 3) {

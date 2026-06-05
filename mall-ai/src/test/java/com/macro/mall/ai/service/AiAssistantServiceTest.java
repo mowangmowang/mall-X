@@ -1,6 +1,6 @@
 package com.macro.mall.ai.service;
 
-import com.macro.mall.ai.client.AiClient;
+import com.macro.mall.ai.chat.AiChatService;
 import com.macro.mall.ai.config.PromptProperties;
 import com.macro.mall.ai.domain.AiResponse;
 import com.macro.mall.ai.domain.ProductQaRequest;
@@ -14,28 +14,27 @@ import org.mockito.ArgumentCaptor;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
- * AiAssistantService 单元测试 (Stage 1 - Record 化)
+ * AiAssistantService 单元测试 (Stage 3 - Spring AI)
  *
- * <p>使用 Mockito 模拟 AiClient 和 ReturnReasonService，
- * 验证 3 轮引导业务逻辑、强制校验、JSON 解析 fallback 等场景。
- * DTO 已迁移为 record，测试改用 record 构造器和 accessor。</p>
+ * <p>使用 Mockito 模拟 {@link AiChatService} 和 {@link ReturnReasonService}。</p>
  */
 class AiAssistantServiceTest {
 
-    private AiClient aiClient;
+    private AiChatService aiChat;
     private ReturnReasonService returnReasonService;
     private PromptProperties prompts;
     private AiAssistantServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        aiClient = mock(AiClient.class);
+        aiChat = mock(AiChatService.class);
         returnReasonService = mock(ReturnReasonService.class);
-        // Stage 2: PromptProperties 通过 mock 提供测试用 prompt 与默认值
         prompts = new PromptProperties(
             "QA system prompt",
             "RETURN system prompt {reasons}",
@@ -43,8 +42,7 @@ class AiAssistantServiceTest {
             "质量问题",
             "硬件故障"
         );
-        // Stage 1: 构造器注入
-        service = new AiAssistantServiceImpl(aiClient, returnReasonService, prompts);
+        service = new AiAssistantServiceImpl(aiChat, returnReasonService, prompts);
         when(returnReasonService.getEnabledReturnReasons())
                 .thenReturn(List.of("质量问题", "商品损坏", "7天无理由退货"));
     }
@@ -55,13 +53,13 @@ class AiAssistantServiceTest {
     void chatAboutProduct_normalFlow() {
         ProductQaRequest request = new ProductQaRequest(1L, "材质是什么？", "iPhone 15", null, null, null, null);
 
-        when(aiClient.chat(anyString(), anyString())).thenReturn("该手机采用钛金属设计。");
+        when(aiChat.chat(anyString(), anyString())).thenReturn("该手机采用钛金属设计。");
 
         AiResponse response = service.chatAboutProduct(request);
 
         assertNotNull(response);
         assertEquals("该手机采用钛金属设计。", response.reply());
-        verify(aiClient, times(1)).chat(anyString(), anyString());
+        verify(aiChat, times(1)).chat(anyString(), anyString());
     }
 
     @Test
@@ -70,12 +68,12 @@ class AiAssistantServiceTest {
             1L, "还有吗？", null, null, null, null,
             "用户: 拍照怎么样？\nAI: 4800万像素");
 
-        when(aiClient.chat(anyString(), anyString())).thenReturn("有夜景模式。");
+        when(aiChat.chat(anyString(), anyString())).thenReturn("有夜景模式。");
 
         service.chatAboutProduct(request);
 
         ArgumentCaptor<String> contentCaptor = ArgumentCaptor.forClass(String.class);
-        verify(aiClient).chat(anyString(), contentCaptor.capture());
+        verify(aiChat).chat(anyString(), contentCaptor.capture());
         assertTrue(contentCaptor.getValue().contains("【对话历史】"));
         assertTrue(contentCaptor.getValue().contains("【顾客问题】"));
     }
@@ -87,7 +85,7 @@ class AiAssistantServiceTest {
         ReturnSuggestionRequest request = new ReturnSuggestionRequest(
             "手机有问题", null, null, null, null, 1);
 
-        when(aiClient.chat(anyString(), anyString())).thenReturn(
+        when(aiChat.renderAndChat(anyString(), anyMap(), anyString())).thenReturn(
             "{\"reason\":\"\",\"description\":\"\",\"category\":\"\",\"confidence\":\"high\",\"guideQuestion\":\"请问具体什么故障？\",\"finished\":false}"
         );
 
@@ -103,7 +101,7 @@ class AiAssistantServiceTest {
         ReturnSuggestionRequest request = new ReturnSuggestionRequest(
             "屏幕不亮", null, null, null, null, 2);
 
-        when(aiClient.chat(anyString(), anyString())).thenReturn(
+        when(aiChat.renderAndChat(anyString(), anyMap(), anyString())).thenReturn(
             "{\"reason\":\"\",\"description\":\"\",\"category\":\"\",\"confidence\":\"high\",\"guideQuestion\":\"突然还是一直？\",\"finished\":false}"
         );
 
@@ -118,7 +116,7 @@ class AiAssistantServiceTest {
         ReturnSuggestionRequest request = new ReturnSuggestionRequest(
             "屏幕不亮", null, null, null, null, 3);
 
-        when(aiClient.chat(anyString(), anyString())).thenReturn(
+        when(aiChat.renderAndChat(anyString(), anyMap(), anyString())).thenReturn(
             "{\"reason\":\"质量问题\",\"description\":\"屏幕无法显示\",\"category\":\"硬件故障\",\"confidence\":\"high\",\"guideQuestion\":\"已确认\",\"finished\":true}"
         );
 
@@ -137,14 +135,14 @@ class AiAssistantServiceTest {
         ReturnSuggestionRequest request = new ReturnSuggestionRequest(
             "手机有问题", null, null, null, null, 3);
 
-        when(aiClient.chat(anyString(), anyString())).thenReturn(
+        when(aiChat.renderAndChat(anyString(), anyMap(), anyString())).thenReturn(
             "{\"reason\":\"\",\"description\":\"\",\"category\":\"\",\"confidence\":\"high\",\"guideQuestion\":\"完成\",\"finished\":true}"
         );
 
         ReturnSuggestionResult result = service.suggestReturn(request);
 
         assertTrue(result.finished());
-        // step=3 时强制填充默认值
+        // step=3 时强制填充默认值（从 PromptProperties 读取）
         assertEquals("质量问题", result.suggestedReason());
         assertEquals("手机有问题", result.suggestedDescription());
         assertEquals("硬件故障", result.category());
@@ -155,7 +153,7 @@ class AiAssistantServiceTest {
         ReturnSuggestionRequest request = new ReturnSuggestionRequest(
             "屏幕坏", null, null, null, null, 3);
 
-        when(aiClient.chat(anyString(), anyString())).thenReturn("not a json");
+        when(aiChat.renderAndChat(anyString(), anyMap(), anyString())).thenReturn("not a json");
 
         ReturnSuggestionResult result = service.suggestReturn(request);
 
@@ -172,7 +170,7 @@ class AiAssistantServiceTest {
         ReturnSuggestionRequest request = new ReturnSuggestionRequest(
             "测试", null, null, null, null, 1);
 
-        when(aiClient.chat(anyString(), anyString())).thenReturn(
+        when(aiChat.renderAndChat(anyString(), anyMap(), anyString())).thenReturn(
             "{\"reason\":\"\",\"description\":\"\",\"category\":\"\",\"confidence\":\"high\",\"guideQuestion\":\"x\",\"finished\":false}"
         );
 
@@ -188,7 +186,7 @@ class AiAssistantServiceTest {
             "测试", null, null, null, null, 3);
 
         // 模拟 AI 返回 Markdown 代码块格式
-        when(aiClient.chat(anyString(), anyString())).thenReturn(
+        when(aiChat.renderAndChat(anyString(), anyMap(), anyString())).thenReturn(
             "```json\n{\"reason\":\"商品损坏\",\"description\":\"屏幕破裂\",\"category\":\"硬件故障\",\"confidence\":\"high\",\"guideQuestion\":\"ok\",\"finished\":true}\n```"
         );
 

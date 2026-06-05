@@ -9,13 +9,15 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
  * AiChatService 单元测试 (Stage 3)
  *
- * <p>验证 Spring AI ChatClient 封装：模板渲染 + ChatClient 调用链。</p>
+ * <p>直接 mock {@link ChatClient}，绕过 {@link ChatClient.Builder} 的抽象复杂性。</p>
  *
  * @author alan
  * @since 2026-06
@@ -25,7 +27,6 @@ class AiChatServiceTest {
     private ChatClient chatClient;
     private ChatClient.ChatClientRequestSpec requestSpec;
     private ChatClient.CallResponseSpec callSpec;
-    private ChatClient.Builder builder;
     private PromptProperties prompts;
     private AiChatService service;
 
@@ -41,13 +42,6 @@ class AiChatServiceTest {
         when(requestSpec.user(anyString())).thenReturn(requestSpec);
         when(requestSpec.call()).thenReturn(callSpec);
 
-        builder = new ChatClient.Builder() {
-            @Override
-            public ChatClient build() {
-                return chatClient;
-            }
-        };
-
         prompts = new PromptProperties(
             "QA system",
             "RET system {reasons}",
@@ -56,7 +50,7 @@ class AiChatServiceTest {
             "硬件故障"
         );
 
-        service = new AiChatService(builder, prompts);
+        service = new AiChatService(chatClient, prompts);
     }
 
     @Test
@@ -66,6 +60,8 @@ class AiChatServiceTest {
         String result = service.chat("You are helpful", "Hi");
 
         assertThat(result).isEqualTo("AI 回复");
+        verify(requestSpec).system("You are helpful");
+        verify(requestSpec).user("Hi");
     }
 
     @Test
@@ -75,13 +71,12 @@ class AiChatServiceTest {
         String result = service.chat("Hello {name}", Map.of("name", "World"), "user msg");
 
         assertThat(result).isEqualTo("OK");
-        // 验证 system prompt 被渲染后传入
-        org.mockito.Mockito.verify(requestSpec).system("Hello World");
-        org.mockito.Mockito.verify(requestSpec).user("user msg");
+        verify(requestSpec).system("Hello World");
+        verify(requestSpec).user("user msg");
     }
 
     @Test
-    void chat_rendersPromptPropertyWithReasons() {
+    void renderAndChat_replacesReasonsPlaceholder() {
         when(callSpec.content()).thenReturn("result");
 
         String result = service.renderAndChat(
@@ -91,7 +86,6 @@ class AiChatServiceTest {
         );
 
         assertThat(result).isEqualTo("result");
-        // 验证 yml 模板的 {reasons} 占位符被替换
-        org.mockito.Mockito.verify(requestSpec).system(org.mockito.ArgumentMatchers.contains("质量问题、商品损坏"));
+        verify(requestSpec).system(contains("质量问题、商品损坏"));
     }
 }
