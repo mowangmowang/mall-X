@@ -13,15 +13,6 @@ server:
 
 # ====== OpenFeign 配置 (Stage 6) ======
 # 默认指向 mall-portal (8085)，可在 application-local.yml 覆盖
-feign:
-  client:
-    config:
-      mall-portal:
-        url: http://localhost:8085  # 生产环境用服务发现 (Nacos)
-        connect-timeout: 3000
-        read-timeout: 5000
-        logger-level: basic
-
 spring:
   cloud:
     # 关闭服务发现（mall-ai 不接 Nacos），仅用 URL 直连 mall-portal
@@ -32,6 +23,9 @@ spring:
         config:
           mall-portal:
             url: http://localhost:8085
+            connect-timeout: 3000
+            read-timeout: 5000
+            logger-level: basic
       lazy-attributes-resolution: true
 
 # ====== CORS 策略 (由 mall-common-cors 统一读取) ======
