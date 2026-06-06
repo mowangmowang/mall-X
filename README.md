@@ -377,6 +377,7 @@ cd mall-admin-web && npm install && npm run dev   # http://localhost:5173
 | [AGENTS.md](./AGENTS.md) | 开发规范、build/run 命令、Gotchas（开发者 / AI 代理必读） |
 | [CHANGELOG.md](./CHANGELOG.md) | Mall-X 与上游 macrozheng/mall 的所有差异 |
 | [NOTICE](./NOTICE) | Apache 2.0 fork 归属声明 |
+| [document/开发环境要求.md](./document/开发环境要求.md) | **新开发者 1-2 天跑通环境的权威手册**（JDK 17 / SB 3.5.14 / ES 8.x / Vite 3000 等版本基线 + 端口分配 + 33 个坑点 + 验证清单） |
 | [document/architecture_diagram.md](./document/architecture_diagram.md) | 详细 Mermaid 架构图 |
 | [document/postman/](./document/postman/) | Postman 接口测试集合 |
 | [document/sql/mall.sql](./document/sql/mall.sql) | 数据库脚本 |
