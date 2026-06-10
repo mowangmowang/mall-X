@@ -1,0 +1,54 @@
+.git
+.gitignore
+.idea
+.vscode
+*.iml
+.DS_Store
+Thumbs.db
+
+# Maven build artifacts
+target/
+build/
+*.jar
+**/target/
+**/build/
+**/mvnw
+**/mvnw.cmd
+.mvn/
+.m2/
+
+# Logs
+*.log
+logs/
+**/logs/
+
+# IDE / editor
+.project
+.classpath
+.settings/
+.factorypath
+
+# Docker artifacts
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Frontend
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+
+# Documents / meta
+document/
+guidence/
+mall-admin-web/
+mall-app-web/
+mall-web/
+*.md
+!README.md
+
+# Tests
+test-output/
+allure-results/
+src/test/

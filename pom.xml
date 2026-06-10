@@ -35,6 +35,7 @@
         <skipTests>true</skipTests>
         <docker.host>http://192.168.3.101:2375</docker.host>
         <docker.maven.plugin.version>0.43.3</docker.maven.plugin.version>
+        <docker.skip>false</docker.skip>
         <pagehelper-starter.version>2.1.0</pagehelper-starter.version>
         <pagehelper.version>6.1.1</pagehelper.version>
         <druid.version>1.2.28</druid.version>
@@ -255,6 +256,8 @@
                             </execution>
                         </executions>
                     <configuration>
+                        <!-- 通过 -Ddocker.skip=true 跳过镜像构建（无 Docker daemon 时使用）-->
+                        <skip>${docker.skip}</skip>
                         <!-- Docker 远程管理地址-->
                         <dockerHost>${docker.host}</dockerHost>
                         <images>

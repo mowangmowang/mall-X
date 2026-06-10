@@ -1,0 +1,53 @@
+.git
+.gitignore
+.idea
+.vscode
+*.iml
+.DS_Store
+Thumbs.db
+
+# Maven build artifacts
+target/
+build/
+*.jar
+!${project.build.finalName}.jar
+**/target/
+**/build/
+**/mvnw
+**/mvnw.cmd
+.mvn/
+
+# Maven local
+.m2/
+
+# Logs
+*.log
+logs/
+**/logs/
+
+# IDE / editor
+.project
+.classpath
+.settings/
+.factorypath
+
+# Docker artifacts (avoid recursive packaging)
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Frontend (should not be in Java image)
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+
+# Documents
+document/
+guidence/
+*.md
+!README.md
+
+# Test artifacts
+test-output/
+allure-results/

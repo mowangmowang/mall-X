@@ -1,28 +1,13 @@
 #!/usr/bin/env bash
-# 定义应用组名
-group_name='mall'
-# 定义应用名称
-app_name='mall-admin'
-# 定义应用版本
-app_version='1.0-SNAPSHOT'
-# 定义应用环境
-profile_active='prod'
-echo '----copy jar----'
-docker stop ${app_name}
-echo '----stop container----'
-docker rm ${app_name}
-echo '----rm container----'
-docker rmi ${group_name}/${app_name}:${app_version}
-echo '----rm image----'
-# 打包编译docker镜像
-docker build -t ${group_name}/${app_name}:${app_version} .
-echo '----build image----'
-docker run -p 8080:8080 --name ${app_name} \
---link mysql:db \
---link redis:redis \
--e 'spring.profiles.active'=${profile_active} \
--e TZ="Asia/Shanghai" \
--v /etc/localtime:/etc/localtime \
--v /mydata/app/${app_name}/logs:/var/logs \
--d ${group_name}/${app_name}:${app_version}
-echo '----start container----'
+# 已废弃：此脚本原先从 document/sh/ 目录直接 docker build，build context 错误且 Dockerfile 硬编码 mall-admin。
+# 新版统一改用 fabric8 docker-maven-plugin 或 document/sh/build-and-run.sh。
+#
+# 旧脚本保留以防回退到旧的部署方式。
+# 推荐：
+#   1) Maven 一键打包 + 推镜像：mvn -pl mall-admin -am package -DskipTests
+#   2) 启动容器：./document/sh/mall-admin.sh
+#   3) 或 docker compose -f document/docker/docker-compose-app.yml -p mall up -d
+
+set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec "${SCRIPT_DIR}/build-and-run.sh" mall-admin

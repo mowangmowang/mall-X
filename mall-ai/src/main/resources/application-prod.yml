@@ -1,0 +1,45 @@
+server:
+  port: 8086
+
+spring:
+  cloud:
+    discovery:
+      enabled: false
+    openfeign:
+      client:
+        config:
+          mall-portal:
+            # 通过 docker compose service name 直连 mall-portal
+            url: http://mall-portal:8085
+            connect-timeout: 3000
+            read-timeout: 10000
+            logger-level: basic
+      lazy-attributes-resolution: true
+
+  ai:
+    openai:
+      # 生产环境必须通过环境变量注入，禁止在 yml 写死 key
+      api-key: ${AI_API_KEY}
+      base-url: ${AI_BASE_URL:https://api.deepseek.com}
+      chat:
+        options:
+          model: ${AI_MODEL:deepseek-chat}
+          temperature: 0.7
+          max-tokens: 1024
+
+mall:
+  security:
+    cors:
+      # 生产环境必须改为具体域名（不能为 *），多个用英文逗号分隔
+      allowed-origins: ${ALLOWED_ORIGINS:http://localhost:8080}
+      allowed-methods: "*"
+      allowed-headers: "*"
+      allow-credentials: true
+      max-age: 3600
+
+logging:
+  file:
+    path: /var/logs
+  level:
+    root: info
+    com.macro.mall: info

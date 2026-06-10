@@ -1,42 +1,135 @@
-version: '3'
+# 应用服务（mall-admin / mall-search / mall-portal / mall-ai）
+# 用法：先启动基础设施 stack（同 -p 项目名）：
+#   docker compose -f docker-compose-env.yml -p mall up -d
+# 再启动应用 stack：
+#   docker compose -f docker-compose-app.yml -p mall up -d
+# 两个 stack 通过 -p mall + 共享的 mall-net 网络互通（DNS 用 service name）。
+#
+# 镜像名/标签通过环境变量覆盖：
+#   IMAGE_TAG=2.0.0 docker compose -f docker-compose-app.yml -p mall up -d
+networks:
+  mall-net:
+    external: true
+    name: mall-net
+
+x-logging: &default-logging
+  file:
+    path: /var/logs
+  level:
+    root: info
+
 services:
   mall-admin:
-    image: mall/mall-admin:1.0-SNAPSHOT
+    image: ${IMAGE_PREFIX_MALL_ADMIN:-mall/mall-admin}:${IMAGE_TAG:-1.0-SNAPSHOT}
     container_name: mall-admin
+    hostname: mall-admin
+    restart: always
     ports:
       - 8080:8080
     volumes:
       - /mydata/app/mall-admin/logs:/var/logs
-      - /etc/localtime:/etc/localtime
+      - /etc/localtime:/etc/localtime:ro
     environment:
-      - 'TZ="Asia/Shanghai"'
-    external_links:
-      - mysql:db #可以用db这个域名访问mysql服务
+      - TZ=Asia/Shanghai
+      - JAVA_OPTS=-Xms512m -Xmx1024m
+    networks:
+      - mall-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/actuator/health | grep -q UP || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
   mall-search:
-    image: mall/mall-search:1.0-SNAPSHOT
+    image: ${IMAGE_PREFIX_MALL_SEARCH:-mall/mall-search}:${IMAGE_TAG:-1.0-SNAPSHOT}
     container_name: mall-search
+    hostname: mall-search
+    restart: always
     ports:
       - 8081:8081
     volumes:
       - /mydata/app/mall-search/logs:/var/logs
-      - /etc/localtime:/etc/localtime
+      - /etc/localtime:/etc/localtime:ro
     environment:
-      - 'TZ="Asia/Shanghai"'
-    external_links:
-      - elasticsearch:es #可以用es这个域名访问elasticsearch服务
-      - mysql:db #可以用db这个域名访问mysql服务
+      - TZ=Asia/Shanghai
+      - JAVA_OPTS=-Xms512m -Xmx1024m
+    networks:
+      - mall-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8081/actuator/health | grep -q UP || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
   mall-portal:
-    image: mall/mall-portal:1.0-SNAPSHOT
+    image: ${IMAGE_PREFIX_MALL_PORTAL:-mall/mall-portal}:${IMAGE_TAG:-1.0-SNAPSHOT}
     container_name: mall-portal
+    hostname: mall-portal
+    restart: always
     ports:
       - 8085:8085
     volumes:
       - /mydata/app/mall-portal/logs:/var/logs
-      - /etc/localtime:/etc/localtime
+      - /etc/localtime:/etc/localtime:ro
     environment:
-      - 'TZ="Asia/Shanghai"'
-    external_links:
-      - redis:redis #可以用redis这个域名访问redis服务
-      - mongo:mongo #可以用mongo这个域名访问mongo服务
-      - mysql:db #可以用db这个域名访问mysql服务
-      - rabbitmq:rabbit #可以用rabbit这个域名访问rabbitmq服务
+      - TZ=Asia/Shanghai
+      - JAVA_OPTS=-Xms512m -Xmx1024m
+    networks:
+      - mall-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8085/actuator/health | grep -q UP || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  mall-ai:
+    image: ${IMAGE_PREFIX_MALL_AI:-mall/mall-ai}:${IMAGE_TAG:-1.0-SNAPSHOT}
+    container_name: mall-ai
+    hostname: mall-ai
+    restart: always
+    ports:
+      - 8086:8086
+    volumes:
+      - /mydata/app/mall-ai/logs:/var/logs
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=Asia/Shanghai
+      - JAVA_OPTS=-Xms256m -Xmx768m
+      # 必填：生产环境注入真实 LLM key / base-url
+      - AI_API_KEY=${AI_API_KEY:-}
+      - AI_BASE_URL=${AI_BASE_URL:-https://api.deepseek.com}
+      - AI_MODEL=${AI_MODEL:-deepseek-chat}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:8080}
+    networks:
+      - mall-net
+    depends_on:
+      mall-portal:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8086/actuator/health | grep -q UP || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
